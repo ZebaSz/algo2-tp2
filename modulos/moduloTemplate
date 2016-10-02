@@ -1,0 +1,57 @@
+\section{<MODULO>}
+
+\subsection{Interfaz}
+
+\textbf{se explica con}: \tadNombre{<TAD>}.
+
+\textbf{géneros}: \TipoVariable{<GENERO>}.
+
+\subsubsection{Operaciones básicas de <MODULO>}
+
+\InterfazFuncion{Copiar}{\In{a}{$\alpha$}}{$\alpha$}
+    {$res \igobs a$}
+    [$\Theta(copy(a))$]
+    [función de copia de $\alpha$'s]
+
+%%_________________________________________________
+
+\subsubsection{Representación de <MODULO>}
+
+\begin{Estructura}{itLista($\alpha$)}[iter]
+	\begin{Tupla}[iter]
+	  \tupItem{siguiente}{puntero(nodo)}%
+	  \tupItem{lista}{puntero(lst)}%
+	\end{Tupla}
+\end{Estructura}
+
+%%_________________________________________________
+
+\subsubsection{Invariante de Representación}
+
+%%EN ESPAÑOL
+\begin{enumerate}
+	\item{El largo del vector es igual al producto de filas por columnas}
+\end{enumerate}
+
+\Rep[dic][d]{\#claves(secuADicc($d$.claves)) $=$ long($d$.claves) $\land$ long($d$.claves) = long($d$.significados)}
+
+%%_________________________________________________
+
+\subsubsection{Funci\'on de Abstracci\'on}
+
+\Abs[estr]{campus}[e]{cs}{true}
+
+\AbsFc[itDic]{itBi(tupla($\kappa$, $\sigma$))}[it]{CrearItBi(Join(Anteriores($it$.claves), Anteriores($it$.significados)), \\\phantom{CrearItBi(}Join(Siguientes($it$.claves), Siguientes($it$.significados)))}\mbox{}
+
+%%_________________________________________________
+
+\subsection{Algoritmos}
+
+\begin{algorithm}[H]{\textbf{iVacía}() $\to$ $res$ : lst}
+    	\begin{algorithmic}[1]
+			 \State $res \gets \langle NULL, 0 \rangle$ \Comment $\Theta(1)$
+
+			\medskip
+			\Statex \underline{Complejidad:} $\Theta(1)$
+    	\end{algorithmic}
+\end{algorithm}
