@@ -8,10 +8,12 @@
 
 \subsubsection{Operaciones básicas de <MODULO>}
 
-\InterfazFuncion{Copiar}{\In{a}{$\alpha$}}{$\alpha$}
-    {$res \igobs a$}
-    [$\Theta(copy(a))$]
-    [función de copia de $\alpha$'s]
+\InterfazFuncion{<OP>}{\Inout{<PARAM>}{<GENERO2>}, \In{<PARAM2>}{<GENERO3>}}{<RES>}
+  [<PRE>]
+  {<POS>}
+  [<COMPLEJIDAD>]
+  [<DESCRIPCION>]
+  [<ALIASING>] %%OPCIONAL
 
 %%_________________________________________________
 
