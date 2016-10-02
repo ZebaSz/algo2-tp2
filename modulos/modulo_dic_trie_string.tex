@@ -1,0 +1,118 @@
+\newcommand\dicString{diccString($\alpha$)}
+
+\section{Módulo Diccionario (String, $\alpha$) sobre Trie}
+
+Descsripcion TODO
+
+\subsection{Interfaz}
+
+\textbf{parametros formales}
+
+\textbf{géneros}: \TipoVariable{$\alpha$}.
+
+\textbf{se explica con}: \tadNombre{Diccionario(String,$\alpha$)}.
+
+\textbf{géneros}: \TipoVariable{\dicString, itDiccString($\alpha$)}.
+
+~
+
+\subsubsection{Operaciones básicas de Diccionario (String, $\alpha$) sobre Trie}
+
+\InterfazFuncion{Vacío}{}{\dicString}
+[true]
+{$res$ $\igobs$ vacío()}
+[]%%Complejidad O(1)
+[Creación de un diccionario vacío]
+[]
+
+~
+
+\InterfazFuncion{Definir}{\Inout{d}{\dicString}, \In{c}{string}, \In{s}{$\alpha$}}{}
+[$d \igobs d_0$]
+{$d \igobs$ definir($c, s, d_0$)}
+[]%%O(de la clave mas larga)
+[Define sobre la clave $c$ el signigicado $s$ en el diccionario $d$]
+[]%%c y s por copia???????
+
+~
+
+\InterfazFuncion{Definido?}{\In{d}{\dicString}, \In{c}{string}}{bool}
+[true]
+{$res \igobs$ def?($c, d$)]}
+[]%%O(de la clave mas larga)
+[Devuelve true si la clave $c$ esta definida en el diccionario.]
+[]
+
+~
+
+\InterfazFuncion{Obtener}{\In{d}{\dicString}, \In{c}{string}}{$\alpha$}
+[def?($c, d$)]
+{alias($res \igobs$ obtener($c$, $d$))}
+[]%%O(de la clave mas larga)
+[devuelve el significado de la clave $c$ en $d$]
+[$res$ es modificable si y sólo si $d$ es modificable]
+
+~
+
+\InterfazFuncion{Borrar}{\Inout{d}{\dicString}, \In{c}{string}}{}
+[$d \igobs d_0 \land$ def?($c, d$)]
+{$d \igobs$ borrar($c, d_0$)}
+[]%%O(de la clave mas larga)
+[Borra la clave $c$ y su significado del diccionario $d$]
+[]
+
+~
+%%TODO CLAVES
+
+\subsubsection{Representación de Diccionario (String, $\alpha$) sobre Trie)}
+
+\begin{Estructura}{ Diccionario (String, $\alpha$) sobre Trie }[estr]
+	\begin{Tupla}[estr]
+		\tupItem{raiz}{vector(puntero(Nodo))}
+	\end{Tupla}
+
+	~
+
+	\begin{Tupla}[Nodo]
+		\tupItem{hijos}{vector(puntero(Nodo))}
+		\tupItem{valor}{$\alpha$}
+		\tupItem{contieneValor}{bool}
+	\end{Tupla}
+
+\end{Estructura}
+
+\subsubsection{Invariante de Representación}
+
+\Rep[estr][e]{
+	longitud(e.raiz) == 27 $\land$
+	hijosValidos(e.raiz)
+}
+
+\tadOperacion{esValido}{puntero(Nodo)/nodo}{bool}{}
+\tadOperacion{hijosValidos}{vector(puntero(Nodo))/hijos}{bool}{}
+
+\tadAxioma{esValido(nodo)}{ %%aca iria un if preguntando si el nodo es null??????
+	longitud(nodo.hijos) == 27 $\land$
+	hijosValidos(nodo.hijos) 
+}
+%%TODO
+\tadAxioma{hijosValidos(hijos)}{ %%Preguntar por punteros
+	vacio?(hijos) $\oluego$ (esValido(dameUno(hijos)) $\land$ hijosValidos(sinUno(hijos))
+}
+
+\subsubsection{Función de Abstracción}
+
+\Abs[estr]{\dicString}[e]{d}{TODO} %%TODO
+
+\subsection{Algoritmos}
+
+\begin{algorithm}[H]
+	\SetAlgoLined
+	\NoCaptionOfAlgo
+	\caption{\algoritmo{Vacío}{}{estr}}
+	res.raiz $\leftarrow$ ArreglosDeNulls(27)\;
+\end{algorithm}
+
+
+
+
