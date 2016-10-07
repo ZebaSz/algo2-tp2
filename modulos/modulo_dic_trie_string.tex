@@ -1,14 +1,23 @@
 \newcommand\dicString{diccString($\alpha$)}
 
-\section{Módulo Diccionario (String, $\alpha$) sobre Trie}
+\section{Módulo Diccionario (String, \texorpdfstring{$\alpha$}{α}) sobre Trie}
 
 Descsripcion TODO
 
+Usaremos $copy(s)$ para denotar el costo de copiar el elemento $s \in \alpha$, y llamaremos $|c_{max}|$ a la longitud de la clave más larga.
+
 \subsection{Interfaz}
 
-\textbf{parametros formales}
-
-\textbf{géneros}: \TipoVariable{$\alpha$}.
+\textbf{parámetros formales}\hangindent=2\parindent\\
+\parbox{1.7cm}{\textbf{géneros}} \TipoVariable{$\alpha$}\\
+%% TODO agregué esto por las dudas, supongo que es necesario, revisar
+\parbox[t]{1.7cm}{\textbf{función}}\parbox[t]{\textwidth-2\parindent-1.7cm}{
+	\InterfazFuncion{Copiar}{\In{s}{$\alpha$}}{$\alpha$}
+	{$res \igobs s$}
+	[$\Theta(copy(s))$]
+	[función de copia de $\alpha$'s]
+	[]
+}
 
 \textbf{se explica con}: \tadNombre{Diccionario(String,$\alpha$)}.
 
@@ -16,12 +25,12 @@ Descsripcion TODO
 
 ~
 
-\subsubsection{Operaciones básicas de Diccionario (String, $\alpha$) sobre Trie}
+\subsubsection{Operaciones básicas de Diccionario (String, \texorpdfstring{$\alpha$}{α}) sobre Trie}
 
-\InterfazFuncion{Vacío}{}{\dicString}
+\InterfazFuncion{CrearDiccionario}{}{\dicString}
 [true]
 {$res$ $\igobs$ vacío()}
-[]%%Complejidad O(1)
+[$O(1)$]
 [Creación de un diccionario vacío]
 []
 
@@ -30,16 +39,16 @@ Descsripcion TODO
 \InterfazFuncion{Definir}{\Inout{d}{\dicString}, \In{c}{string}, \In{s}{$\alpha$}}{}
 [$d \igobs d_0$]
 {$d \igobs$ definir($c, s, d_0$)}
-[]%%O(de la clave mas larga)
+[$O(|c_{max}| + copy(s))$]
 [Define sobre la clave $c$ el signigicado $s$ en el diccionario $d$]
-[]%%c y s por copia???????
+[Se almacena una copia de $s$]
 
 ~
 
 \InterfazFuncion{Definido?}{\In{d}{\dicString}, \In{c}{string}}{bool}
 [true]
 {$res \igobs$ def?($c, d$)]}
-[]%%O(de la clave mas larga)
+[$O(|c_{max}|)$]
 [Devuelve true si la clave $c$ esta definida en el diccionario.]
 []
 
@@ -48,7 +57,7 @@ Descsripcion TODO
 \InterfazFuncion{Obtener}{\In{d}{\dicString}, \In{c}{string}}{$\alpha$}
 [def?($c, d$)]
 {alias($res \igobs$ obtener($c$, $d$))}
-[]%%O(de la clave mas larga)
+[$O(|c_{max}|)$]
 [devuelve el significado de la clave $c$ en $d$]
 [$res$ es modificable si y sólo si $d$ es modificable]
 
@@ -57,24 +66,25 @@ Descsripcion TODO
 \InterfazFuncion{Borrar}{\Inout{d}{\dicString}, \In{c}{string}}{}
 [$d \igobs d_0 \land$ def?($c, d$)]
 {$d \igobs$ borrar($c, d_0$)}
-[]%%O(de la clave mas larga)
+[$O(|c_{max}|)$]
 [Borra la clave $c$ y su significado del diccionario $d$]
 []
 
 ~
-%%TODO CLAVES
 
-\subsubsection{Representación de Diccionario (String, $\alpha$) sobre Trie)}
+%%TODO ITERADOR DE CLAVES
+
+\subsubsection{Representación de Diccionario (String, \texorpdfstring{$\alpha$}{α}) sobre Trie)}
 
 \begin{Estructura}{ Diccionario (String, $\alpha$) sobre Trie }[estr]
 	\begin{Tupla}[estr]
-		\tupItem{raiz}{vector(puntero(Nodo))}
+		\tupItem{raiz}{arreglo[27] de puntero(Nodo)}
 	\end{Tupla}
 
 	~
 
 	\begin{Tupla}[Nodo]
-		\tupItem{hijos}{vector(puntero(Nodo))}
+		\tupItem{hijos}{arreglo[27] de puntero(Nodo)}
 		\tupItem{valor}{$\alpha$}
 		\tupItem{contieneValor}{bool}
 	\end{Tupla}
@@ -84,20 +94,12 @@ Descsripcion TODO
 \subsubsection{Invariante de Representación}
 
 \Rep[estr][e]{
-	longitud(e.raiz) == 27 $\land$
-	hijosValidos(e.raiz)
+	($\forall i \in [0..27)$) (hijoValido(e.raiz[i]))
 }
 
-\tadOperacion{esValido}{puntero(Nodo)/nodo}{bool}{}
-\tadOperacion{hijosValidos}{vector(puntero(Nodo))/hijos}{bool}{}
-
-\tadAxioma{esValido(nodo)}{ %%aca iria un if preguntando si el nodo es null??????
-	longitud(nodo.hijos) == 27 $\land$
-	hijosValidos(nodo.hijos) 
-}
-%%TODO
-\tadAxioma{hijosValidos(hijos)}{ %%Preguntar por punteros
-	vacio?(hijos) $\oluego$ (esValido(dameUno(hijos)) $\land$ hijosValidos(sinUno(hijos))
+\tadOperacion{hijoValido}{puntero(Nodo)}{bool}{}
+\tadAxioma{hijoValido(nodo)}{
+	nodo == NULL $\oluego$ ($\forall i \in [0..27)$) (hijoValido(nodo.hijos[i]))
 }
 
 \subsubsection{Función de Abstracción}
@@ -109,8 +111,10 @@ Descsripcion TODO
 \begin{algorithm}[H]
 	\SetAlgoLined
 	\NoCaptionOfAlgo
-	\caption{\algoritmo{Vacío}{}{estr}}
-	res.raiz $\leftarrow$ ArreglosDeNulls(27)\;
+	\caption{\algoritmo{CrearDiccionario}{}{estr}}
+	\For{$i \leftarrow 0$ \KwTo $26$}{
+	res.raiz[i] $\leftarrow$ NULL
+	}
 \end{algorithm}
 
 

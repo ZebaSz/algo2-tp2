@@ -28,15 +28,15 @@ _*O(1) amortizado_
 | obtener   | O(\|clave\|)|
 | borrar    | O(\|clave\|)|
 
-## Grilla(dataPos)
+## Grilla(tupla(bool, dataPos))
 
 - mapa
 
 - arreglo de arreglos (dimensionables)
 
-### dataPos: tupla(bool, nat, PQ(jugador))
-
 - bool = pos valida
+
+### dataPos: tupla(nat, PQ(jugador))
 
 - contador de movsLejosDePos
 
