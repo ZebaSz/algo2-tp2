@@ -1,0 +1,428 @@
+\section{Módulo Diccionario String($\alpha$)}
+
+Se representa mediante un árbol n-ario con invariante de trie. Las claves son strings y permite acceder a un significado en un tiempo en el peor caso igual a la longitud de la palabra (string) más larga y definir un significado en el mismo tiempo más el tiempo
+de copy(s) ya que los significados se almacenan por copia.
+
+\subsection{Interfaz}
+
+\textbf{parametros formales}
+
+\textbf{géneros}: \TipoVariable{$\alpha$}.
+
+\textbf{funcion}: \InterfazFuncion{Copiar}{\In{s}{$\alpha$}}{$\alpha$}
+				  [true]
+				  {res $=_{obs}$ s}
+				  [$O(copy(s))$]
+				  [funcion de copia de $\alpha$.]
+				  []
+
+\textbf{se explica con}: \tadNombre{Diccionario(String,$\alpha$)}.
+
+\textbf{géneros}: \TipoVariable{diccString($\alpha$), itDiccString($\alpha$)}.
+
+
+
+~
+
+\subsubsection{Operaciones básicas de Diccionario String($\alpha$)}
+
+\InterfazFuncion{CrearDiccionario}{}{}
+{res $=_{obs}$ vacío()}
+[$O(1)$ \\ Sólo crea un arreglo de 27 posiciones inicializadas con null y una lista vacía]
+[Crea un diccionario vacío.]
+[]
+
+~
+
+
+
+\InterfazFuncion{Definido?}{\In{d}{diccString$(\alpha)$}, \In{c}{string})}{bool}
+[true]
+{$res$ $\igobs$ def?($d$, $c$)}
+[$O(|n_m|)$ \\ Debe acceder a la clave c, recorriendo una por una las partes de la clave (caracteres)]
+[Devuelve true si la clave está definida en el diccionario y false en caso contrario.]
+[]
+
+~
+
+\InterfazFuncion{Definir}{\Inout{d}{diccString$(\alpha)$}, \In{c}{string}, \In{s}{$\alpha$}}{}
+[$ d \igobs d_0 $]
+{$ d \igobs$ definir($c$, $s$, $d_0$)}
+[$O(|n_m| + copy(s))$ \\ Debe definir la clave c, recorriendo una por una las partes de la clave y después copiar el contenido del significado.]
+[Define la clave $c$ con el significado $s$]
+[Almacena una copia de $s$.]
+
+~
+
+\InterfazFuncion{Obtener}{\In{d}{diccString$(\alpha)$}, \In{c}{string}}{$\alpha$}
+[def?($c$, $d$)]
+{alias($res$ $\igobs$ obtener($c$, $d$))}
+[$O(|n_m|)$ \\ Debe acceder a la clave c, recorriendo una por una las partes de la clave (caracteres)]
+[Devuelve el significado correspondiente a la clave $c$.]
+[Devuelve el significado almacenado en el diccionario, por lo que $res$ es modificable si y sólo si $d$ lo es.]
+
+~
+
+\InterfazFuncion{Eliminar}{\Inout{d}{diccString($\alpha$)}, \In{c}{string}}{}
+[$ d \igobs d_0 \land $ def?($d$, $c$)]
+{$ d \igobs$ borrar($d_0$, $c$)}
+[$O(|n_m|)$ \\ Debe acceder a la clave c, recorriendo una por una las partes de la clave (caracteres) e invalidar su significado]
+[Borra la clave $c$ del diccionario y su significado.]
+[]
+
+~
+
+\InterfazFuncion{CrearItClaves}{\In{d}{diccString($\alpha$)}}{itConj(String)}
+[true]
+{alias(esPermutacion?(SecuSuby(res), c)) $\land$ vacia?(Anteriores(res))}
+[$O(1)$]
+[Crea un Iterador de Conjunto en base a la interfaz del iterador de Conjunto Lineal]
+[]
+
+~
+\subsubsection{Operaciones básicas del iterador}
+
+Este iterador permite recorrer el trie sobre el que est\'{a} implementado el diccionario para obtener cada clave los significados. Las claves de los elementos iterados no
+pueden modificarse nunca por cuestiones de implementación. El iterador es un iterador de lista, que recorre listaIterable por lo que sus operaciones son identicas a ella.
+
+\InterfazFuncion{CrearIt}{\In{d}{diccString($\alpha$)}}{itDiccString($\alpha$)}
+[true]
+{alias(esPermutación(SecuSuby($res$), $d$)) $\land$ vacia?(Anteriores($res$))}
+[$\Theta(1)$]
+[crea un iterador bidireccional del diccionario, de forma tal que HayAnterior evalúe a false (i.e.,
+que se pueda recorrer los elementos aplicando iterativamente Siguiente).]
+[El iterador se invalida si y sólo si se elimina el elemento siguiente del iterador sin utilizar la función
+EliminarSiguiente. Además, anteriores(res) y siguientes(res) podrían cambiar completamente ante cualquier
+operación que modifique d sin utilizar las funciones del iterador.]
+
+~
+
+\InterfazFuncion{HaySiguiente}{\In{it}{itDiccString($\alpha$)}}{bool}
+[true]
+{res $=_{obs}$ haySiguiente?($it$)}
+[$\Theta(1)$]
+[devuelve true si y sólo si en el iterador todavía quedan elementos para avanzar.]
+[]
+
+~
+
+\InterfazFuncion{HayAnterior}{\In{it}{itDiccString($\alpha$)}}{bool}
+[true]
+{res $=_{obs}$ hayAnterior?($it$)}
+[$\Theta(1)$]
+[devuelve true si y sólo si en el iterador todavía quedan elementos para retroceder.]
+[]
+
+
+
+~
+
+\InterfazFuncion{SiguienteSignificado}{\In{it}{itDiccString($\alpha$)}}{$\alpha$}
+[haySiguiente?(it)]
+{alias(res $=_{obs}$ haySiguiente?($it$).significado)}
+[$\Theta(1)$]
+[devuelve el significado del elemento siguiente del iterador]
+[res es modificable si y sólo si it es modficable.]
+
+~
+
+
+\InterfazFuncion{AnteriorSignificado}{\In{it}{itDiccString($\alpha$)}}{$\alpha$}
+[hayAnterior?(it)]
+{alias(res $=_{obs}$ haySiguiente?($it$).significado)}
+[$\Theta(1)$]
+[devuelve el significado del elemento anterior del iterador]
+[res es modificable si y sólo si it es modficable.]
+
+~
+
+\InterfazFuncion{Avanzar}{\Inout{it}{itDiccString($\alpha$)}}{}
+[it $=$ it$_0$ $\land$ haySiguiente?(it)]
+{it $=_{obs}$ avanzar(it$_0$)}
+[$\Theta(1)$]
+[avanza a la posicion siguiente del iterador.]
+[]
+
+~
+
+\InterfazFuncion{Retroceder}{\Inout{it}{itDiccString($\alpha$)}}{}
+[it $=$ it$_0$ $\land$ hayAnterior?(it)]
+{it $=_{obs}$ hayAnterior?(it$_0$)}
+[$\Theta(1)$]
+[retrocede a la posicion anterior del iterador.]
+[]
+
+~
+
+
+\pagebreak
+
+\subsubsection{Representación de Diccionario String($\alpha$)}
+
+\begin{Estructura}{ Diccionario String($\alpha$)}[estr]
+	\begin{Tupla}[estr]
+		\tupItem{raiz}{arreglo(puntero(Nodo))}%
+		\tupItem{listaIterable}{lista(puntero(Nodo))}%
+	\end{Tupla}
+
+	~
+
+	\begin{Tupla}[Nodo]
+		\tupItem{arbolTrie}{arreglo(puntero(Nodo))}%
+		\tupItem{\\
+					info}{$\alpha$}%
+		\tupItem{\\
+					infoValida}{bool}%
+		\tupItem{\\
+					infoEnLista}{iterador(listaIterable)}
+	\end{Tupla}
+
+\end{Estructura}
+
+\subsubsection{Invariante de Representación}
+
+\renewcommand{\labelenumi}{(\Roman{enumi})}
+
+\begin{enumerate}
+	\item Raiz es la raiz del arbol con invariante de trie y es un arreglo de 27 posiciones.
+	\item Cada uno de los elementos de la lista tiene que ser un puntero a un Nodo del trie.
+	\item Nodo es una tupla que contiene un arreglo de 27 posiciones con un puntero a otro Nodo en cada posicion
+	,un elemento info que es el alfa que contiene esa clave del arbol, un elemento infoValida y un elemento iterador que es un puntero a un nodo de la lista enlazada.
+	\item El iterador a la lista enlazada de cada nodo tiene que apuntar al elemento de la lista que apunta al
+	mismo Nodo.
+	\item Cada uno de los nodos de la lista apunta a un nodo del arbol cuyo infoEnLista apunta al mismo nodo de la lista.
+
+\end{enumerate}
+
+
+
+	($\forall c$: diccString($(\alpha)$))()
+
+\Rep[estr][e]{
+	\\
+	longitud(e.raiz)==27 $\yluego$
+	\\
+	($\forall i$ $\in$ [0..longitud(e.raiz)))\\
+	\- \- ((($\neg$ e.raiz[i] == NULL) $\impluego$
+	nodoValido(raiz[i])) $\land$ ($*$e.raiz[i].infoValida == true $\impluego$ \\
+	iteradorValido(raiz[i]))) $\land$
+	\\
+	listaValida(e.listaIterable)
+}\mbox{}
+
+\tadOperacion{nodoValido}{puntero(Nodo)/nodo}{bool}{}
+\tadOperacion{iteradorValido}{puntero(Nodo)/nodo}{bool}{}
+
+~
+
+\tadAxioma{nodoValido($nodo$)}{
+	longitud(*nodo.arbolTrie) == 27 $\yluego$
+		\\
+		($\forall i$ $\in$ [0..longitud(*nodo.arbolTrie)))
+		\\
+		(($\neg$ *nodo.arbolTrie[i] == NULL) $\impluego$
+	nodoValido(*nodo.arbolTrie[i]))
+}
+\tadAxioma{iteradorValido($nodo$)}{
+	PunteroValido(nodo) $\yluego$
+		\\
+		($\forall i$ $\in$ [0..longitud(*nodo.arbolTrie)))
+		\\
+		((*nodo.arbolTrie[i].infoValida == true) $\impluego$
+	iteradorValido(*nodo.arbolTrie[i]))
+}
+\tadAxioma{PunteroValido(nodo)}{
+	El iterador perteneciente al nodo (infoEnLista) apunta a
+	un nodo de listaIterable (lista(puntero(Nodo))) cuyo puntero
+	apunta al mismo nodo pasado por parámetro. Es decir se trata
+	de una referencia circular.
+}
+
+\tadAxioma{listaValida(lista)}{
+	Cada nodo de la lista tiene un puntero a un nodo de la estructura cuyo infoEnLista (iterador) apunta al mismo nodo.
+	Es decir se trata de una referencia circular.
+}
+
+\pagebreak
+
+\subsubsection{Funci\'on de Abstracci\'on}
+
+\Abs[estr]{diccString($\alpha$)}[e]{d}{
+($\forall s$: string)(def?($d$, $s$) $\igobs$ \\ Definido?(d,s)
+\- $\land$ \\
+\- def?($d$, $s$) $\impluego$ obtener($s$,$d$) $\igobs$ \\
+\- Obtener($d$,$s$) \\
+)
+}
+
+\subsection{Algoritmos}
+
+\lstset{style=alg}
+
+\begin{lstlisting}[mathescape]
+
+'\alg{iCrearDiccionario}{}{estr}'
+{$\textbf{Pre}$ $\equiv$ true}
+
+    arreglo(puntero(Nodo)): res.raiz $\leftarrow$ CrearArreglo(27) '\ote{1}'
+	nat: i $\leftarrow$ 0 '\ote{1}'
+    while i < long(res.raiz) do '\ote{1}'
+    	res.raiz[i] $\leftarrow$ NULL '\ote{1}'
+    end while '\ote{1}'
+    res.listaIterable $\leftarrow$ Vacia() '\ote{1}'
+
+{$\textbf{Post}$ $\equiv$ res $=_{obs}$ vacio()}
+'\ofi{O(1)} \\ Crea un arreglo de 27 posiciones y lo recorre inicializándolo en NULL. Luego crea una lista vacía'
+
+\end{lstlisting}
+
+\begin{lstlisting}[mathescape]
+
+'\alg{iDefinido?}{\In{d}{estr)}, \In{c}{string}}{bool}'
+{$\textbf{Pre}$ $\equiv$ true}
+
+	nat: i $\leftarrow$ 0 '\ote{1}'
+	nat: letra $\leftarrow$ ord(c[0]) '\ote{1}'
+	puntero(Nodo): arr $\leftarrow$ d.raiz[letra] '\ote{1}'
+	while(i < longitud(c) and not arr = NULL) do '\ote{1}'
+		i $\leftarrow$ i + 1 '\ote{1}'
+		letra $\leftarrow$ ord(c[i]) '\ote{1}'
+		arr $\leftarrow$ (*arr).arbolTrie[letra] '\ote{1}'
+	end while '\ote{$|n_m|$}'
+	if(i=longitud(c)) then '\ote{1}'
+		res $\leftarrow$ (*arr).infoValida '\ote{1}'
+	else
+		res $\leftarrow$ false '\ote{1}'
+	end if
+
+{$\textbf{Post}$ $\equiv$ res $=_{obs}$ def?(d,c)}
+'\ofi{O(|n_m|)} \\ Toma el primer caracter y encuentra su posición en el arreglo raíz. Luego itera sobre los caracteres restantes hasta el final del String c, por lo que hace |$n_m$| operaciones. Finalmente pregunta si el significado encontrado es válido o no'
+
+\end{lstlisting}
+
+\begin{lstlisting}[mathescape]
+
+'\alg{iDefinir}{\Inout{d}{estr}, \In{c}{string}, \In{s}{$\alpha$}}{}'
+{$\textbf{Pre}$ $\equiv$ d $=_{obs}$ d$_0$}
+
+	nat: i $\leftarrow$ 0 '\ote{1}'
+	nat: letra $\leftarrow$ ord(c[0]) '\ote{1}'
+	if (d.raiz[letra] = NULL) then '\ote{1}'
+		Nodo: nuevo '\ote{1}'
+		arreglo(puntero(Nodo)): nuevo.arbolTrie $\leftarrow$ CrearArrelgo(27) '\ote{1}'
+		nuevo.infoValida $\leftarrow$ false '\ote{1}'
+		d.raiz[letra] $\leftarrow$ puntero(nuevo) '\ote{1}'
+	end if
+	puntero(Nodo): arr $\leftarrow$ d.raiz[letra] '\ote{1}'
+	while(i < longitud(c)) do '\ote{1}'
+		i $\leftarrow$ i + 1 '\ote{1}'
+		letra $\leftarrow$ ord(c[i]) '\ote{1}'
+		if (arr.arbolTrie[letra] = NULL) then '\ote{1}'
+			Nodo: nuevoHijo '\ote{1}'
+			arreglo(puntero(Nodo)): nuevoHijo.arbolTrie $\leftarrow$ CrearArrelgo(27) '\ote{1}'
+			nuevoHijo.infoValida $\leftarrow$ false '\ote{1}'
+			arr.arbolTrie[letra] $\leftarrow$ puntero(nuevoHijo) '\ote{1}'
+		end if
+		arr $\leftarrow$ (*arr).arreglo[letra] '\ote{1}' '\ote{1}'
+	end while '\ote{$|n_m|$}'
+    (*arr).info $\leftarrow$ s '\ote{copy(s)}'
+    if(not (*arr).infoValida = true) then '\ote{1}'
+    	itLista(puntero(Nodo)) it $\leftarrow$ AgregarAdelante(d.listaIterable,NULL) '\ote{1}'
+    	(*arr).infoValida $\leftarrow$ true '\ote{1}'
+    	(*arr).infoEnLisa $\leftarrow$ it '\ote{1}'
+    	siguiente(it) $\leftarrow$ puntero(*arr) '\ote{1}'
+    end if
+
+{$\textbf{Post}$ $\equiv$ d $=_{obs}$ definir(c,s,d$_0$)}
+'\ofi{O(|n_m| + copy(s))} \\ Itera sobre la cantidad de caracteres del String c y en caso de que algún caracter no esté definido crea un arrelglo de 27 posiciones, por lo que realiza |$n_m$| operaciones. Luego copia el significado pasado por parámetro en O(copy(s)) y finalmente agrega en la lista un puntero al nodo creado'
+
+\end{lstlisting}
+
+\begin{lstlisting}[mathescape]
+
+'\alg{iObtener}{\In{d}{estr}, \In{c}{string}}{$\alpha$}'
+{$\textbf{Pre}$ $\equiv$ def?(c,d)}
+
+	nat: i $\leftarrow$ 0 '\ote{1}'
+	nat: letra $\leftarrow$ ord(c[0]) '\ote{1}'
+	puntero(Nodo): arr $\leftarrow$ d.raiz[letra] '\ote{1}'
+	while(i < longitud(c)) do '\ote{1}'
+		i $\leftarrow$ i + 1 '\ote{1}'
+		letra $\leftarrow$ ord(c[i]) '\ote{1}'
+		arr $\leftarrow$ (*arr).arbolTrie[letra] '\ote{1}'
+	end while '\ote{$|n_m|$}'
+	res $\leftarrow$ (*arr).info '\ote{1}'
+
+{$\textbf{Post}$ $\equiv$ alias(res $=_{obs}$ obtener(c,d)}
+'\ofi{O(|n_m|)} \\ Toma el primer caracter y encuentra su posición en el arreglo raíz. Luego itera sobre los caracteres restantes hasta el final del String c, por lo que hace |$n_m$| operaciones. Finalmente retorna el significado almacenado. Todas las demás operaciones se realizan en O(1) porque son comparaciones o asignaciones de valores enteros o de punteros'
+
+\end{lstlisting}
+
+\begin{lstlisting}[mathescape]
+
+'\alg{iEliminar}{\Inout{d}{estr}, \In{c}{string}}{}'
+{$\textbf{Pre}$ $\equiv$ d $=_{obs}$ d$_0$ $\land$ def?(d,c)}
+
+	nat: i $\leftarrow$ 0 '\ote{1}'
+	nat: letra $\leftarrow$ ord(c[0]) '\ote{1}'
+	puntero(Nodo): arr $\leftarrow$ d.raiz[letra] '\ote{1}'
+	pila(puntero(Nodo)): pil $\leftarrow$ Vacia() '\ote{1}'
+	while(i < longitud(c)) do '\ote{1}'
+		i $\leftarrow$ i + 1 '\ote{1}'
+		letra $\leftarrow$ ord(c[i]) '\ote{1}'
+		arr $\leftarrow$ (*arr).arbolTrie[letra] '\ote{1}'
+		Apilar(pil,arr) '\ote{1}'
+	end while '\ote{$|n_m|$}'
+	if (tieneHermanos(arr)) then '\ote{1}'
+		(*arr).infoValida $\leftarrow$ false '\ote{1}'
+	else
+		i $\leftarrow$ 1 '\ote{1}'
+		puntero(Nodo): del $\leftarrow$ tope(pil) '\ote{1}'
+		del $\leftarrow$ NULL '\ote{1}'
+		Desapilar(pil) '\ote{1}'
+		while(i< longitud(c) and not(tieneHermanosEInfo(*tope(pil)))) do '\ote{1}'
+			del $\leftarrow$ tope(pil) '\ote{1}'
+			del $\leftarrow$ NULL '\ote{1}'
+			Desapilar(pil) '\ote{1}'
+			i $\leftarrow$ i + 1 '\ote{1}'
+		end while '\ote{$|n_m|$}'
+		if(i = longitud(c)) then '\ote{1}'
+			d.raiz[ord(c[0])] $\leftarrow$ NULL '\ote{1}'
+		end if
+	end if
+
+{$\textbf{Post}$ $\equiv$ d $=_{obs}$ borrar(d$_0$,c)}
+'\ofi{O(|n_m|)} \\ Toma el primer caracter y encuentra su posición en el arreglo raíz. Luego crea una pila en O(1). Recorre el resto de los caracteres del String c y apila cada uno de los Nodos encontrado en la pila (0(1)) por lo que en total realiza |$n_m$| operaciones. Llama a la función tieneHermanos y le pasa por parámetro el nodo encontrado O(1) (ver Algoritmo "tieneHermanos"). Luego recorre todos los elementos apilados preguntando si hay alguno que no tiene hermanos para en cuyo caso eliminarlo, realizando en el peor caso |$n_m$| operaciones porque puede ser que sea necesario eliminar todo hasta la raiz.'
+
+\end{lstlisting}
+
+\begin{lstlisting}[mathescape]
+
+'\alg{tieneHermanos}{\In{nodo}{puntero(Nodo)}}{bool}'
+{$\textbf{Pre}$ $\equiv$ nodo!=NULL}
+
+	nat: i $\leftarrow$ 0 '\ote{1}'
+	nat: l $\leftarrow$ longitud((*nodo).arbolTrie)) '\ote{1}'
+	while(i< l and not(*nodo).arbolTrie[i] = NULL) do '\ote{1}'
+		i $\leftarrow$ i + 1 '\ote{1}'
+	end while '\ote{1}'
+	res $\leftarrow$ i < l '\ote{1}'
+
+{$\textbf{Post}$ $\equiv$ res $=_{obs}$ ($\exists i$ $\in$ [0..longitud(*nodo.arbolTrie)) (*nodo.arbolTrie[i] != NULL))}
+'\ofi{O(1)} \\ Recorre el arreglo de 27 posiciones en caso de que todas las posiciones del mismo tengan NULL. Como es una constante ya que en el peor caso siempre recorre a lo sumo 27 posiciones entonces es O(1)'
+
+\end{lstlisting}
+
+\begin{lstlisting}[mathescape]
+
+'\alg{tieneHermanosEInfo}{\In{nodo}{puntero(Nodo)}}{bool}'
+{$\textbf{Pre}$ $\equiv$ nodo!=NULL}
+
+	res $\leftarrow$ tieneHermanos(nodo) and (*nodo).infoValida = true '\ote{1}'
+
+{$\textbf{Post}$ $\equiv$ res $=_{obs}$
+($\exists i$ $\in$ [0..longitud(*nodo.arbolTrie))
+(*nodo.arbolTrie[i] != NULL)) $\land$ (*nodo).infoValida = true}
+'\ofi{O(1)} \\ Llama a la funcion tieneHermanos que es O(1) y verifica además que el nodo contenga información válida'
+
+\end{lstlisting}
