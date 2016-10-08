@@ -12,10 +12,10 @@ Descripcion TODO ¿CUALES TIENEN DESCRIPCION Y CUALES NO?
 
 \subsubsection{Operaciones básicas de Coordenada}
 
-\InterfazFuncion{CrearCoor}{\In {x,y}{nat}}{coor}
+\InterfazFuncion{CrearCoor}{\In {y,x}{nat}}{coor}
 [true]
-{$res$ $\igobs$ crearCoor(x,y)}
-[]%%Complejidad O(1)
+{$res$ $\igobs$ crearCoor(y,x)}
+[$O(1)$]
 [Creación de una coordenada con latitud $x$ y longitud $y$]
 []
 
@@ -24,7 +24,7 @@ Descripcion TODO ¿CUALES TIENEN DESCRIPCION Y CUALES NO?
 \InterfazFuncion{Latitud}{\In{c}{coor}}{nat}
 [true]
 {$res \igobs$ latitud(c)}
-[]%%Complejidad O(1)
+[$O(1)$]
 [Devuelve la latitud de la coordenada $c$]
 []
 
@@ -33,7 +33,7 @@ Descripcion TODO ¿CUALES TIENEN DESCRIPCION Y CUALES NO?
 \InterfazFuncion{Longitud}{\In{c}{coor}}{nat}
 [true]
 {$res \igobs$ longitud(c)}
-[]%%Complejidad O(1)
+[$O(1)$]
 [Devuelve la longitud de la coordenada $c$]
 []
 
@@ -42,7 +42,7 @@ Descripcion TODO ¿CUALES TIENEN DESCRIPCION Y CUALES NO?
 \InterfazFuncion{DistEuclidea}{\In{c,d}{coor}}{nat}
 [true]
 {$res \igobs$ distEuclidea($c, d$)]}
-[]%%Complejidad O(sacarle la raiz a un numero :))
+[$O(1)$]
 [Devuelve la distancia euclideana entre las coordenadas c y d.]
 []
 ~
@@ -50,7 +50,7 @@ Descripcion TODO ¿CUALES TIENEN DESCRIPCION Y CUALES NO?
 \InterfazFuncion{CoordenadaArriba}{\In{c}{coor}}{coor}
 [true]
 {$res \igobs$ coordenadaArriba(c)}
-[]%%Complejidad O(1)
+[$O(1)$]
 [Devuelve una coordenada con latitud de c + 1, y longitud de c como párametros]
 []
 
@@ -59,7 +59,7 @@ Descripcion TODO ¿CUALES TIENEN DESCRIPCION Y CUALES NO?
 \InterfazFuncion{CoordenadaAbajo}{\In{c}{coor}}{coor}
 [latitud(c) $>$ 0]
 {$res \igobs$ coordenadaAbajo(c)}
-[]%%Complejidad O(1)
+[$O(1)$]
 [Devuelve una coordenada con latitud de c - 1, y longitud de c como párametros]
 []
 
@@ -68,7 +68,7 @@ Descripcion TODO ¿CUALES TIENEN DESCRIPCION Y CUALES NO?
 \InterfazFuncion{CoordenadaALaDerecha}{\In{c}{coor}}{coor}
 [true]
 {$res \igobs$ coordenadaALaDerecha(c)}
-[]%%Complejidad O(1)
+[$O(1)$]
 [Devuelve una coordenada con latitud de c, y longitud de c + 1 como párametros]
 []
 
@@ -77,7 +77,7 @@ Descripcion TODO ¿CUALES TIENEN DESCRIPCION Y CUALES NO?
 \InterfazFuncion{CoordenadaALaIzquierda}{\In{c}{coor}}{coor}
 [longitud(c) $>$ 0]
 {$res \igobs$ coordenadaALaIzquierda(c)}
-[]%%Complejidad O(1)
+[$O(1)$]
 [Devuelve una coordenada con latitud de c, y longitud de c - 1 como párametros]
 []
 
@@ -108,8 +108,54 @@ Descripcion TODO ¿CUALES TIENEN DESCRIPCION Y CUALES NO?
 \subsection{Algoritmos}
 
 \begin{algorithm}[H]
+	\SetAlgoLined
+	\NoCaptionOfAlgo
+	\caption{\algoritmo{iCrearCoor}{\In{y}{nat}, \In{x}{nat}}{estr}}
+	res.latitud $\leftarrow$ y\;
+	res.longitud $\leftarrow$ x\;
+\end{algorithm}
+
+\begin{algorithm}[H]
+	\SetAlgoLined
+	\NoCaptionOfAlgo
+	\caption{\algoritmo{iLatitud}{\In{e}{estr}}{nat}}
+	res $\leftarrow$ e.latitud\;
+\end{algorithm}
+
+\begin{algorithm}[H]
+	\SetAlgoLined
+	\NoCaptionOfAlgo
+	\caption{\algoritmo{iLongitud}{\In{e}{estr}}{nat}}
+	res $\leftarrow$ e.longitud\;
 \end{algorithm}
 
 
+%%TODO preguntar si va con iCrearCoor o con CrearCoor
 
+\begin{algorithm}[H]
+	\SetAlgoLined
+	\NoCaptionOfAlgo
+	\caption{\algoritmo{iCoordenadaArriba}{\In{e}{estr}}{estr}}
+	res $\leftarrow$ iCrearCoor(iLatitud(e)+1, iLongitud(e))\; 
+\end{algorithm}
 
+\begin{algorithm}[H]
+	\SetAlgoLined
+	\NoCaptionOfAlgo
+	\caption{\algoritmo{iCoordenadaAbajo}{\In{e}{estr}}{estr}}
+	res $\leftarrow$ iCrearCoor(iLatitud(e)-1, iLongitud(e))\; 
+\end{algorithm}
+
+\begin{algorithm}[H]
+	\SetAlgoLined
+	\NoCaptionOfAlgo
+	\caption{\algoritmo{iCoordenadaALaDerecha}{\In{e}{estr}}{estr}}
+	res $\leftarrow$ iCrearCoor(iLatitud(e), iLongitud(e)+1)\; 
+\end{algorithm}
+
+\begin{algorithm}[H]
+	\SetAlgoLined
+	\NoCaptionOfAlgo
+	\caption{\algoritmo{iCoordenadaALaIzquierda}{\In{e}{estr}}{estr}}
+	res $\leftarrow$ iCrearCoor(iLatitud(e), iLongitud(e)-1)\; 
+\end{algorithm}
