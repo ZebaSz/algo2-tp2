@@ -159,3 +159,22 @@ Descripcion TODO ¿CUALES TIENEN DESCRIPCION Y CUALES NO?
 	\caption{\algoritmo{iCoordenadaALaIzquierda}{\In{e}{estr}}{estr}}
 	res $\leftarrow$ iCrearCoor(iLatitud(e), iLongitud(e)-1)\; 
 \end{algorithm}
+
+\begin{algorithm}[H]
+	\SetAlgoLined
+	\NoCaptionOfAlgo
+	\caption{\algoritmo{iDistEuclidea}{\In{e1}{estr}, \In{e2}{estr}}{nat}}
+	nat: la $\leftarrow$ 0\;
+	nat: lo $\leftarrow$ 0\;
+	\eIf{iLatitud(e1) $>$ iLatitud(e2)}{
+		la $\leftarrow$ (iLatitud(e1) - iLatitud(e2)) $\times$ (iLatitud(e1) - iLatitud(e2))
+	}{
+		la $\leftarrow$ (iLatitud(e2) - iLatitud(e1)) $\times$ (iLatitud(e2) - iLatitud(e1))
+	}
+	\eIf{iLongitud(e1) $>$ iLongitud(e2)}{
+		lo $\leftarrow$ (iLongitud(e1) - iLongitud(e2)) $\times$ (iLongitud(e1) - iLongitud(e2))
+	}{
+		lo $\leftarrow$ (iLongitud(e2) - iLongitud(e1)) $\times$ (iLongitud(e2) - iLongitud(e1))
+	}
+	res $\leftarrow$ la + lo\; 
+\end{algorithm}
