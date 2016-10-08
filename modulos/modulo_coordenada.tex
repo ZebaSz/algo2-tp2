@@ -167,14 +167,14 @@ Descripcion TODO ¿CUALES TIENEN DESCRIPCION Y CUALES NO?
 	nat: la $\leftarrow$ 0\;
 	nat: lo $\leftarrow$ 0\;
 	\eIf{iLatitud(e1) $>$ iLatitud(e2)}{
-		la $\leftarrow$ (iLatitud(e1) - iLatitud(e2)) $\times$ (iLatitud(e1) - iLatitud(e2))
+		la $\leftarrow$ (iLatitud(e1) - iLatitud(e2)) $\times$ (iLatitud(e1) - iLatitud(e2))\;
 	}{
-		la $\leftarrow$ (iLatitud(e2) - iLatitud(e1)) $\times$ (iLatitud(e2) - iLatitud(e1))
+		la $\leftarrow$ (iLatitud(e2) - iLatitud(e1)) $\times$ (iLatitud(e2) - iLatitud(e1))\;
 	}
 	\eIf{iLongitud(e1) $>$ iLongitud(e2)}{
-		lo $\leftarrow$ (iLongitud(e1) - iLongitud(e2)) $\times$ (iLongitud(e1) - iLongitud(e2))
+		lo $\leftarrow$ (iLongitud(e1) - iLongitud(e2)) $\times$ (iLongitud(e1) - iLongitud(e2))\;
 	}{
-		lo $\leftarrow$ (iLongitud(e2) - iLongitud(e1)) $\times$ (iLongitud(e2) - iLongitud(e1))
+		lo $\leftarrow$ (iLongitud(e2) - iLongitud(e1)) $\times$ (iLongitud(e2) - iLongitud(e1))\;
 	}
 	res $\leftarrow$ la + lo\; 
 \end{algorithm}

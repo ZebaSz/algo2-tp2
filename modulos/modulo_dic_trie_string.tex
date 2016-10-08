@@ -78,13 +78,13 @@ Usaremos $copy(s)$ para denotar el costo de copiar el elemento $s \in \alpha$, y
 
 \begin{Estructura}{ Diccionario (String, $\alpha$) sobre Trie }[estr]
 	\begin{Tupla}[estr]
-		\tupItem{raiz}{arreglo[27] de puntero(Nodo)}
+		\tupItem{raiz}{puntero(Nodo)}
 	\end{Tupla}
 
 	~
 
 	\begin{Tupla}[Nodo]
-		\tupItem{hijos}{arreglo[27] de puntero(Nodo)}
+		\tupItem{hijos}{arreglo[256] de puntero(Nodo)}
 		\tupItem{valor}{$\alpha$}
 		\tupItem{contieneValor}{bool}
 	\end{Tupla}
@@ -94,26 +94,51 @@ Usaremos $copy(s)$ para denotar el costo de copiar el elemento $s \in \alpha$, y
 \subsubsection{Invariante de Representación}
 
 \Rep[estr][e]{
-	($\forall i \in [0..27)$) (hijoValido(e.raiz[i]))
+	hijoValido(e.raiz)
 }
 
 \tadOperacion{hijoValido}{puntero(Nodo)}{bool}{}
+
 \tadAxioma{hijoValido(nodo)}{
-	nodo == NULL $\oluego$ ($\forall i \in [0..27)$) (hijoValido(nodo.hijos[i]))
+	nodo == NULL $\oluego$ ($\forall i \in [0..256)$) (hijoValido(nodo.hijos[i]))
 }
 
 \subsubsection{Función de Abstracción}
 
-\Abs[estr]{\dicString}[e]{d}{TODO} %%TODO
+%%TODO se indefine si raiz es NULL arreglarlo
+
+\Abs[estr]{\dicString}[e]{d}
+{($\forall s$: string)
+(def?(s, d) = definido?(e.raiz) $\yluego$
+(def?(s, d) $\implies$ obtener(s, d) = obtener(e.raiz, s, 0)))
+}
+
+
+\tadOperacion{definido?}{puntero(Nodo)/n, string/c, nat/i}{bool}{n $\neq$ NULL $\land$ i $\leq$ longitud(c)}
+\tadOperacion{obtener}{puntero(Nodo)/n, string/c, nat/i}{$\alpha$}{n $\neq$ NULL $\land$ i $\leq$ longitud(c) $\yluego$ definido?(n, c, i)}
+
+\tadAxioma{definido?(nodo, clave, i)}
+{\IF i $<$ Longitud(nodo.hijos) THEN
+	nodo.hijos[ord(clave[i])] != NULL $\yluego$ definido?(nodo.hijos[ord(clave[i])], clave, i+1)
+ELSE
+	nodo.contieneValor
+FI}
+
+\tadAxioma{obtener(nodo, clave, i)}
+{\IF i $<$ Longitud(nodo.hijos) THEN
+	obtener(nodo.hijos[ord(clave[i])], clave, i+1)
+ELSE
+	nodo.valor
+FI}
 
 \subsection{Algoritmos}
 
 \begin{algorithm}[H]
 	\SetAlgoLined
 	\NoCaptionOfAlgo
-	\caption{\algoritmo{CrearDiccionario}{}{estr}}
-	\For{$i \leftarrow 0$ \KwTo $26$}{
-	res.raiz[i] $\leftarrow$ NULL
+	\caption{\algoritmo{iCrearDiccionario}{}{estr}}
+	\For{$i \leftarrow 0$ \KwTo $255$}{
+		res.raiz[i] $\leftarrow$ NULL\;
 	}
 \end{algorithm}
 
