@@ -1,0 +1,409 @@
+\newcommand\dicString{diccString($\alpha$)}
+\newcommand\itDicString{itDiccString($\alpha$)}
+
+\section{Módulo DiccionarioString(\texorpdfstring{$\alpha$}{α})}
+
+El diccionario se representa con un trie, que permite lectura, inserción y modificación en $\Theta(|clave|)$, donde \texttt{clave} es la clave consultar o modificar.
+
+Las claves se guardan al mismo tiempo en un Conjunto Lineal, siempre con inserción rápida ya que al insertar en el trie podemos saber si la clave existía de antemano.
+
+Al tener que mantener las copias de las claves, remover un elemento cuesta $O(|c_{max}| + |c_{max}| * \#c)$ (ya que debe removerse del conjunto de claves).
+
+Usaremos $copy(s)$ para denotar el costo de copiar el elemento $s \in \alpha$. Llamaremos $|c_{max}|$ a la longitud de la clave más larga, y $\#c$ a la cantidad de claves definidas. Se asume que la complejidad de comparar dos Strings es $O(|c_{max}|)$.
+
+\begin{Interfaz}
+
+	\textbf{parámetros formales}\hangindent=2\parindent\\
+	\parbox{1.7cm}{\textbf{géneros}} \TipoVariable{$\alpha$}\\
+	\parbox[t]{1.7cm}{\textbf{función}}\parbox[t]{\textwidth-2\parindent-1.7cm}{
+		\InterfazFuncion{Copiar}{\In{s}{$\alpha$}}{$\alpha$}
+		{$res \igobs s$}
+		[$\Theta(copy(s))$]
+		[función de copia de $\alpha$'s.]
+	}
+
+	\textbf{se explica con}: \tadNombre{Diccionario(String,$\alpha$)}, \tadNombre{Conjunto Lineal(String)}, \tadNombre{Iterador Bidireccional($\alpha$)}.
+
+	\textbf{géneros}: \TipoVariable{\dicString, \itDicString}.
+
+
+	\TituloDis{Operaciones básicas de DiccionarioString(\texorpdfstring{$\alpha$}{α})}
+
+	\InterfazFuncion{CrearDiccionario}{}{\dicString}
+	{$res$ $\igobs$ vacío()}
+	[$O(1)$]
+	[creación de un diccionario vacío.]
+
+	\InterfazFuncion{Definir}{\Inout{d}{\dicString}, \In{c}{string}, \In{s}{$\alpha$}}{}
+	[$d \igobs d_0$]
+	{$d \igobs$ definir($c, s, d_0$)}
+	[$O(|c_{max}| + copy(s))$]
+	[define sobre la clave $c$ el signigicado $s$ en el diccionario $d$.]
+	[se almacena una copia de $c$ y de $s$.]
+
+	\InterfazFuncion{Definido?}{\In{d}{\dicString}, \In{c}{string}}{bool}
+	{$res \igobs$ def?($c, d$)]}
+	[$O(|c_{max}|)$]
+	[devuelve true si la clave $c$ esta definida en el diccionario.]
+
+	\InterfazFuncion{Obtener}{\In{d}{\dicString}, \In{c}{string}}{$\alpha$}
+	[def?($c, d$)]
+	{alias($res \igobs$ obtener($c$, $d$))}
+	[$O(|c_{max}|)$]
+	[devuelve el significado de la clave $c$ en $d$]
+	[$res$ es modificable si y sólo si $d$ es modificable.]
+
+	\InterfazFuncion{Borrar}{\Inout{d}{\dicString}, \In{c}{string}}{}
+	[$d \igobs d_0 \land$ def?($c, d_0$)]
+	{$d \igobs$ borrar($c, d_0$)}
+	[$O(|c_{max}| * \#c)$]
+	[borra la clave $c$ y su significado del diccionario $d$.]
+
+
+	\TituloDis{Operaciones del iterador}
+
+	El iterador que presentamos no permite modificar el diccionario recorrido.
+
+	\InterfazFuncion{CrearIt}{\In{d}{DiccString($\alpha$)}}{\itDicString}
+	{alias(esPermutacion?(SecuSuby($res$), $d.claves$)) $\land$ vacia?(Anteriores($res$))}
+	[$O(1)$]
+	[crea un iterador bidireccional del diccionario usando el iterador del conjunto de sus claves.]
+	[el iterador se invalida si y sólo si se elimina el elemento siguiente del iterador. Además, anteriores($res$) y siguientes($res$) podrían cambiar completamente ante cualquier operación que modifique $d$ sin utilizar las funciones del iterador.]
+
+	\InterfazFuncion{HaySiguiente}{\In{it}{\itDicString}}{bool}
+	{$res$ $\igobs$ haySiguiente?($it$)}
+	[$O(1)$]
+	[devuelve \texttt{true} si y sólo si en el iterador todavía quedan elementos para avanzar.]
+
+	\InterfazFuncion{HayAnterior}{\In{it}{\itDicString}}{bool}
+	{$res$ $\igobs$ hayAnterior?($it$)}
+	[$O(1)$]
+	[devuelve \texttt{true} si y sólo si en el iterador todavía quedan elementos para retroceder.]
+
+	\InterfazFuncion{Siguiente}{\In{it}{\itDicString}}{tupla(String, $\alpha$)}
+	[HaySiguiente?($it$)]
+	{alias($res$ $\igobs$ Siguiente($it$))}
+	[$O(|c_{max}|))$]
+	[devuelve el elemento siguiente a la posición del iterador, como tupla clave-valor.]
+	[$res$ no es modificable.]
+
+	\InterfazFuncion{Anterior}{\In{it}{\itDicString}}{tupla(String, $\alpha$)}
+	[HayAnterior?($it$)]
+	{alias($res$ $\igobs$ Anterior($it$))}
+	[$O(|c_{max}|)$]
+	[devuelve el elemento anterior a la posición del iterador, como tupla clave-valor.]
+	[$res$ no es modificable.]
+
+	\InterfazFuncion{Avanzar}{\Inout{it}{\itDicString}}{}
+	[$it = it_0$ $\land$ HaySiguiente?($it$)]
+	{$it$ $\igobs$ Avanzar($it_0$)}
+	[$O(1)$]
+	[avanza a la posición siguiente del iterador.]
+
+	\InterfazFuncion{Retroceder}{\Inout{it}{\itDicString}}{}
+	[$it = it_0$ $\land$ HayAnterior?($it$)]
+	{$it$ $\igobs$ Retroceder($it_0$)}
+	[$O(1)$]
+	[retrocede a la posición anterior del iterador.]
+
+\end{Interfaz}
+
+\begin{Representacion}
+
+	\TituloDis{Representación de DiccionarioString(\texorpdfstring{$\alpha$}{α})}
+
+	\begin{Estructura}{DiccionarioString($\alpha$)}[dicStr]
+
+		\begin{Tupla}[dicStr]
+			\tupItem{raiz}{puntero(Nodo)}
+			\tupItem{claves}{conj(String)}
+		\end{Tupla}
+
+		~
+
+		\begin{Tupla}[Nodo]
+			\tupItem{hijos}{arreglo[256] de puntero(Nodo)}
+			\tupItem{valor}{$\alpha$}
+			\tupItem{contieneValor}{bool}
+		\end{Tupla}
+
+	\end{Estructura}
+
+	\TituloDis{Invariante de Representación del Diccionario}
+
+	\Rep[dicStr][e]{
+		$\neg$(e.raiz == NULL) $\land$ hijoValido(e.raiz)
+	}
+
+	~
+
+	\tadOperacion{hijoValido}{puntero(Nodo)}{bool}{}
+
+	\tadAxioma{hijoValido(nodo)}{
+		nodo == NULL $\oluego$ ($\forall i \in [0..256)$) (hijoValido(nodo.hijos[i]))
+	}
+
+	\TituloDis{Función de Abstracción del Diccionario}
+
+	\Abs[dicStr]{\dicString}[e]{d}
+	{($\forall s$: string)
+	(def?(c, d) = definido?(e.raiz, c, 0) $\yluego$ \\
+	(def?(c, d) $\impluego$ obtener(c, d) = obtener(e.raiz, c, 0)))
+	}
+
+	~
+
+	\tadOperacion{definido?}{puntero(Nodo)/n, string/c, nat/i}{bool}{n $\neq$ NULL $\land$ i $\leq$ longitud(c)}
+	\tadAxioma{definido?(nodo, clave, i)}
+	{\IF i $<$ Longitud(clave) THEN
+		$\neg$(nodo.hijos[ord(clave[i])] = NULL) $\yluego$ \\ definido?(nodo.hijos[ord(clave[i])], clave, i+1)
+	ELSE
+		nodo.contieneValor
+	FI}
+
+
+	~
+
+	\tadOperacion{obtener}{puntero(Nodo)/n, string/c, nat/i}{$\alpha$}{n $\neq$ NULL $\land$ i $\leq$ longitud(c) $\yluego$ definido?(n, c, i)}
+
+	\tadAxioma{obtener(nodo, clave, i)}
+	{\IF i $<$ Longitud(clave) THEN
+		obtener(nodo.hijos[ord(clave[i])], clave, i+1)
+	ELSE
+		nodo.valor
+	FI}
+
+
+	\TituloDis{Representación del iterador}
+
+	\begin{Estructura}{Iterador DiccionarioString($\alpha$)}[itDicStr]
+
+		\begin{Tupla}[itDicStr]
+			\tupItem{itClaves}{itConj(String)}
+			\tupItem{dic}{puntero(dicStr)}
+		\end{Tupla}
+
+	\end{Estructura}
+
+
+	\TituloDis{Invariante de Representación del iterador}
+
+	\Rep[itDicStr][it]{Rep(it.itClaves) $\land$ Rep(*it.dic)}
+
+
+	\TituloDis{Función de Abstracción del iterador}
+
+	\Abs[itDicStr]{itBi(tupla(String, $\alpha$))}[it]{b}{Anteriores(b) $=$ Tuplas(Anteriores(it.itClaves), *it.dic) $\land$ \\ Siguientes(b) $=$ Tuplas(Siguientes(it.itClaves), *it.dic)}
+
+	~
+
+	\tadOperacion{Tuplas}{secu(String)/cs, dicc(String, $\alpha$)/dic}{secu(tupla(String, $\alpha$))}{}
+
+	\tadAxioma{Tuplas(cs, dic)}
+	{\IF vacia?(cs) THEN
+		\secuvacia
+	ELSE
+		$\langle$ prim(cs), obtener(prim(cs), dic) $\rangle$ \puntito Tuplas(fin(cs), dic)
+	FI}
+
+
+\end{Representacion}
+
+\begin{Algoritmos}
+
+	\TituloDis{Algorítmos de DiccionarioString(\texorpdfstring{$\alpha$}{α})}
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iCrearDiccionario}{}{dicStr}}
+		res.raiz $\leftarrow$ CrearNodo() \OdeLinea{1}
+		res.claves $\leftarrow$ Vacio() \OdeLinea{1}
+	\end{algorithm}
+
+	\complejidad: $O(1)$
+
+	\justifcomp: solo se crea un nodo vacío y el conjunto vacío de claves
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{CrearNodo}{}{puntero(Nodo)}}
+		Nodo: nuevo \OdeLinea{1}
+		nuevo.contieneValor $\leftarrow$ false \OdeLinea{1}
+		\For(\OdeBloque{1}){$i \leftarrow 0$ \KwTo $255$}{ 
+			nuevo.hijos[i] $\leftarrow$ NULL \OdeLinea{1}
+		}
+		res $\leftarrow$ \&nuevo \OdeLinea{1}
+	\end{algorithm}
+
+	\complejidad: $O(1)$
+
+	\justifcomp: se asigna NULL a una cantidad fija de posiciones
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iDefinir}{\Inout{dic}{dicStr}, \In{c}{String}, \In{s}{$\alpha$}}{}}
+		puntero(Nodo): entrada $\leftarrow$ dic.raiz \OdeLinea{1}
+		\For(\OdeBloque{|c|}){$i \leftarrow 0$ \KwTo Longitud(c)}{
+			\If(\OdeBloque{1}){(*entrada).hijos[ord(c[i])] == NULL} {
+				(*entrada).hijos[ord(c[i])] $\leftarrow$ CrearNodo() \OdeLinea{1}
+			}
+			entrada $\leftarrow$ (*entrada).hijos[ord(c[i])] \OdeLinea{1}
+		}
+
+		\If(\OdeBloque{1}){not (*entrada).contieneValor} {
+			AgregarRapido(dic.claves, c) \OdeLinea{1}
+			(*entrada).contieneValor $\leftarrow$ true \OdeLinea{1}
+		}
+
+		(*entrada).valor $\leftarrow$ s \OdeLinea{copy(s)}
+	\end{algorithm}
+
+	\complejidad: $O(|c| + copy(s))$
+
+	\justifcomp: el ciclo itera hasta el largo de la clave a insertar y luego la copia para insertarla; la clave solo se agrega al conjunto si no estaba definida antes
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iDefinido?}{\Inout{dic}{dicStr}, \In{c}{String}}{bool}}
+		puntero(Nodo): entrada $\leftarrow$ dic.raiz \OdeLinea{1}
+		\For(\OdeBloque{|c|}){$i \leftarrow 0$ \KwTo Longitud(c)}{
+			\lIf(\OdeBloque{1}){entrada == NULL} {break}
+			entrada $\leftarrow$ (*entrada).hijos[ord(c[i])] \OdeLinea{1}
+		}
+
+		res $\leftarrow$ (entrada == NULL) \OdeLinea{1}
+	\end{algorithm}
+
+	\complejidad: $O(|c|)$
+
+	\justifcomp: el ciclo como máximo itera hasta el largo de la clave buscada
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iObtener}{\Inout{dic}{dicStr}, \In{c}{String}}{$\alpha$}}
+		puntero(Nodo): entrada $\leftarrow$ dic.raiz \OdeLinea{1}
+		\For(\OdeBloque{|c|}){$i \leftarrow 0$ \KwTo Longitud(c)}{
+			entrada $\leftarrow$ (*entrada).hijos[ord(c[i])] \OdeLinea{1}
+		}
+
+		res $\leftarrow$ (*entrada).valor \OdeLinea{copy(s)}
+	\end{algorithm}
+
+	\complejidad: $O(|c| + copy(s))$
+
+	\justifcomp: el ciclo itera hasta el largo de la clave a obtener y luego la copia para retornarla
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iBorrar}{\Inout{dic}{dicStr}, \In{c}{String}}{}}
+		puntero(Nodo): entrada $\leftarrow$ dic.raiz \OdeLinea{1}
+		\For(\OdeBloque{|c|}){$i \leftarrow 0$ \KwTo Longitud(c)}{
+			entrada $\leftarrow$ (*entrada).hijos[ord(c[i])] \OdeLinea{1}
+		}
+
+		(*entrada).contieneValor $\leftarrow$ false \OdeLinea{1}
+		Eliminar(dic.claves, c) \OdeLinea{|c_{max}| * \#c}
+	\end{algorithm}
+
+	\complejidad: $O(|c_{max}| * \#c)$
+
+	\justifcomp: el ciclo itera hasta el largo de la clave a borrar y luego asigna un booleano, y borra la clave del conjunto
+
+	\TituloDis{Algorítmos del iterador}
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iCrearIt}{\In{dic}{dicStr}}{itDicStr}}
+		res.itClaves $\leftarrow$ CrearIt(dic.claves) \OdeLinea{1}
+		res.dic $\leftarrow$ \&dic \OdeLinea{1}
+	\end{algorithm}
+
+	\complejidad: $O(1)$
+
+	\justifcomp: solo se guarda un puntero al diccionario y se crea el iterador de las claves
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iHaySiguiente}{\In{it}{itDicStr}}{bool}}
+		res $\leftarrow$ HaySiguiente(it.itClaves) \OdeLinea{1}
+	\end{algorithm}
+
+	\complejidad: $O(1)$
+
+	\justifcomp: comparte la complejidad del iterador de las claves
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iHayAnterior}{\In{it}{itDicStr}}{bool}}
+		res $\leftarrow$ HayAnterior(it.itClaves) \OdeLinea{1}
+	\end{algorithm}
+
+	\complejidad: $O(1)$
+
+	\justifcomp: comparte la complejidad del iterador de las claves
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iSiguiente}{\In{it}{itDicStr}}{tupla(String, $\alpha$)}}
+		String: clave $\leftarrow$ Siguiente(it.itClaves) \OdeLinea{1}
+		res $\leftarrow \langle$ clave, Obtener(*it.dic, clave) $\rangle$ \OdeLinea{|c_{max}|}
+	\end{algorithm}
+
+	\complejidad: $O(|c_{max}|)$
+
+	\justifcomp: comparte la complejidad del iterador de las claves, y luego consulta el diccionario a través de su función de obtener
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iAnterior}{\In{it}{itDicStr}}{tupla(String, $\alpha$)}}
+		String: clave $\leftarrow$ Anterior(it.itClaves) \OdeLinea{1}
+		res $\leftarrow \langle$ clave, Obtener(*it.dic, clave) $\rangle$ \OdeLinea{|c_{max}|}
+	\end{algorithm}
+
+	\complejidad: $O(|c_{max}|)$
+
+	\justifcomp: comparte la complejidad del iterador de las claves, y luego consulta el diccionario a través de su función de obtener
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iAvanzar}{\Inout{it}{itDicStr}}{}}
+		it.itClaves $\leftarrow$ Avanzar(it.itClaves) \OdeLinea{1}
+	\end{algorithm}
+
+	\complejidad: $O(1)$
+
+	\justifcomp: comparte la complejidad del iterador de las claves
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iRetroceder}{\Inout{it}{itDicStr}}{}}
+		it.itClaves $\leftarrow$ Retroceder(it.itClaves) \OdeLinea{1}
+	\end{algorithm}
+
+	\complejidad: $O(1)$
+
+	\justifcomp: comparte la complejidad del iterador de las claves
+
+\end{Algoritmos}
