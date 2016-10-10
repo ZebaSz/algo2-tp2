@@ -2,179 +2,144 @@
 
 Descripcion TODO ¿CUALES TIENEN DESCRIPCION Y CUALES NO?
 
-\subsection{Interfaz}
+\begin{Interfaz}
 
-\textbf{se explica con}: \tadNombre{coordenada}.
+	\textbf{se explica con}: \tadNombre{coordenada}.
 
-\textbf{géneros}: \TipoVariable{coor}.
+	\textbf{géneros}: \TipoVariable{coor}.
 
-~
+	\TituloDis{Operaciones básicas de Coordenada}
 
-\subsubsection{Operaciones básicas de Coordenada}
+	\InterfazFuncion{CrearCoor}{\In {y,x}{nat}}{coor}
+	{$res$ $\igobs$ crearCoor(y,x)}
+	[$O(1)$]
+	[creación de una coordenada con latitud $x$ y longitud $y$.]
 
-\InterfazFuncion{CrearCoor}{\In {y,x}{nat}}{coor}
-[true]
-{$res$ $\igobs$ crearCoor(y,x)}
-[$O(1)$]
-[Creación de una coordenada con latitud $x$ y longitud $y$]
-[]
+	\InterfazFuncion{Latitud}{\In{c}{coor}}{nat}
+	{$res \igobs$ latitud(c)}
+	[$O(1)$]
+	[devuelve la latitud de la coordenada $c$.]
 
-~
+	\InterfazFuncion{Longitud}{\In{c}{coor}}{nat}
+	{$res \igobs$ longitud(c)}
+	[$O(1)$]
+	[devuelve la longitud de la coordenada $c$.]
 
-\InterfazFuncion{Latitud}{\In{c}{coor}}{nat}
-[true]
-{$res \igobs$ latitud(c)}
-[$O(1)$]
-[Devuelve la latitud de la coordenada $c$]
-[]
+	\InterfazFuncion{DistEuclidea}{\In{c,d}{coor}}{nat}
+	{$res \igobs$ distEuclidea($c, d$)]}
+	[$O(1)$]
+	[devuelve la distancia euclideana entre las coordenadas c y d.]
 
-~
+	\InterfazFuncion{CoordenadaArriba}{\In{c}{coor}}{coor}
+	{$res \igobs$ coordenadaArriba(c)}
+	[$O(1)$]
+	[devuelve una coordenada con latitud de c + 1, y longitud de c como párametros.]
 
-\InterfazFuncion{Longitud}{\In{c}{coor}}{nat}
-[true]
-{$res \igobs$ longitud(c)}
-[$O(1)$]
-[Devuelve la longitud de la coordenada $c$]
-[]
+	\InterfazFuncion{CoordenadaAbajo}{\In{c}{coor}}{coor}
+	[latitud(c) $>$ 0]
+	{$res \igobs$ coordenadaAbajo(c)}
+	[$O(1)$]
+	[devuelve una coordenada con latitud de c - 1, y longitud de c como párametros.]
 
-~
+	\InterfazFuncion{CoordenadaALaDerecha}{\In{c}{coor}}{coor}
+	{$res \igobs$ coordenadaALaDerecha(c)}
+	[$O(1)$]
+	[devuelve una coordenada con latitud de c, y longitud de c + 1 como párametros.]
 
-\InterfazFuncion{DistEuclidea}{\In{c,d}{coor}}{nat}
-[true]
-{$res \igobs$ distEuclidea($c, d$)]}
-[$O(1)$]
-[Devuelve la distancia euclideana entre las coordenadas c y d.]
-[]
-~
+	\InterfazFuncion{CoordenadaALaIzquierda}{\In{c}{coor}}{coor}
+	[longitud(c) $>$ 0]
+	{$res \igobs$ coordenadaALaIzquierda(c)}
+	[$O(1)$]
+	[devuelve una coordenada con latitud de c, y longitud de c - 1 como párametros.]
 
-\InterfazFuncion{CoordenadaArriba}{\In{c}{coor}}{coor}
-[true]
-{$res \igobs$ coordenadaArriba(c)}
-[$O(1)$]
-[Devuelve una coordenada con latitud de c + 1, y longitud de c como párametros]
-[]
-
-~
-
-\InterfazFuncion{CoordenadaAbajo}{\In{c}{coor}}{coor}
-[latitud(c) $>$ 0]
-{$res \igobs$ coordenadaAbajo(c)}
-[$O(1)$]
-[Devuelve una coordenada con latitud de c - 1, y longitud de c como párametros]
-[]
-
-~
-
-\InterfazFuncion{CoordenadaALaDerecha}{\In{c}{coor}}{coor}
-[true]
-{$res \igobs$ coordenadaALaDerecha(c)}
-[$O(1)$]
-[Devuelve una coordenada con latitud de c, y longitud de c + 1 como párametros]
-[]
-
-~
-
-\InterfazFuncion{CoordenadaALaIzquierda}{\In{c}{coor}}{coor}
-[longitud(c) $>$ 0]
-{$res \igobs$ coordenadaALaIzquierda(c)}
-[$O(1)$]
-[Devuelve una coordenada con latitud de c, y longitud de c - 1 como párametros]
-[]
-
-~
-%%TODO CLAVES
-
-\subsubsection{Representación de Coordenada}
-
-\begin{Estructura}{ Coordenada }[estr]
-	\begin{Tupla}[estr]
-		\tupItem{lat}{nat}
-		\tupItem{long}{nat}
-	\end{Tupla}
-
-\end{Estructura}
+\end{Interfaz}
 
 
-\subsubsection{Invariante de Representación}
+\begin{Representacion}
 
-\Rep[estr][e]{
-	true
-	}
+	\TituloDis{Representación de Coordenada}
 
-\subsubsection{Función de Abstracción}
+	\begin{Estructura}{Coordenada}[estr]
+		\begin{Tupla}[estr]
+			\tupItem{lat}{nat}
+			\tupItem{long}{nat}
+		\end{Tupla}
 
-\Abs[estr]{coor}[e]{c}{latitud(c) == e.lat $\land$ longitud(c) == e.long}
-
-\subsection{Algoritmos}
-
-\begin{algorithm}[H]
-	\SetAlgoLined
-	\NoCaptionOfAlgo
-	\caption{\algoritmo{iCrearCoor}{\In{y}{nat}, \In{x}{nat}}{estr}}
-	res.latitud $\leftarrow$ y\;
-	res.longitud $\leftarrow$ x\;
-\end{algorithm}
-
-\begin{algorithm}[H]
-	\SetAlgoLined
-	\NoCaptionOfAlgo
-	\caption{\algoritmo{iLatitud}{\In{e}{estr}}{nat}}
-	res $\leftarrow$ e.latitud\;
-\end{algorithm}
-
-\begin{algorithm}[H]
-	\SetAlgoLined
-	\NoCaptionOfAlgo
-	\caption{\algoritmo{iLongitud}{\In{e}{estr}}{nat}}
-	res $\leftarrow$ e.longitud\;
-\end{algorithm}
+	\end{Estructura}
 
 
-%%TODO preguntar si va con iCrearCoor o con CrearCoor
+	\TituloDis{Invariante de Representación}
 
-\begin{algorithm}[H]
-	\SetAlgoLined
-	\NoCaptionOfAlgo
-	\caption{\algoritmo{iCoordenadaArriba}{\In{e}{estr}}{estr}}
-	res $\leftarrow$ iCrearCoor(iLatitud(e)+1, iLongitud(e))\; 
-\end{algorithm}
+	\RepFc[estr][e]{true}
 
-\begin{algorithm}[H]
-	\SetAlgoLined
-	\NoCaptionOfAlgo
-	\caption{\algoritmo{iCoordenadaAbajo}{\In{e}{estr}}{estr}}
-	res $\leftarrow$ iCrearCoor(iLatitud(e)-1, iLongitud(e))\; 
-\end{algorithm}
+	\TituloDis{Función de Abstracción}
 
-\begin{algorithm}[H]
-	\SetAlgoLined
-	\NoCaptionOfAlgo
-	\caption{\algoritmo{iCoordenadaALaDerecha}{\In{e}{estr}}{estr}}
-	res $\leftarrow$ iCrearCoor(iLatitud(e), iLongitud(e)+1)\; 
-\end{algorithm}
+	\Abs[estr]{coor}[e]{c}{latitud(c) == e.lat $\land$ longitud(c) == e.long}
 
-\begin{algorithm}[H]
-	\SetAlgoLined
-	\NoCaptionOfAlgo
-	\caption{\algoritmo{iCoordenadaALaIzquierda}{\In{e}{estr}}{estr}}
-	res $\leftarrow$ iCrearCoor(iLatitud(e), iLongitud(e)-1)\; 
-\end{algorithm}
+\end{Representacion}
 
-\begin{algorithm}[H]
-	\SetAlgoLined
-	\NoCaptionOfAlgo
-	\caption{\algoritmo{iDistEuclidea}{\In{e1}{estr}, \In{e2}{estr}}{nat}}
-	nat: la $\leftarrow$ 0\;
-	nat: lo $\leftarrow$ 0\;
-	\eIf{iLatitud(e1) $>$ iLatitud(e2)}{
-		la $\leftarrow$ (iLatitud(e1) - iLatitud(e2)) $\times$ (iLatitud(e1) - iLatitud(e2))\;
-	}{
-		la $\leftarrow$ (iLatitud(e2) - iLatitud(e1)) $\times$ (iLatitud(e2) - iLatitud(e1))\;
-	}
-	\eIf{iLongitud(e1) $>$ iLongitud(e2)}{
-		lo $\leftarrow$ (iLongitud(e1) - iLongitud(e2)) $\times$ (iLongitud(e1) - iLongitud(e2))\;
-	}{
-		lo $\leftarrow$ (iLongitud(e2) - iLongitud(e1)) $\times$ (iLongitud(e2) - iLongitud(e1))\;
-	}
-	res $\leftarrow$ la + lo\; 
-\end{algorithm}
+
+\begin{Algoritmos}
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iCrearCoor}{\In{y}{nat}, \In{x}{nat}}{estr}}
+		res.latitud $\leftarrow$ y\;
+		res.longitud $\leftarrow$ x\;
+	\end{algorithm}
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iLatitud}{\In{e}{estr}}{nat}}
+		res $\leftarrow$ e.latitud\;
+	\end{algorithm}
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iLongitud}{\In{e}{estr}}{nat}}
+		res $\leftarrow$ e.longitud\;
+	\end{algorithm}
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iCoordenadaArriba}{\In{e}{estr}}{estr}}
+		res $\leftarrow$ CrearCoor(Latitud(e)+1, Longitud(e))\; 
+	\end{algorithm}
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iCoordenadaAbajo}{\In{e}{estr}}{estr}}
+		res $\leftarrow$ CrearCoor(Latitud(e)-1, Longitud(e))\; 
+	\end{algorithm}
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iCoordenadaALaDerecha}{\In{e}{estr}}{estr}}
+		res $\leftarrow$ CrearCoor(Latitud(e), Longitud(e)+1)\; 
+	\end{algorithm}
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iCoordenadaALaIzquierda}{\In{e}{estr}}{estr}}
+		res $\leftarrow$ CrearCoor(Latitud(e), Longitud(e)-1)\; 
+	\end{algorithm}
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iDistEuclidea}{\In{e1}{estr}, \In{e2}{estr}}{nat}}
+		nat: la $\leftarrow$ 0\;
+		nat: lo $\leftarrow$ 0\;
+		\eIf{Latitud(e1) $>$ Latitud(e2)}{
+			la $\leftarrow$ (Latitud(e1) - Latitud(e2)) $\times$ (Latitud(e1) - Latitud(e2))\;
+		}{
+			la $\leftarrow$ (Latitud(e2) - Latitud(e1)) $\times$ (Latitud(e2) - Latitud(e1))\;
+		}
+		\eIf{Longitud(e1) $>$ Longitud(e2)}{
+			lo $\leftarrow$ (Longitud(e1) - Longitud(e2)) $\times$ (Longitud(e1) - Longitud(e2))\;
+		}{
+			lo $\leftarrow$ (Longitud(e2) - Longitud(e1)) $\times$ (Longitud(e2) - Longitud(e1))\;
+		}
+		res $\leftarrow$ la + lo\; 
+	\end{algorithm}
+
+\end{Algoritmos}
