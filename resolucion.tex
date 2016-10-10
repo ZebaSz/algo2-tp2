@@ -2,10 +2,30 @@
 \usepackage[paper=a4paper, left=1.5cm, right=1.5cm, bottom=1.5cm, top=3.5cm]{geometry}
 \usepackage[utf8]{inputenc}
 \usepackage[spanish]{babel}
-\usepackage{aed2-symb,aed2-itef,aed2-tad,caratula}
-\usepackage{aed2-dis}
+\usepackage{aed2-symb,aed2-itef,aed2-tad,aed2-dis,caratula}
 \usepackage[pdfencoding=auto, colorlinks=true, linkcolor=blue]{hyperref}
-\usepackage[boxruled, lined]{algorithm2e}
+\usepackage[boxruled, longend]{algorithm2e}
+\SetKwComment{Comment}{}{}
+
+\makeatletter
+\renewcommand{\algocf@caption@boxruled}{%
+  \hrule
+  \hbox to \hsize{%
+    \vrule\hskip-0.4pt
+    \vbox{   
+       \vskip\interspacetitleboxruled%
+       \unhbox\algocf@capbox\hfill
+       \vskip\interspacetitleboxruled
+       }%
+     \hskip-0.4pt\vrule%
+   }\nointerlineskip%
+}%
+\makeatother
+
+\newcommand\complejidad{\textbf{Complejidad}}
+\newcommand\justifcomp{\textbf{Justificación}}
+\newcommand\OdeLinea[1]{\Comment*[r]{$O(#1)$}}
+\newcommand\OdeBloque[1]{\Comment*[f]{$O(#1)$}}
 
 \begin{document}
 
@@ -28,8 +48,9 @@
 \tableofcontents
 
 \pagebreak
-
-\input{modulos/modulo_dic_trie_string}
 \input{modulos/modulo_coordenada}
+
+\pagebreak
+\input{modulos/modulo_dic_trie_string}
 
 \end{document}

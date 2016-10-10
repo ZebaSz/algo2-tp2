@@ -1,16 +1,20 @@
 \newcommand\dicString{diccString($\alpha$)}
+\newcommand\compConjLineal{|c_{max}| * \#c}
 
-\section{Módulo Diccionario (String, \texorpdfstring{$\alpha$}{α}) sobre Trie}
+\section{Módulo DiccionarioString(\texorpdfstring{$\alpha$}{α})}
 
-Descsripcion TODO
+El diccionario se representa con un trie, que permite lectura, inserción y modificación en $\Theta(|clave|)$, donde \texttt{clave} es la clave consultar o modificar.
 
-Usaremos $copy(s)$ para denotar el costo de copiar el elemento $s \in \alpha$, y llamaremos $|c_{max}|$ a la longitud de la clave más larga.
+Las claves se guardan al mismo tiempo en un Conjunto Lineal, siempre con inserción rápida ya que al insertar en el trie podemos saber si la clave existía de antemano.
+
+Al tener que mantener las copias de las claves, remover un elemento cuesta $O\left(|c_{max}| + \compConjLineal\right)$ (ya que debe removerse del conjunto de claves).
+
+Usaremos $copy(s)$ para denotar el costo de copiar el elemento $s \in \alpha$. Llamaremos $|c_{max}|$ a la longitud de la clave más larga, y $\#c$ a la cantidad de claves definidas. Se asume que la complejidad de comparar dos Strings es $O(|c_{max}|)$.
 
 \subsection{Interfaz}
 
 \textbf{parámetros formales}\hangindent=2\parindent\\
 \parbox{1.7cm}{\textbf{géneros}} \TipoVariable{$\alpha$}\\
-%% TODO agregué esto por las dudas, supongo que es necesario, revisar
 \parbox[t]{1.7cm}{\textbf{función}}\parbox[t]{\textwidth-2\parindent-1.7cm}{
 	\InterfazFuncion{Copiar}{\In{s}{$\alpha$}}{$\alpha$}
 	{$res \igobs s$}
@@ -19,13 +23,12 @@ Usaremos $copy(s)$ para denotar el costo de copiar el elemento $s \in \alpha$, y
 	[]
 }
 
-\textbf{se explica con}: \tadNombre{Diccionario(String,$\alpha$)}.
+\textbf{se explica con}: \tadNombre{Diccionario(String,$\alpha$)}, \tadNombre{Conjunto Lineal(String)}, \tadNombre{Iterador Bidireccional($\alpha$)}.
 
 \textbf{géneros}: \TipoVariable{\dicString, itDiccString($\alpha$)}.
 
-~
 
-\subsubsection{Operaciones básicas de Diccionario (String, \texorpdfstring{$\alpha$}{α}) sobre Trie}
+\subsubsection{Operaciones básicas de DiccionarioString(\texorpdfstring{$\alpha$}{α})}
 
 \InterfazFuncion{CrearDiccionario}{}{\dicString}
 [true]
@@ -41,7 +44,7 @@ Usaremos $copy(s)$ para denotar el costo de copiar el elemento $s \in \alpha$, y
 {$d \igobs$ definir($c, s, d_0$)}
 [$O(|c_{max}| + copy(s))$]
 [Define sobre la clave $c$ el signigicado $s$ en el diccionario $d$]
-[Se almacena una copia de $s$]
+[Se almacena una copia de $c$ y de $s$]
 
 ~
 
@@ -58,27 +61,33 @@ Usaremos $copy(s)$ para denotar el costo de copiar el elemento $s \in \alpha$, y
 [def?($c, d$)]
 {alias($res \igobs$ obtener($c$, $d$))}
 [$O(|c_{max}|)$]
-[devuelve el significado de la clave $c$ en $d$]
+[Devuelve el significado de la clave $c$ en $d$]
 [$res$ es modificable si y sólo si $d$ es modificable]
 
 ~
 
 \InterfazFuncion{Borrar}{\Inout{d}{\dicString}, \In{c}{string}}{}
-[$d \igobs d_0 \land$ def?($c, d$)]
+[$d \igobs d_0 \land$ def?($c, d_0$)]
 {$d \igobs$ borrar($c, d_0$)}
-[$O(|c_{max}|)$]
+[$O\left(|c_{max}| + \compConjLineal\right)$]
 [Borra la clave $c$ y su significado del diccionario $d$]
 []
 
 ~
 
-%%TODO ITERADOR DE CLAVES
 
-\subsubsection{Representación de Diccionario (String, \texorpdfstring{$\alpha$}{α}) sobre Trie)}
+\subsubsection{Operaciones del iterador}
 
-\begin{Estructura}{ Diccionario (String, $\alpha$) sobre Trie }[estr]
-	\begin{Tupla}[estr]
+% TODO 
+
+\subsection{Representación y Abstracción}
+
+\subsubsection{Representación de DiccionarioString(\texorpdfstring{$\alpha$}{α})}
+
+\begin{Estructura}{ DiccionarioString($\alpha$) }[dicStr]
+	\begin{Tupla}[dicStr]
 		\tupItem{raiz}{puntero(Nodo)}
+		\tupItem{claves}{conj(String)}
 	\end{Tupla}
 
 	~
@@ -93,9 +102,11 @@ Usaremos $copy(s)$ para denotar el costo de copiar el elemento $s \in \alpha$, y
 
 \subsubsection{Invariante de Representación}
 
-\Rep[estr][e]{
-	hijoValido(e.raiz)
+\Rep[dicStr][e]{
+	$\neg$(raiz == NULL) $\land$ hijoValido(e.raiz)
 }
+
+~
 
 \tadOperacion{hijoValido}{puntero(Nodo)}{bool}{}
 
@@ -105,43 +116,143 @@ Usaremos $copy(s)$ para denotar el costo de copiar el elemento $s \in \alpha$, y
 
 \subsubsection{Función de Abstracción}
 
-%%TODO se indefine si raiz es NULL arreglarlo
-
-\Abs[estr]{\dicString}[e]{d}
+\Abs[dicStr]{\dicString}[e]{d}
 {($\forall s$: string)
-(def?(s, d) = definido?(e.raiz) $\yluego$
-(def?(s, d) $\implies$ obtener(s, d) = obtener(e.raiz, s, 0)))
+(def?(c, d) = definido?(e.raiz, c, 0) $\yluego$ \\
+(def?(c, d) $\impluego$ obtener(c, d) = obtener(e.raiz, c, 0)))
 }
 
+~
 
 \tadOperacion{definido?}{puntero(Nodo)/n, string/c, nat/i}{bool}{n $\neq$ NULL $\land$ i $\leq$ longitud(c)}
-\tadOperacion{obtener}{puntero(Nodo)/n, string/c, nat/i}{$\alpha$}{n $\neq$ NULL $\land$ i $\leq$ longitud(c) $\yluego$ definido?(n, c, i)}
-
 \tadAxioma{definido?(nodo, clave, i)}
-{\IF i $<$ Longitud(nodo.hijos) THEN
-	nodo.hijos[ord(clave[i])] != NULL $\yluego$ definido?(nodo.hijos[ord(clave[i])], clave, i+1)
+{\IF i $<$ Longitud(clave) THEN
+	$\neg$(nodo.hijos[ord(clave[i])] = NULL) $\yluego$ \\ definido?(nodo.hijos[ord(clave[i])], clave, i+1)
 ELSE
 	nodo.contieneValor
 FI}
 
+
+~
+
+\tadOperacion{obtener}{puntero(Nodo)/n, string/c, nat/i}{$\alpha$}{n $\neq$ NULL $\land$ i $\leq$ longitud(c) $\yluego$ definido?(n, c, i)}
+
 \tadAxioma{obtener(nodo, clave, i)}
-{\IF i $<$ Longitud(nodo.hijos) THEN
+{\IF i $<$ Longitud(clave) THEN
 	obtener(nodo.hijos[ord(clave[i])], clave, i+1)
 ELSE
 	nodo.valor
 FI}
 
-\subsection{Algoritmos}
+\subsection{Algorítmos}
+
+\subsubsection{Algorítmos de DiccionarioString(\texorpdfstring{$\alpha$}{α})}
 
 \begin{algorithm}[H]
-	\SetAlgoLined
 	\NoCaptionOfAlgo
-	\caption{\algoritmo{iCrearDiccionario}{}{estr}}
-	\For{$i \leftarrow 0$ \KwTo $255$}{
-		res.raiz[i] $\leftarrow$ NULL\;
-	}
+	\caption{\algoritmo{iCrearDiccionario}{}{dicStr}}
+	res.raiz $\leftarrow$ CrearNodo() \OdeLinea{1}
+	res.claves $\leftarrow$ Vacio() \OdeLinea{1}
 \end{algorithm}
 
+\complejidad: $O(1)$
 
+\justifcomp: solo se crea un nodo vacío y el conjunto vacío de claves
 
+~
 
+\begin{algorithm}[H]
+	\NoCaptionOfAlgo
+	\caption{\algoritmo{CrearNodo}{}{puntero(Nodo)}}
+	Nodo: nuevo \OdeLinea{1}
+	nuevo.contieneValor $\leftarrow$ false \OdeLinea{1}
+	\For(\OdeBloque{256}){$i \leftarrow 0$ \KwTo $255$}{ 
+		nuevo.hijos[i] $\leftarrow$ NULL \OdeLinea{1}
+	}
+	res $\leftarrow$ \&nuevo \OdeLinea{1}
+\end{algorithm}
+
+\complejidad: $O(1)$
+
+\justifcomp: se asigna NULL a una cantidad fija de posiciones
+
+~
+
+\begin{algorithm}[H]
+	\NoCaptionOfAlgo
+	\caption{\algoritmo{iDefinir}{\Inout{e}{dicStr}, \In{c}{String}, \In{s}{$\alpha$}}{}}
+	puntero(Nodo): entrada $\leftarrow$ raiz \OdeLinea{1}
+	\For(\OdeBloque{|c|}){$i \leftarrow 0$ \KwTo Longitud(c)}{
+		\If(\OdeBloque{1}){(*entrada).hijos[ord(c[i])] == NULL} {
+			(*entrada).hijos[ord(c[i])] $\leftarrow$ CrearNodo() \OdeLinea{1}
+		}
+		entrada $\leftarrow$ (*entrada).hijos[ord(c[i])] \OdeLinea{1}
+	}
+
+	\If(\OdeBloque{1}){not (*entrada).contieneValor} {
+		AgregarRapido(e.claves, c) \OdeLinea{1}
+		(*entrada).contieneValor $\leftarrow$ true \OdeLinea{1}
+	}
+
+	(*entrada).valor $\leftarrow$ s \OdeLinea{copy(s)}
+\end{algorithm}
+
+\complejidad: $O(|c| + copy(s))$
+
+\justifcomp: el ciclo itera hasta el largo de la clave a insertar y luego la copia para insertarla; la clave solo se agrega al conjunto si no estaba definida antes
+
+~
+
+\begin{algorithm}[H]
+	\NoCaptionOfAlgo
+	\caption{\algoritmo{iDefinido?}{\Inout{e}{dicStr}, \In{c}{String}}{bool}}
+	puntero(Nodo): entrada $\leftarrow$ raiz \OdeLinea{1}
+	\For(\OdeBloque{|c|}){$i \leftarrow 0$ \KwTo Longitud(c)}{
+		\lIf(\OdeBloque{1}){entrada == NULL} {break}
+		entrada $\leftarrow$ (*entrada).hijos[ord(c[i])] \OdeLinea{1}
+	}
+
+	res $\leftarrow$ (entrada == NULL) \OdeLinea{1}
+\end{algorithm}
+
+\complejidad: $O(|c|)$
+
+\justifcomp: el ciclo como máximo itera hasta el largo de la clave buscada
+
+~
+
+\begin{algorithm}[H]
+	\NoCaptionOfAlgo
+	\caption{\algoritmo{iObtener}{\Inout{e}{dicStr}, \In{c}{String}}{$\alpha$}}
+	puntero(Nodo): entrada $\leftarrow$ raiz \OdeLinea{1}
+	\For(\OdeBloque{|c|}){$i \leftarrow 0$ \KwTo Longitud(c)}{
+		entrada $\leftarrow$ (*entrada).hijos[ord(c[i])] \OdeLinea{1}
+	}
+
+	res $\leftarrow$ (*entrada).valor \OdeLinea{copy(s)}
+\end{algorithm}
+
+\complejidad: $O(|c| + copy(s))$
+
+\justifcomp: el ciclo itera hasta el largo de la clave a obtener y luego la copia para retornarla
+
+~
+
+\begin{algorithm}[H]
+	\NoCaptionOfAlgo
+	\caption{\algoritmo{iBorrar}{\Inout{e}{dicStr}, \In{c}{String}}{}}
+	\For(\OdeBloque{|c|}){$i \leftarrow 0$ \KwTo Longitud(c)}{
+		entrada $\leftarrow$ (*entrada).hijos[ord(c[i])] \OdeLinea{1}
+	}
+
+	(*entrada).contieneValor $\leftarrow$ false \OdeLinea{1}
+	Eliminar(e.claves, c) \OdeLinea{\compConjLineal}
+\end{algorithm}
+
+\complejidad: $O\left(\compConjLineal\right)$
+
+\justifcomp: el ciclo itera hasta el largo de la clave a borrar y luego asigna un booleano, y borra la clave del conjunto
+
+\subsubsection{Algorítmos del iterador}
+
+% TODO

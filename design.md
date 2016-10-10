@@ -49,7 +49,7 @@ _*O(1) amortizado_
 | modificar contador     | O(1)        |
 | obtener capturante     | O(1)        |
 | agregar/quitar jugador*| O(log(n))   |
-| borrar PQ              | O(n)        |
+| borrar PQ              | O(1)        |
 _* ya sea por conexion o movimiento_
 
 # Jugador
