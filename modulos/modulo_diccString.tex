@@ -277,7 +277,8 @@ Usaremos $copy(s)$ para denotar el costo de copiar el elemento $s \in \alpha$. L
 			entrada $\leftarrow$ (*entrada).hijos[ord(c[i])] \OdeLinea{1}
 		}
 
-		res $\leftarrow$ (entrada == NULL) \OdeLinea{1}
+		% TODO podemos usar logica de cortocircuito? usamos simbolos de C para logica?
+		res $\leftarrow$ not entrada == NULL \&\& (*entrada).contieneValor \OdeLinea{1}
 	\end{algorithm}
 
 	\complejidad: $O(|c|)$
@@ -311,6 +312,7 @@ Usaremos $copy(s)$ para denotar el costo de copiar el elemento $s \in \alpha$. L
 			entrada $\leftarrow$ (*entrada).hijos[ord(c[i])] \OdeLinea{1}
 		}
 
+		% TODO hace romper los nodos que no sirven?
 		(*entrada).contieneValor $\leftarrow$ false \OdeLinea{1}
 		Eliminar(dic.claves, c) \OdeLinea{|c_{max}| * \#c}
 	\end{algorithm}
