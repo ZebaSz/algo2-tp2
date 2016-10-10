@@ -1,0 +1,49 @@
+\section{Módulo Mapa}
+
+Description %%TODO
+
+\subsection{Interfaz}
+
+	\textbf{se explica con}: \tadNombre{mapa}.
+
+	\textbf{géneros}: \TipoVariable{map}.
+
+~
+
+\subsubsection{Operaciones básicas de Mapa}
+
+%TODO
+
+
+\subsubsection{Representación de Mapa}
+
+\begin{Estructura}{ Mapa }[eMap]
+	\begin{Tupla}[eMap]
+		\tupItem{alto}{nat}
+		\tupItem{ancho}{nat}
+		\tupItem{posValidas}{vector(vector(bool))}
+	\end{Tupla}
+\end{Estructura}
+
+\subsubsection{Invariante de Representación}
+
+\Rep[eMap][e]{
+	e.alto = long(posValidas(e.posValidas)) $\yluego$
+	($\exists i$: nat)(i $<$ e.alto $\implies$ long(e.posValidas[i]) = e.ancho) $\land$
+	($\forall i$: nat)(i $<$ e.alto $\implies$ long(e.posValidas[i]) $\leq$ e.ancho)
+}
+
+
+\subsubsection{Función de Abstracción}
+
+\Abs[eMap]{map}[e]{m}
+{
+	($\exists c$: coor)(c $\in$ coordenadas(m) $\implies$ latitud(c) = e.alto) $\yluego$
+	($\exists c$: coor)(c $\in$ coordenadas(m) $\implies$ longitud(c) = e.ancho) $\yluego$
+	($\forall c$: coor)
+		(c $\in$ coordenadas(m) $\implies$ 
+			latitud(c) $\leq$ e.alto $\yluego$
+			longitud(c) $\leq$ long(e.posValidas[latitud(c)]) $\yluego$ 
+			e.posValidas[latitud(c)][longitud(c)]) $\land$
+		(c $\not\in$ coordenadas(m) $\land$ latitud(c) $\leq$ e.alto $\land$ longitud(c) $\leq$ long(e.posValidas[latitud(c)]) $\implies$ $\neg$ e.posValidas[latitud(c)][longitud(c)])
+}
