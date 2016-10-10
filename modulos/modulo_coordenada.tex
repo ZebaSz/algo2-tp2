@@ -59,8 +59,8 @@ Descripcion TODO ¿CUALES TIENEN DESCRIPCION Y CUALES NO?
 
 	\TituloDis{Representación de Coordenada}
 
-	\begin{Estructura}{Coordenada}[estr]
-		\begin{Tupla}[estr]
+	\begin{Estructura}{Coordenada}[cor]
+		\begin{Tupla}[cor]
 			\tupItem{lat}{nat}
 			\tupItem{long}{nat}
 		\end{Tupla}
@@ -70,11 +70,11 @@ Descripcion TODO ¿CUALES TIENEN DESCRIPCION Y CUALES NO?
 
 	\TituloDis{Invariante de Representación}
 
-	\RepFc[estr][e]{true}
+	\RepFc[cor][e]{true}
 
 	\TituloDis{Función de Abstracción}
 
-	\Abs[estr]{coor}[e]{c}{latitud(c) == e.lat $\land$ longitud(c) == e.long}
+	\Abs[cor]{coor}[e]{c}{latitud(c) == e.lat $\land$ longitud(c) == e.long}
 
 \end{Representacion}
 
@@ -83,50 +83,50 @@ Descripcion TODO ¿CUALES TIENEN DESCRIPCION Y CUALES NO?
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
-		\caption{\algoritmo{iCrearCoor}{\In{y}{nat}, \In{x}{nat}}{estr}}
+		\caption{\algoritmo{iCrearCoor}{\In{y}{nat}, \In{x}{nat}}{cor}}
 		res.latitud $\leftarrow$ y\;
 		res.longitud $\leftarrow$ x\;
 	\end{algorithm}
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
-		\caption{\algoritmo{iLatitud}{\In{e}{estr}}{nat}}
+		\caption{\algoritmo{iLatitud}{\In{e}{cor}}{nat}}
 		res $\leftarrow$ e.latitud\;
 	\end{algorithm}
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
-		\caption{\algoritmo{iLongitud}{\In{e}{estr}}{nat}}
+		\caption{\algoritmo{iLongitud}{\In{e}{cor}}{nat}}
 		res $\leftarrow$ e.longitud\;
 	\end{algorithm}
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
-		\caption{\algoritmo{iCoordenadaArriba}{\In{e}{estr}}{estr}}
+		\caption{\algoritmo{iCoordenadaArriba}{\In{e}{cor}}{cor}}
 		res $\leftarrow$ CrearCoor(Latitud(e)+1, Longitud(e))\; 
 	\end{algorithm}
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
-		\caption{\algoritmo{iCoordenadaAbajo}{\In{e}{estr}}{estr}}
+		\caption{\algoritmo{iCoordenadaAbajo}{\In{e}{cor}}{cor}}
 		res $\leftarrow$ CrearCoor(Latitud(e)-1, Longitud(e))\; 
 	\end{algorithm}
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
-		\caption{\algoritmo{iCoordenadaALaDerecha}{\In{e}{estr}}{estr}}
+		\caption{\algoritmo{iCoordenadaALaDerecha}{\In{e}{cor}}{cor}}
 		res $\leftarrow$ CrearCoor(Latitud(e), Longitud(e)+1)\; 
 	\end{algorithm}
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
-		\caption{\algoritmo{iCoordenadaALaIzquierda}{\In{e}{estr}}{estr}}
+		\caption{\algoritmo{iCoordenadaALaIzquierda}{\In{e}{cor}}{cor}}
 		res $\leftarrow$ CrearCoor(Latitud(e), Longitud(e)-1)\; 
 	\end{algorithm}
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
-		\caption{\algoritmo{iDistEuclidea}{\In{e1}{estr}, \In{e2}{estr}}{nat}}
+		\caption{\algoritmo{iDistEuclidea}{\In{e1}{cor}, \In{e2}{cor}}{nat}}
 		nat: la $\leftarrow$ 0\;
 		nat: lo $\leftarrow$ 0\;
 		\eIf{Latitud(e1) $>$ Latitud(e2)}{

@@ -8,7 +8,7 @@ El diccionario se representa con un trie, que permite lectura, inserción y modi
 
 Las claves se guardan al mismo tiempo en un Conjunto Lineal, siempre con inserción rápida ya que al insertar en el trie podemos saber si la clave existía de antemano.
 
-Al tener que mantener las copias de las claves, remover un elemento cuesta $O(|c_{max}| + |c_{max}| * \#c)$ (ya que debe removerse del conjunto de claves).
+Al tener que mantener las copias de las claves, remover un elemento cuesta $O(|c_{max}| * \#c)$ (ya que debe removerse del conjunto de claves).
 
 Usaremos $copy(s)$ para denotar el costo de copiar el elemento $s \in \alpha$. Llamaremos $|c_{max}|$ a la longitud de la clave más larga, y $\#c$ a la cantidad de claves definidas. Se asume que la complejidad de comparar dos Strings es $O(|c_{max}|)$.
 
@@ -23,7 +23,7 @@ Usaremos $copy(s)$ para denotar el costo de copiar el elemento $s \in \alpha$. L
 		[función de copia de $\alpha$'s.]
 	}
 
-	\textbf{se explica con}: \tadNombre{Diccionario(String,$\alpha$)}, \tadNombre{Conjunto Lineal(String)}, \tadNombre{Iterador Bidireccional($\alpha$)}.
+	\textbf{se explica con}: \tadNombre{Diccionario($\kappa$,$\sigma$)}, \tadNombre{Conjunto Lineal($\alpha$)}, \tadNombre{Iterador Bidireccional($\alpha$)}.
 
 	\textbf{géneros}: \TipoVariable{\dicString, \itDicString}.
 
