@@ -52,95 +52,94 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 	[$res$ no es modificable.]
 
 	\InterfazFuncion{Jugadores}{\In{j}{juego}}{itBi(jugador)}
-	{$res \igobs$ crearItBi($\secuvacia$, jugadores($j$)) $\land$ alias(SecuSuby($res$) $= l$)}
+	{$res \igobs$ crearItBi($\secuvacia$, jugadores($j$)) $\land$ alias(esPermutacion(SecuSuby($res$), jugadores($j$)))}
 	[$O(1)$]
 	[devuelve un iterador del conjunto de jugadores registrados (no expulsados).]
-	[el iterador se invalida si y sólo si se elimina el elemento siguiente del iterador]
+	[el iterador se invalida si y sólo si se elimina el elemento siguiente del iterador.]
 
 	\InterfazFuncion{EstaConectado}{\In{j}{juego}, \In{e}{jugador}}{bool}
-	[]
-	{}
+	[$e \in$ jugadores($j$)]
+	{$res \igobs$ estaConectado($e, j$)}
 	[$O()$]
 	[devuelve si el jugador está conectado al juego.]
 
 	\InterfazFuncion{Sanciones}{\In{j}{juego}, \In{e}{jugador}}{nat}
-	[]
-	{}
+	[$e \in$ jugadores($j$)]
+	{$res \igobs$ sanciones($e, j$)}
 	[$O()$]
 	[devuelve la cantidad de sanciones que el jugador posee.]
 
 	\InterfazFuncion{Posicion}{\In{j}{juego}, \In{e}{jugador}}{coor}
-	[]
-	{}
+	[$e \in$ jugadores($j$)]
+	{$res \igobs$ posicion($e, j$)}
 	[$O()$]
 	[devuelve la posición actual del jugador.]
 
 	\InterfazFuncion{Pokémons}{\In{j}{juego}}{itBi(tupla(pokemon, nat))}
-	[]
-	{}
+	% TODO fucking tuplas
+	% TODO fucking metapredicado alias e iteradores
+	{$res \igobs$ crearItBi($\secuvacia$, pokemons($j$)) $\land$ alias(esPermutacion(SecuSuby($res$), pokemons($j$)))}
 	[$O()$]
 	[devuelve un iterador al conjunto de los pokémons y la cantidad de los mismos.]
+	[el iterador se invalida si y sólo si se elimina el elemento siguiente del iterador.]
 
 	\InterfazFuncion{Expulsados}{\In{j}{juego}}{itBi(jugador)}
-	[]
-	{}
+	{$res \igobs$ crearItBi($\secuvacia$, expulsados($j$)) $\land$ alias(esPermutacion(SecuSuby($res$), expulsados($j$)))}
 	[$O()$]
 	[devuelve un iterador del conjunto de jugadores expulsados.]
+	[el iterador se invalida si y sólo si se elimina el elemento siguiente del iterador.]
 
 	\InterfazFuncion{PosConPokémons}{\In{j}{juego}}{conj(coor)}
-	[]
-	{}
+	{alias($res$ = posConPokémons(j))}
 	[$O(1)$]
 	[devuelve el conjunto de posiciones que contienen un pokémon.]
+	[$res$ no es modificable.]
 
 	\InterfazFuncion{PokémonEnPos}{\In{j}{juego}, \In{c}{coor}}{pokemon}
-	[]
-	{}
+	[$c \ \land$ posConPokemon($j$)]
+	{$res \igobs$ pokémonEnPos($c,j$)}
 	[$O()$]
 	[devuelve el pokémon que se encuentra en la posición.]
 
 	\InterfazFuncion{PuedoAgregarPokémon}{\In{j}{juego}, \In{c}{coor}}{bool}
-	[]
-	{}
+	{$res \igobs$ puedoAgregarPokémon($c,j$)}
 	[$O()$]
 	[devuelve si un nuevo pokémon puede ser agregado a esa posición (no debe haber ningún pokémon cerca).]
 
 	\InterfazFuncion{HayPokémonCercano}{\In{j}{juego}, \In{c}{coor}}{bool}
-	[]
-	{}
+	{$res \igobs$ hayPokémonCercano($c,j$)}
 	[$O()$]
 	[devuelve si hay algún pokémon cerca de la posición.]
 
 	\InterfazFuncion{PosPókemonCercano}{\In{j}{juego}, \In{c}{coor}}{coor}
-	[]
-	{}
+	[hayPokémonCercano($c,j$)]
+	{$res \igobs$ posPokémonCercano($c,j$)}
 	[$O()$]
 	[devuelve el pokémon que se encuentra cerca de la posición.]
 
 	% TODO hace falta exponer esto?
 	% cambió la aridad, anotar en consideraciones
 	\InterfazFuncion{EntrenadoresPosibles}{\In{j}{juego}, \In{c}{coor}}{conj(jugador)}
-	[]
-	{}
+	[hayPokémonCercano($c,j$)]
+	{$res \igobs$ entrenadoresPosibles($c,j$)}
 	[$O()$]
 	[devuelve el conjunto de jugadores esperando a capturar el pokémon que se encuentra en la posición.]
 
 	\InterfazFuncion{IndiceRareza}{\In{j}{juego}, \In{pk}{pokemon}}{nat}
-	[]
-	{}
-	[$O()$]
+	[$pk \in$ pokemons($j$)]
+	{$res \igobs$ indiceRareza($pk,j$)}
+	[$O(|pk_{max}|)$]
 	[calcula el índice de rareza de un pokémon.]
 
 	\InterfazFuncion{CantPokémonsTotales}{\In{j}{juego}}{nat}
-	[]
-	{}
-	[$O()$]
+	{$res \igobs$ cantPokémonsTotales($j$)}
+	[$O(1)$]
 	[devuelve la cantidad de pokémons en juego.]
 
 	\InterfazFuncion{CantMismaEspecie}{\In{j}{juego}, \In{pk}{pokemon}}{nat}
-	[]
-	{}
-	[$O()$]
+	[$pk \in$ pokemons($j$)]
+	{$res \igobs$ cantMismaEspecie($j$)}
+	[$O(|pk_{max}|)$]
 	[devuelve la cantidad de pokémons de la especie especificada en juego.]
 
 \end{Interfaz}
@@ -153,6 +152,7 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 			\tupItem{pokemons}{diccString(nat)}
 			\tupItem{posConPokemons}{conj(coor)}
 			\tupItem{jugadores}{vector(infoJugador)}
+			\tupItem{cantPokemons}{nat}
 			\tupItem{proxId}{nat}
 		\end{Tupla}
 
