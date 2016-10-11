@@ -1,0 +1,176 @@
+\section{Módulo Juego}
+
+La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando los nombres como claves. Sus posiciones se guardan en un Conjunto Lineal con inserción rápida, y en el mismo mapa se guarda el pokémon que se ubica en dicha posición (este valor se invalida si la posición no está en el conjunto, como cuando se captura el pokémon). 
+
+\begin{Interfaz}
+
+	\textbf{se explica con}: \tadNombre{Juego}, \tadNombre{Secuencia($\alpha$)}, \tadNombre{Diccionario($\kappa$,$\sigma$)}, \tadNombre{Conjunto Lineal($\alpha$)}.
+
+	\textbf{géneros}: \TipoVariable{juego}.
+
+
+	\InterfazFuncion{CrearJuego}{\In{m}{mapa}}{juego}
+	{$res \igobs$ crearJuego(m)}
+	[$O()$]
+	[crea un juego vacío usando el mapa provisto.]
+	[se guarda una copia de $m$.]
+
+	\InterfazFuncion{AgregarPokémon}{\Inout{j}{juego}, \In{pk}{pokemon}, \In{c}{coor}}{}
+	[$j \igobs j_0 \land$ puedoAgregarPokémon($c,j_0$)]
+	{$j \igobs$ agregarPokémon($pk, c, j_0$)}
+	[$O(|pk_{max}|)$]
+	[agrega un pokemon al juego.]
+
+	\InterfazFuncion{AgregarJugador}{\Inout{j}{juego}}{nat}
+	[$j \igobs j_0$]
+	{$j \igobs$ agregarJugador($j$)}
+	[$O()$]
+	[registra un nuevo jugador y devuelve su ID.]
+
+	\InterfazFuncion{Conectarse}{\Inout{j}{juego}, \In{e}{jugador}, \In{c}{coor}}{}
+	[$j \igobs j_0 \land e \in$ jugadores($j_0$) $\yluego \neg$conectado($e,j_0$) $\land$ posExistente(mapa($j_0$))]
+	{$j \igobs$ conectarse($e, c, j_0$)}
+	[$O(log(\#Jugadores(j)))$]
+	[conecta al jugador al juego.]
+
+	\InterfazFuncion{Desconectarse}{\Inout{j}{juego}, \In{e}{jugador}}{}
+	[$j \igobs j_0 \land e \in$ jugadores($j_0$) $\yluego$ conectado($e,j_0$)]
+	{$j \igobs$ desconectarse($e, j_0$)}
+	[$O()$]
+	[desconecta al jugador del juego.]
+
+	\InterfazFuncion{Moverse}{\Inout{j}{juego}, \In{e}{jugador}, \In{c}{coor}}{}
+	[$j \igobs j_0 \land e \in$ jugadores($j_0$) $\yluego$ conectado($e,j_0$) $\land$ posExistente(mapa($j_0$))]
+	{$j \igobs$ moverse($e, c, j_0$)}
+	[$O()$]
+	[mueve el jugador a la posición elegida. Si el movimiento es ilegal, sanciona al jugador o lo expulsa si excede el límite de sanciones. Aumenta los contadores de captura para otros jugadores donde corresponde y puede provocar la captura de pokémons.]
+
+	\InterfazFuncion{Mapa}{\In{j}{juego}}{mapa}
+	{alias($res$ = mapa($j$))}
+	[$O(1)$]
+	[devuelve el mapa del juego.]
+	[$res$ no es modificable.]
+
+	\InterfazFuncion{Jugadores}{\In{j}{juego}}{itBi(jugador)}
+	{$res \igobs$ crearItBi($\secuvacia$, jugadores($j$)) $\land$ alias(esPermutacion(SecuSuby($res$), jugadores($j$)))}
+	[$O(1)$]
+	[devuelve un iterador del conjunto de jugadores registrados (no expulsados).]
+	[el iterador se invalida si y sólo si se elimina el elemento siguiente del iterador.]
+
+	\InterfazFuncion{EstaConectado}{\In{j}{juego}, \In{e}{jugador}}{bool}
+	[$e \in$ jugadores($j$)]
+	{$res \igobs$ estaConectado($e, j$)}
+	[$O()$]
+	[devuelve si el jugador está conectado al juego.]
+
+	\InterfazFuncion{Sanciones}{\In{j}{juego}, \In{e}{jugador}}{nat}
+	[$e \in$ jugadores($j$)]
+	{$res \igobs$ sanciones($e, j$)}
+	[$O()$]
+	[devuelve la cantidad de sanciones que el jugador posee.]
+
+	\InterfazFuncion{Posicion}{\In{j}{juego}, \In{e}{jugador}}{coor}
+	[$e \in$ jugadores($j$)]
+	{$res \igobs$ posicion($e, j$)}
+	[$O()$]
+	[devuelve la posición actual del jugador.]
+
+	\InterfazFuncion{Pokémons}{\In{j}{juego}}{itBi(tupla(pokemon, nat))}
+	% TODO fucking tuplas
+	% TODO fucking metapredicado alias e iteradores
+	{$res \igobs$ crearItBi($\secuvacia$, pokemons($j$)) $\land$ alias(esPermutacion(SecuSuby($res$), pokemons($j$)))}
+	[$O()$]
+	[devuelve un iterador al conjunto de los pokémons y la cantidad de los mismos.]
+	[el iterador se invalida si y sólo si se elimina el elemento siguiente del iterador.]
+
+	\InterfazFuncion{Expulsados}{\In{j}{juego}}{itBi(jugador)}
+	{$res \igobs$ crearItBi($\secuvacia$, expulsados($j$)) $\land$ alias(esPermutacion(SecuSuby($res$), expulsados($j$)))}
+	[$O()$]
+	[devuelve un iterador del conjunto de jugadores expulsados.]
+	[el iterador se invalida si y sólo si se elimina el elemento siguiente del iterador.]
+
+	\InterfazFuncion{PosConPokémons}{\In{j}{juego}}{conj(coor)}
+	{alias($res$ = posConPokémons(j))}
+	[$O(1)$]
+	[devuelve el conjunto de posiciones que contienen un pokémon.]
+	[$res$ no es modificable.]
+
+	\InterfazFuncion{PokémonEnPos}{\In{j}{juego}, \In{c}{coor}}{pokemon}
+	[$c \ \land$ posConPokemon($j$)]
+	{$res \igobs$ pokémonEnPos($c,j$)}
+	[$O()$]
+	[devuelve el pokémon que se encuentra en la posición.]
+
+	\InterfazFuncion{PuedoAgregarPokémon}{\In{j}{juego}, \In{c}{coor}}{bool}
+	{$res \igobs$ puedoAgregarPokémon($c,j$)}
+	[$O()$]
+	[devuelve si un nuevo pokémon puede ser agregado a esa posición (no debe haber ningún pokémon cerca).]
+
+	\InterfazFuncion{HayPokémonCercano}{\In{j}{juego}, \In{c}{coor}}{bool}
+	{$res \igobs$ hayPokémonCercano($c,j$)}
+	[$O()$]
+	[devuelve si hay algún pokémon cerca de la posición.]
+
+	\InterfazFuncion{PosPókemonCercano}{\In{j}{juego}, \In{c}{coor}}{coor}
+	[hayPokémonCercano($c,j$)]
+	{$res \igobs$ posPokémonCercano($c,j$)}
+	[$O()$]
+	[devuelve el pokémon que se encuentra cerca de la posición.]
+
+	% TODO hace falta exponer esto?
+	% cambió la aridad, anotar en consideraciones
+	\InterfazFuncion{EntrenadoresPosibles}{\In{j}{juego}, \In{c}{coor}}{conj(jugador)}
+	[hayPokémonCercano($c,j$)]
+	{$res \igobs$ entrenadoresPosibles($c,j$)}
+	[$O()$]
+	[devuelve el conjunto de jugadores esperando a capturar el pokémon que se encuentra en la posición.]
+	[$res$ no es modificable.]
+
+	\InterfazFuncion{IndiceRareza}{\In{j}{juego}, \In{pk}{pokemon}}{nat}
+	[$pk \in$ pokemons($j$)]
+	{$res \igobs$ indiceRareza($pk,j$)}
+	[$O(|pk_{max}|)$]
+	[calcula el índice de rareza de un pokémon.]
+
+	\InterfazFuncion{CantPokémonsTotales}{\In{j}{juego}}{nat}
+	{$res \igobs$ cantPokémonsTotales($j$)}
+	[$O(1)$]
+	[devuelve la cantidad de pokémons en juego.]
+
+	\InterfazFuncion{CantMismaEspecie}{\In{j}{juego}, \In{pk}{pokemon}}{nat}
+	[$pk \in$ pokemons($j$)]
+	{$res \igobs$ cantMismaEspecie($j$)}
+	[$O(|pk_{max}|)$]
+	[devuelve la cantidad de pokémons de la especie especificada en juego.]
+
+\end{Interfaz}
+
+\begin{Representacion}
+
+	\begin{Estructura}{Juego}[pokego]
+		\begin{Tupla}[pokego]
+			\tupItem{mapa}{mapa}
+			\tupItem{pokemons}{diccString(nat)}
+			\tupItem{posConPokemons}{conj(coor)}
+			\tupItem{jugadores}{vector(infoJugador)}
+			\tupItem{cantPokemons}{nat}
+			\tupItem{proxId}{nat}
+		\end{Tupla}
+
+		\begin{Tupla}[infoJugador]
+			\tupItem{eliminado?}{bool}
+			\tupItem{conectado?}{bool}
+			\tupItem{posicion}{coor}
+			\tupItem{pokemonsCapturados}{diccString(nat)}
+		\end{Tupla}
+
+	\end{Estructura}
+
+\end{Representacion}
+
+
+\begin{Algoritmos}
+
+% TODO algoritmos
+
+\end{Algoritmos}

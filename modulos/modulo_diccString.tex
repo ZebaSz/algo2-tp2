@@ -8,7 +8,7 @@ El diccionario se representa con un trie, que permite lectura, inserción y modi
 
 Las claves se guardan al mismo tiempo en un Conjunto Lineal, siempre con inserción rápida ya que al insertar en el trie podemos saber si la clave existía de antemano.
 
-Al tener que mantener las copias de las claves, remover un elemento cuesta $O(|c_{max}| + |c_{max}| * \#c)$ (ya que debe removerse del conjunto de claves).
+Al tener que mantener las copias de las claves, remover un elemento cuesta $O(|c_{max}| * \#c)$ (ya que debe removerse del conjunto de claves).
 
 Usaremos $copy(s)$ para denotar el costo de copiar el elemento $s \in \alpha$. Llamaremos $|c_{max}|$ a la longitud de la clave más larga, y $\#c$ a la cantidad de claves definidas. Se asume que la complejidad de comparar dos Strings es $O(|c_{max}|)$.
 
@@ -23,7 +23,7 @@ Usaremos $copy(s)$ para denotar el costo de copiar el elemento $s \in \alpha$. L
 		[función de copia de $\alpha$'s.]
 	}
 
-	\textbf{se explica con}: \tadNombre{Diccionario(String,$\alpha$)}, \tadNombre{Conjunto Lineal(String)}, \tadNombre{Iterador Bidireccional($\alpha$)}.
+	\textbf{se explica con}: \tadNombre{Diccionario($\kappa$,$\sigma$)}, \tadNombre{Conjunto Lineal($\alpha$)}, \tadNombre{Iterador Bidireccional($\alpha$)}.
 
 	\textbf{géneros}: \TipoVariable{\dicString, \itDicString}.
 
@@ -134,28 +134,17 @@ Usaremos $copy(s)$ para denotar el costo de copiar el elemento $s \in \alpha$. L
 
 	\begin{enumerate}
 
-		\item Se cumple el invariante de representación del conjunto de las claves
-
-		\item Todo nodo del trie es válido si o bien es nulo o contiene 256 subnodos válidos
-
-		\item Todo nodo del trie no nulo es válido si o bien no almacena valor o guarda un valor válido
-
 		\item La raíz del trie es un nodo válido no nulo que no guarda valor
 		% TODO tal vez si queremos que se haga nulo o que guarde valor
+
+		\item Los punteros son únicos (se referencian desde un único punto del trie)
+		% TODO agregar a Rep
 
 	\end{enumerate}
 
 
 	\Rep[dicStr][e]{
-		Rep(e.claves) $\land$ nodoValido(e.raiz) $\land \neg$(e.raiz == NULL) $\yluego \neg$(e.raiz.contieneValor)
-	}
-
-	~
-
-	\tadOperacion{nodoValido}{puntero(Nodo)}{bool}{}
-
-	\tadAxioma{nodoValido(nodo)}{
-		nodo == NULL $\oluego$ ((nodo.contieneValor $\implies$ Rep(nodo.valor)) $\land$ \\ ($\forall i \in [0$..$256)$) (nodoValido(nodo.hijos[i])))
+		(e.raiz $\neq$ NULL) $\yluego \neg$(e.raiz.contieneValor)
 	}
 
 	\TituloDis{Función de Abstracción del Diccionario}
@@ -206,17 +195,13 @@ Usaremos $copy(s)$ para denotar el costo de copiar el elemento $s \in \alpha$. L
 
 	\begin{enumerate}
 
-		\item Se cumple el invariante de representación del iterador de las claves
-
 		\item El diccionario no es nulo
-
-		\item Se cumple el invariante de representación del diccionario
 
 		\item El iterador de las claves corresponde a las claves del diccionario
 
 	\end{enumerate}
 
-	\Rep[itDicStr][it]{Rep(it.itClaves) $\land \neg$(it.dic = NULL) $\yluego$ \\ (Rep(*it.dic) $\land$ it.itClaves $\igobs$  CrearIterador((*it.dic).claves))}
+	\Rep[itDicStr][it]{(it.dic $\neq$ NULL) $\yluego$ esPermutacion(SecuSuby(it.itClaves), (*it.dic).claves)}
 
 
 	\TituloDis{Función de Abstracción del iterador}
@@ -225,7 +210,7 @@ Usaremos $copy(s)$ para denotar el costo de copiar el elemento $s \in \alpha$. L
 
 	~
 
-	\tadOperacion{Tuplas}{secu(String)/cs, dicc(String, $\alpha$)/dic}{secu(tupla(String, $\alpha$))}{}
+	\tadOperacion{Tuplas}{secu(String)/cs, dicc(String{,}\ $\alpha$)/dic}{secu(tupla(String, $\alpha$))}{}
 
 	\tadAxioma{Tuplas(cs, dic)}
 	{\IF vacia?(cs) THEN
