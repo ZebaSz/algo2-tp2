@@ -7,7 +7,6 @@ Description %%TODO
 
 	\textbf{géneros}: \TipoVariable{map}.
 
-
 	\TituloDis{Operaciones básicas de Mapa}
 
 	\InterfazFuncion{CrearMapa}{}{map}
@@ -24,6 +23,33 @@ Description %%TODO
 	[Agrega la coordenada al mapa ]
 	[]
 
+	\InterfazFuncion{Coordenadas}{\In{m}{map}}{conj(coor)}
+	[]
+	{$res \igobs coordenadas(m)$}
+	[]
+	[Devuelve las coordenadas de un mapa]
+	[]
+
+	\InterfazFuncion{PosExistente}{\In{c}{coor}, \In{m}{map}}{bool}
+	[]
+	{$res \igobs posExistente(m)$}
+	[]
+	[Verifica si existe la coordenada ]
+	[]
+
+	\InterfazFuncion{HayCamino}{\In{c1}{coor}, \In{c2}{coor}, \In{m}{map}}{bool}
+	[$c1 \in$ coordenadas(m) $\land$ $c2 \in$ coordenadas(m)]
+	{$res \igobs hayCamino(m)$}
+	[]
+	[]
+	[]
+
+	\InterfazFuncion{ExisteCamino}{\In{c1}{coor}, \In{c2}{coor}, \In{m}{map}}{bool}
+	[$c1 \in$ coordenadas(m) $\land$ $c2 \in$ coordenadas(m)]
+	{$res \igobs existeCamino(m)$}
+	[]
+	[]
+	[]
 \end{Interfaz}
 
 
@@ -59,3 +85,38 @@ Description %%TODO
 			(c $\not\in$ coordenadas(m) $\land$ latitud(c) $\leq$ e.alto $\land$ longitud(c) $\leq$ long(e.posValidas[latitud(c)]) $\implies$ $\neg$ e.posValidas[latitud(c)][longitud(c)]))
 	}
 \end{Representacion}
+
+\begin{Algoritmos}
+	\TituloDis{Algorítmos de Mapa}
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iCrearMapa}{}{map}}
+	\end{algorithm}
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iAgregarCoor}{\In{c}{coor}, \Inout{m}{map}}{}}
+	\end{algorithm}
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iCoordenadas}{\In{m}{map}}{}}
+	\end{algorithm}
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iPosExistente}{\In{c}{coor}, \In{m}{map}}{}}
+	\end{algorithm}
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iHayCamino}{\In{c1}{coor}, \In{c2}{coor}, \In{m}{map}}{}}
+	\end{algorithm}
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iExisteCamino}{\In{c1}{coor}, \In{c2}{coor}, \In{m}{map}}{}}
+	\end{algorithm}
+
+\end{Algoritmos}
