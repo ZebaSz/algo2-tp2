@@ -74,10 +74,11 @@ Description %%TODO
 
 	\TituloDis{Función de Abstracción}
 
-	\Abs[eMap]{map}[e]{m}{
+	\Abs[eMap]{map}[e]{m}
+	{
 		($\exists c$: coor)(c $\in$ coordenadas(m) $\implies$ latitud(c) = e.alto) $\yluego$ \\
 		($\exists c$: coor)(c $\in$ coordenadas(m) $\implies$ longitud(c) = e.ancho) $\yluego$ 
-		($\forall c$: coo\end{Representacion}r)( \\
+		($\forall c$: coor)( \\
 			(c $\in$ coordenadas(m) $\implies$ 
 				latitud(c) $\leq$ e.alto $\yluego$
 				longitud(c) $\leq$ long(e.posValidas[latitud(c)]) $\yluego$ 
@@ -92,6 +93,7 @@ Description %%TODO
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{iCrearMapa}{}{map}}
+		res $\leftarrow$ Vacia()\;
 	\end{algorithm}
 
 	\begin{algorithm}[H]
