@@ -1,0 +1,132 @@
+\newcommand\colaPrior{colaPrior($\alpha$)}
+\section{Módulo Cola de Prioridad(\texorpdfstring{$\alpha$}{α}))}
+	Description %%TODO habria que decir que la raiz es el elemento minimo
+
+\begin{Interfaz}
+	\textbf{se explica con}: \tadNombre{\colaPrior}.
+
+	\textbf{géneros}: \TipoVariable{\colaPrior}.
+
+	\TituloDis{Operaciones básicas de Cola de Prioridad($\alpha$)}
+
+	\InterfazFuncion{Vacia}{}{\colaPrior}
+	[]
+	{$res \igobs vacia$}
+	[$O(1))$]
+	[Crea una cola vacia]
+	[]
+
+	\InterfazFuncion{Encolar}{\Inout{h}{\colaPrior}, \In{a}{$\alpha$}}}{}
+	[$h \igobs h_0$]
+	{$h \igobs$ encolar($a, h_0$)}
+	[$O(log(#h))$]
+	[agrega un nodo de valor $a$ en la cola de prioridad $h$, donde $#h$ es la cantidad de elementos de $h$]
+	[se almacena una copia de $a$.]
+
+	\InterfazFuncion{Vacia?}{\In{h}{\colaPrior}}{bool}
+	{$res \igobs$ vacia?($h$)]}
+	[$O(1)$]
+	[devuelve true si la cola de prioridad $h$ no contiene nodos.]
+
+	\InterfazFuncion{Proximo}{\In{h}{\colaPrior}}{$\alpha$}
+	{$res \igobs$ proximo($h$)]}
+	[$O(1)$]
+	[devuelve el valor del minimo elemento perteneciente al heap]	
+
+	\InterfazFuncion{Desencolar}{\Inout{h}{\colaPrior}}{}
+	[$h \igobs h_0$]
+	{$h \igobs$ desencolar($h_0$)}
+	[$O(log(#h))$]
+	[elimina la raiz de la cola de prioridad $h$, donde $#h$ es la cantidad de elementos de $h$]
+	[]
+
+\end{Interfaz}
+
+
+\begin{Representacion}
+	\TituloDis{Representación de \colaPrior}
+
+	\begin{Estructura}{ colpaPrior }[eCola]
+		\begin{Tupla}[eCola]
+			\tupItem{raiz}{puntero(Nodo)}
+		\end{Tupla}
+		\begin{Tupla}[Nodo]
+			\tupItem{hijoIzq}{puntero(Nodo)}
+			\tupItem{hijoDer}{puntero(Nodo)}				
+			\tupItem{valor}{$\alpha$}
+		\end{Tupla}
+	\end{Estructura}
+
+	\TituloDis{Invariante de Representación}
+
+	\begin{enumerate}
+		
+		\item El valor de todo Nodo es menor que el valor de cualquiera de sus hijos
+
+	\end{enumerate}
+	
+
+	\Rep[eCola][e]{
+		heap?(raiz)	
+	}
+
+	\tadOperacion{heap?}{puntero(Nodo)/raiz}{bool}
+	\tadAxioma{heap?(raiz)}{
+		(raiz $\eq$ NULL) $\oluego$ \\
+		(raiz $\neq$ NULL) $\implies$  ((raiz.valor $<$ raiz.hijoIzq.valor)\\ $\land$(raiz.valor $<$ raiz.hijoIzq.valor) $\land$ \\
+		heap?(raiz.hijoIzq) $\land$ heap?(raiz.hijoDer))
+	}
+
+	\TituloDis{Función de Abstracción}
+
+	\Abs[eCola]{colaPrior}[e]{c}
+	{
+		
+
+
+		($\exists c$: coor)(c $\in$ coordenadas(m) $\implies$ latitud(c) = e.alto) $\yluego$ \\
+		($\exists c$: coor)(c $\in$ coordenadas(m) $\implies$ longitud(c) = e.ancho) $\yluego$ 
+		($\forall c$: coor)( \\
+			(c $\in$ coordenadas(m) $\implies$ 
+				latitud(c) $\leq$ e.alto $\yluego$
+				longitud(c) $\leq$ long(e.posValidas[latitud(c)]) $\yluego$ 
+				e.posValidas[latitud(c)][longitud(c)]) $\land$ \\
+			(c $\not\in$ coordenadas(m) $\land$ latitud(c) $\leq$ e.alto $\land$ longitud(c) $\leq$ long(e.posValidas[latitud(c)]) $\implies$ $\neg$ e.posValidas[latitud(c)][longitud(c)]))
+	}
+\end{Representacion}
+
+\begin{Algoritmos}
+	\TituloDis{Algorítmos de Mapa}
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iCrearMapa}{}{map}}
+		res $\leftarrow$ Vacia()\;
+	\end{algorithm}
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iAgregarCoor}{\In{c}{coor}, \Inout{m}{map}}{}}
+	\end{algorithm}
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iCoordenadas}{\In{m}{map}}{}}
+	\end{algorithm}
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iPosExistente}{\In{c}{coor}, \In{m}{map}}{}}
+	\end{algorithm}
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iHayCamino}{\In{c1}{coor}, \In{c2}{coor}, \In{m}{map}}{}}
+	\end{algorithm}
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iExisteCamino}{\In{c1}{coor}, \In{c2}{coor}, \In{m}{map}}{}}
+	\end{algorithm}
+
+\end{Algoritmos}
