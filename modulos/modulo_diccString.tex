@@ -23,9 +23,11 @@ Usaremos $copy(s)$ para denotar el costo de copiar el elemento $s \in \alpha$. L
 		[función de copia de $\alpha$'s.]
 	}
 
-	\textbf{se explica con}: \tadNombre{Diccionario($\kappa$,$\sigma$)}, \tadNombre{Conjunto Lineal($\alpha$)}, \tadNombre{Iterador Bidireccional($\alpha$)}.
+	\textbf{se explica con}: \tadNombre{Diccionario($\kappa$,$\sigma$)}, \tadNombre{Iterador Bidireccional($\alpha$)}.
 
 	\textbf{géneros}: \TipoVariable{\dicString, \itDicString}.
+
+	\textbf{servicios usados}: \tadNombre{Conjunto Lineal($\alpha$)}
 
 
 	\TituloDis{Operaciones básicas de DiccionarioString(\texorpdfstring{$\alpha$}{α})}
@@ -229,8 +231,8 @@ Usaremos $copy(s)$ para denotar el costo de copiar el elemento $s \in \alpha$. L
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{iCrearDiccionario}{}{dicStr}}
-		res.raiz $\leftarrow$ CrearNodo() \OdeLinea{1}
-		res.claves $\leftarrow$ Vacio() \OdeLinea{1}
+		res.raiz $\leftarrow$ CrearNodo()\OdeLinea{1}
+		res.claves $\leftarrow$ Vacio()\OdeLinea{1}
 	\end{algorithm}
 
 	\complejidad: $O(1)$
@@ -242,12 +244,12 @@ Usaremos $copy(s)$ para denotar el costo de copiar el elemento $s \in \alpha$. L
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{CrearNodo}{}{puntero(Nodo)}}
-		Nodo: nuevo \OdeLinea{1}
-		nuevo.contieneValor $\leftarrow$ false \OdeLinea{1}
+		Nodo: nuevo\OdeLinea{1}
+		nuevo.contieneValor $\leftarrow$ false\OdeLinea{1}
 		\For(\OdeBloque{1}){$i \leftarrow 0$ \KwTo $255$}{ 
-			nuevo.hijos[i] $\leftarrow$ NULL \OdeLinea{1}
+			nuevo.hijos[i] $\leftarrow$ NULL\OdeLinea{1}
 		}
-		res $\leftarrow$ \&nuevo \OdeLinea{1}
+		res $\leftarrow$ \&nuevo\OdeLinea{1}
 	\end{algorithm}
 
 	\complejidad: $O(1)$
@@ -259,20 +261,20 @@ Usaremos $copy(s)$ para denotar el costo de copiar el elemento $s \in \alpha$. L
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{iDefinir}{\Inout{dic}{dicStr}, \In{c}{String}, \In{s}{$\alpha$}}{}}
-		puntero(Nodo): entrada $\leftarrow$ dic.raiz \OdeLinea{1}
+		puntero(Nodo): entrada $\leftarrow$ dic.raiz\OdeLinea{1}
 		\For(\OdeBloque{|c_{max}|}){$i \leftarrow 0$ \KwTo Longitud(c)}{
 			\If(\OdeBloque{1}){(*entrada).hijos[ord(c[i])] == NULL} {
-				(*entrada).hijos[ord(c[i])] $\leftarrow$ CrearNodo() \OdeLinea{1}
+				(*entrada).hijos[ord(c[i])] $\leftarrow$ CrearNodo()\OdeLinea{1}
 			}
-			entrada $\leftarrow$ (*entrada).hijos[ord(c[i])] \OdeLinea{1}
+			entrada $\leftarrow$ (*entrada).hijos[ord(c[i])]\OdeLinea{1}
 		}
 
 		\If(\OdeBloque{1}){not (*entrada).contieneValor} {
-			AgregarRapido(dic.claves, c) \OdeLinea{1}
-			(*entrada).contieneValor $\leftarrow$ true \OdeLinea{1}
+			AgregarRapido(dic.claves, c)\OdeLinea{1}
+			(*entrada).contieneValor $\leftarrow$ true\OdeLinea{1}
 		}
 
-		(*entrada).valor $\leftarrow$ s \OdeLinea{copy(s)}
+		(*entrada).valor $\leftarrow$ s\OdeLinea{copy(s)}
 	\end{algorithm}
 
 	\complejidad: $O(|c_{max}| + copy(s))$
@@ -284,14 +286,14 @@ Usaremos $copy(s)$ para denotar el costo de copiar el elemento $s \in \alpha$. L
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{iDefinido?}{\Inout{dic}{dicStr}, \In{c}{String}}{bool}}
-		puntero(Nodo): entrada $\leftarrow$ dic.raiz \OdeLinea{1}
+		puntero(Nodo): entrada $\leftarrow$ dic.raiz\OdeLinea{1}
 		\For(\OdeBloque{|c_{max}|}){$i \leftarrow 0$ \KwTo Longitud(c)}{
 			\lIf(\OdeBloque{1}){entrada == NULL} {break}
-			entrada $\leftarrow$ (*entrada).hijos[ord(c[i])] \OdeLinea{1}
+			entrada $\leftarrow$ (*entrada).hijos[ord(c[i])]\OdeLinea{1}
 		}
 
 		% TODO podemos usar logica de cortocircuito? usamos simbolos de C para logica?
-		res $\leftarrow$ not entrada == NULL \&\& (*entrada).contieneValor \OdeLinea{1}
+		res $\leftarrow$ not entrada == NULL \&\& (*entrada).contieneValor\OdeLinea{1}
 	\end{algorithm}
 
 	\complejidad: $O(|c_{max}|)$
@@ -303,12 +305,12 @@ Usaremos $copy(s)$ para denotar el costo de copiar el elemento $s \in \alpha$. L
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{iObtener}{\Inout{dic}{dicStr}, \In{c}{String}}{$\alpha$}}
-		puntero(Nodo): entrada $\leftarrow$ dic.raiz \OdeLinea{1}
+		puntero(Nodo): entrada $\leftarrow$ dic.raiz\OdeLinea{1}
 		\For(\OdeBloque{|c_{max}|}){$i \leftarrow 0$ \KwTo Longitud(c)}{
-			entrada $\leftarrow$ (*entrada).hijos[ord(c[i])] \OdeLinea{1}
+			entrada $\leftarrow$ (*entrada).hijos[ord(c[i])]\OdeLinea{1}
 		}
 
-		res $\leftarrow$ (*entrada).valor \OdeLinea{copy(s)}
+		res $\leftarrow$ (*entrada).valor\OdeLinea{copy(s)}
 	\end{algorithm}
 
 	\complejidad: $O(|c_{max}| + copy(s))$
@@ -320,14 +322,14 @@ Usaremos $copy(s)$ para denotar el costo de copiar el elemento $s \in \alpha$. L
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{iBorrar}{\Inout{dic}{dicStr}, \In{c}{String}}{}}
-		puntero(Nodo): entrada $\leftarrow$ dic.raiz \OdeLinea{1}
+		puntero(Nodo): entrada $\leftarrow$ dic.raiz\OdeLinea{1}
 		\For(\OdeBloque{|c_{max}|}){$i \leftarrow 0$ \KwTo Longitud(c)}{
-			entrada $\leftarrow$ (*entrada).hijos[ord(c[i])] \OdeLinea{1}
+			entrada $\leftarrow$ (*entrada).hijos[ord(c[i])]\OdeLinea{1}
 		}
 
 		% TODO hace romper los nodos que no sirven?
-		(*entrada).contieneValor $\leftarrow$ false \OdeLinea{1}
-		Eliminar(dic.claves, c) \OdeLinea{|c_{max}| * \#c}
+		(*entrada).contieneValor $\leftarrow$ false\OdeLinea{1}
+		Eliminar(dic.claves, c)\OdeLinea{|c_{max}| * \#c}
 	\end{algorithm}
 
 	\complejidad: $O(|c_{max}| * \#c)$
@@ -339,8 +341,8 @@ Usaremos $copy(s)$ para denotar el costo de copiar el elemento $s \in \alpha$. L
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{iCrearIt}{\In{dic}{dicStr}}{itDicStr}}
-		res.itClaves $\leftarrow$ CrearIt(dic.claves) \OdeLinea{1}
-		res.dic $\leftarrow$ \&dic \OdeLinea{1}
+		res.itClaves $\leftarrow$ CrearIt(dic.claves)\OdeLinea{1}
+		res.dic $\leftarrow$ \&dic\OdeLinea{1}
 	\end{algorithm}
 
 	\complejidad: $O(1)$
@@ -352,7 +354,7 @@ Usaremos $copy(s)$ para denotar el costo de copiar el elemento $s \in \alpha$. L
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{iHaySiguiente}{\In{it}{itDicStr}}{bool}}
-		res $\leftarrow$ HaySiguiente(it.itClaves) \OdeLinea{1}
+		res $\leftarrow$ HaySiguiente(it.itClaves)\OdeLinea{1}
 	\end{algorithm}
 
 	\complejidad: $O(1)$
@@ -364,7 +366,7 @@ Usaremos $copy(s)$ para denotar el costo de copiar el elemento $s \in \alpha$. L
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{iHayAnterior}{\In{it}{itDicStr}}{bool}}
-		res $\leftarrow$ HayAnterior(it.itClaves) \OdeLinea{1}
+		res $\leftarrow$ HayAnterior(it.itClaves)\OdeLinea{1}
 	\end{algorithm}
 
 	\complejidad: $O(1)$
@@ -376,8 +378,8 @@ Usaremos $copy(s)$ para denotar el costo de copiar el elemento $s \in \alpha$. L
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{iSiguiente}{\In{it}{itDicStr}}{tupla(String, $\alpha$)}}
-		String: clave $\leftarrow$ Siguiente(it.itClaves) \OdeLinea{1}
-		res $\leftarrow \langle$ clave, Obtener(*it.dic, clave) $\rangle$ \OdeLinea{|c_{max}|}
+		String: clave $\leftarrow$ Siguiente(it.itClaves)\OdeLinea{1}
+		res $\leftarrow \langle$ clave, Obtener(*it.dic, clave) $\rangle$\OdeLinea{|c_{max}|}
 	\end{algorithm}
 
 	\complejidad: $O(|c_{max}|)$
@@ -389,8 +391,8 @@ Usaremos $copy(s)$ para denotar el costo de copiar el elemento $s \in \alpha$. L
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{iAnterior}{\In{it}{itDicStr}}{tupla(String, $\alpha$)}}
-		String: clave $\leftarrow$ Anterior(it.itClaves) \OdeLinea{1}
-		res $\leftarrow \langle$ clave, Obtener(*it.dic, clave) $\rangle$ \OdeLinea{|c_{max}|}
+		String: clave $\leftarrow$ Anterior(it.itClaves)\OdeLinea{1}
+		res $\leftarrow \langle$ clave, Obtener(*it.dic, clave) $\rangle$\OdeLinea{|c_{max}|}
 	\end{algorithm}
 
 	\complejidad: $O(|c_{max}|)$
@@ -402,7 +404,7 @@ Usaremos $copy(s)$ para denotar el costo de copiar el elemento $s \in \alpha$. L
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{iAvanzar}{\Inout{it}{itDicStr}}{}}
-		it.itClaves $\leftarrow$ Avanzar(it.itClaves) \OdeLinea{1}
+		it.itClaves $\leftarrow$ Avanzar(it.itClaves)\OdeLinea{1}
 	\end{algorithm}
 
 	\complejidad: $O(1)$
@@ -414,7 +416,7 @@ Usaremos $copy(s)$ para denotar el costo de copiar el elemento $s \in \alpha$. L
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{iRetroceder}{\Inout{it}{itDicStr}}{}}
-		it.itClaves $\leftarrow$ Retroceder(it.itClaves) \OdeLinea{1}
+		it.itClaves $\leftarrow$ Retroceder(it.itClaves)\OdeLinea{1}
 	\end{algorithm}
 
 	\complejidad: $O(1)$
