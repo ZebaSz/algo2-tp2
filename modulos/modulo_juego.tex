@@ -212,19 +212,23 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 	\tadOperacion{listaPoke}{conj(pokemon)/cs, dicc(String{,}Nat)/dic}{multiconj(pokemon)}{cs $\subseteq$ claves(dic)}
 	\tadOperacion{agregarPoke}{pokemon, nat}{multiconj(pokemon)}{}
 	\tadOperacion{listaExpulsados}{TODO NO SE QUE PASARLE}{conj(jugador)}{}
-	
+		
+	~
+
 	\tadAxioma{listasPoke(cs, dic)}
 	{\IF vacia?(cs) THEN
 		$\emptyset$
 	ELSE
-		$\langle$ agregarPoke(dameUno(cs),obtener(dameUno(cs),dic)) $\bigcup$ listasPoke(sinUno(cs), dic)
+		agregarPoke(dameUno(cs),obtener(dameUno(cs),dic)) $\bigcup$ listasPoke(sinUno(cs), dic)
 	FI}
-	
+		
+	~
+
 	\tadAxioma{agregarPoke(p, n)}
 	{\IF n == 0 THEN
 		$\emptyset$
 	ELSE
-		$\langle$ Ag(p, agregarPoke(p, n-1))
+		Ag(p, agregarPoke(p, n-1))
 	FI}
 	%TODO dado que los jugadores estan implicitos, es una boludez decirle "cucha, para cada numero que tenes en jugadores, existe esa posicion en el vector" asi que también queda medio implicito ese observador, pero capaz hay una mejor forma de hacerlo y dejarlo retratado :)
 
