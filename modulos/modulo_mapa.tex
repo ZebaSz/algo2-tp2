@@ -59,7 +59,15 @@ Usaremos $lat_{max}$ y $long_{max}$ para denotar las máximas dimensiones entre 
 	\end{Estructura}
 
 	\TituloDis{Invariante de Representación}
+	\begin{enumerate}
+	
+		\item La longitud del vector posiciones es igual al alto del mapa
+		
+		\item La longitud de cada uno de los vectores dentro del vector posiciones es igual o menor al ancho del mapa
 
+		\item Existe al menos un vector dentro del vector posiciones cuya longitud es igual al ancho del mapa 
+ 		
+	\end{enumerate}
 	\Rep[eMap][e]{
 		e.alto = long(e.posiciones) $\yluego$ \\
 		($\exists i$: nat)(i $<$ e.alto $\implies$ long(e.posiciones[i]) = e.ancho) $\land$ \\
@@ -70,7 +78,7 @@ Usaremos $lat_{max}$ y $long_{max}$ para denotar las máximas dimensiones entre 
 
 	\Abs[eMap]{map}[e]{m}{
 		($\forall c$: coor) (c $\in$ coordenadas(m) $\iff$ \\
-		latitud(c) $<$ e.alto $\yluego$ longitud(c) $<$ long(e.posiciones[latitud(c)]) $\yluego$ e.posiciones[latitud(c)][longitud(c)])
+		latitud(c) $<$ e.alto $\yluego$ longitud(c) $<$ long(e.posiciones[latitud(c)]) $\yluego$ e.posiciones[latitud(c)][longitud(c)].posValida)
 	}
 \end{Representacion}
 

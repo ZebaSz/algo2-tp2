@@ -156,7 +156,6 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 			\tupItem{posConPokemons}{conj(coor)}
 			\tupItem{jugadores}{vector(infoJugador)}
 			\tupItem{cantPokemons}{nat}
-			\tupItem{proxId}{nat}
 		\end{Tupla}
 
 		\begin{Tupla}[infoJugador]
@@ -171,34 +170,36 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 	\TituloDis{Invariante de Representación del Diccionario}
 
 	\begin{enumerate}
-	%TODO falta hablar del mapa
 	%TODO agregar a Rep
-	
-		\item En jugadores la posición del vector proxId esta vacía (o bien aún no existe)
 		
-		\item Todas las coordenadas pertenecientes a posConPokemons pertenecen a las coordenadas del mapa
+		\item Todas las coordenadas pertenecientes a posConPokemons pertenecen a las coordenadas válidas del mapa
 
 		\item La suma de todos los significados del diccionario pokemons más la longitud de posConPokemons es igual a cantPokemons
+		%TODO no se como meter bien la sumatoria en esta condicion :(
 		
 		\item No hay dos coordenadas pertenecientes a posConPokemons a menos de 5 de distancia
 		
 		\item Para cada miembro de jugadores, las claves de pokemonsCapturados pertenecen a las claves de pokemons
 
-		\item En pokemons, para cada clave su significado es la suma de todos los significados de infoJugadores donde la clave existe más la cantidad de coordenadas de posConPokemons donde el pokemon se encuentra
-		
+		\item En pokemons, para cada clave su significado es la suma de todos los significados de infoJugadores donde la clave existe y el jugador no fue eliminado, más la cantidad de coordenadas de posConPokemons donde el pokemon se encuentra
+		%TODO no se como meter bien la sumatoria en esta condicion AGAIN
+				
 		\item Para cada miembro de jugadores, si el jugador esta eliminado no puede estar conectado 
+		%TODO para hablar de jugadores, hablo de ($\forall i$:infoJugador), alguno confirmeme la correctitud de esto pls
 		
-		\item Para cada miembro de jugadores, si el jugador esta conectado su posición tiene que pertenecer a las coordenadas del mapa
+		\item Para cada miembro de jugadores, si el jugador esta conectado su posición tiene que pertenecer a las coordenadas válidas del mapa
 		
 		\item Para cada miembro de jugadores, si el jugador no esta conectado QUE CARAJO LE PASA A SU POSICION
 		
 		\item Para cada miembro de jugadores, si el jugador no esta conectado QUE CARAJO PASA CON EL DICCIONARIO POKEMONS CAPTURADOS
  
+ %TODO uso la función claves, ¿se puede agregar a diccString pls?
 		
 	\end{enumerate}
 
 
 	\Rep[pokego][e]{
+	($\forall c$: coor)(c $\in$ e.posConPokemons $\implies$ c $\in$ coordenadas(e.mapa)) $\land$ ($\forall c,d$: coor)(c $\in$ e.posConPokemons $\land$ d $\in$ e.posConPokemons $\implies$ distEuclidea(c,d) == 0 $\lor$ distEuclidea(c,d) $>$ 25) $\land$ ($\forall i$:infoJugador)(i $\in$ e.jugadores $\implies$ claves(i.pokemonsCapturados) $\subseteq$ claves(e.pokemons)) $\land$ ($\forall i$:infoJugador)(i.eliminado $\implies$ $\neg$i.conectado) $\yluego$ ($\forall i$:infoJugador)(i.conectado $\implies$ i.posicion $\in$ coordenadas(e.mapa))
 	}
 
 
