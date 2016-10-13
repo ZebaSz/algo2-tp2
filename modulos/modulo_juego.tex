@@ -159,7 +159,7 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 		\end{Tupla}
 
 		\begin{Tupla}[infoJugador]
-			\tupItem{eliminado?}{bool}
+			\tupItem{sanciones}{nat}
 			\tupItem{conectado?}{bool}
 			\tupItem{posicion}{coor}
 			\tupItem{pokemonsCapturados}{diccString(nat)}
@@ -170,7 +170,6 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 	\TituloDis{Invariante de Representación del Diccionario}
 
 	\begin{enumerate}
-	%TODO agregar a Rep
 		
 		\item Todas las coordenadas pertenecientes a posConPokemons pertenecen a las coordenadas válidas del mapa
 
@@ -181,11 +180,11 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 		
 		\item Para cada miembro de jugadores, las claves de pokemonsCapturados pertenecen a las claves de pokemons
 
-		\item En pokemons, para cada clave su significado es la suma de todos los significados de infoJugadores donde la clave existe y el jugador no fue eliminado, más la cantidad de coordenadas de posConPokemons donde el pokemon se encuentra
+		\item En pokemons, para cada clave su significado es la suma de todos los significados de infoJugadores donde la clave existe y el jugador no tiene 5 sanciones, más la cantidad de coordenadas de posConPokemons donde el pokemon se encuentra
 		%TODO no se como meter bien la sumatoria en esta condicion AGAIN
 				
-		\item Para cada miembro de jugadores, si el jugador esta eliminado no puede estar conectado 
-		%TODO para hablar de jugadores, hablo de ($\forall i$:infoJugador), alguno confirmeme la correctitud de esto pls
+		\item Para cada miembro de jugadores, si el jugador tiene 5 sanciones no puede estar conectado 
+		%TODO para hablar de jugadores, hablo de (forall i:infoJugador), alguno confirmeme la correctitud de esto pls
 		
 		\item Para cada miembro de jugadores, si el jugador esta conectado su posición tiene que pertenecer a las coordenadas válidas del mapa
 		
@@ -199,8 +198,35 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 
 
 	\Rep[pokego][e]{
-	($\forall c$: coor)(c $\in$ e.posConPokemons $\implies$ c $\in$ coordenadas(e.mapa)) $\land$ ($\forall c,d$: coor)(c $\in$ e.posConPokemons $\land$ d $\in$ e.posConPokemons $\implies$ distEuclidea(c,d) == 0 $\lor$ distEuclidea(c,d) $>$ 25) $\land$ ($\forall i$:infoJugador)(i $\in$ e.jugadores $\implies$ claves(i.pokemonsCapturados) $\subseteq$ claves(e.pokemons)) $\land$ ($\forall i$:infoJugador)(i.eliminado $\implies$ $\neg$i.conectado) $\yluego$ ($\forall i$:infoJugador)(i.conectado $\implies$ i.posicion $\in$ coordenadas(e.mapa))
+	($\forall c$: coor)(c $\in$ e.posConPokemons $\implies$ c $\in$ coordenadas(e.mapa)) $\land$ ($\forall c,d$: coor)(c $\in$ e.posConPokemons $\land$ d $\in$ e.posConPokemons $\implies$ distEuclidea(c,d) == 0 $\lor$ distEuclidea(c,d) $>$ 25) $\land$ ($\forall i$:infoJugador)(i $\in$ e.jugadores $\implies$ claves(i.pokemonsCapturados) $\subseteq$ claves(e.pokemons)) $\land$ ($\forall i$:infoJugador)(i.sanciones == 5 $\implies$ $\neg$i.conectado) $\yluego$ ($\forall i$:infoJugador)(i.conectado $\implies$ i.posicion $\in$ coordenadas(e.mapa))
 	}
+	
+	\TituloDis{Función de Abstracción}
+
+	\Abs[pokego]{juego}[e]{j}{
+		mapa(j) == e.mapa $\land$ ($\forall p:$ jugador))(p $\in$ jugadores(j) $\implies$ long(e.jugadores) $\geq$ p $\yluego$ estaConectado(p,j) == e.jugadores[p].conectado? $\land$ sanciones(p,j) == e.jugadores[p].sanciones $\land$ (estaConectado(p,j) $\impluego$ posicion(p,j) == e.jugadores[p].posicion)) $\land$ pokemons(j) == listaPoke(e.pokemons.claves, e.pokemons) $\land$ expulsados(j) == listaExpulsados(e.jugadores) $\land$ ($\forall c:$ coor) (c $\in$ posConPokemons(j) == c $\in$ e.posConPokemons) $\land$ TODO POKEMON EN POS, TODO MOV PARA CAPTURA
+	}
+	
+	~
+
+	\tadOperacion{listaPoke}{conj(pokemon)/cs, dicc(String{,}Nat)/dic}{multiconj(pokemon)}{cs $\subseteq$ claves(dic)}
+	\tadOperacion{agregarPoke}{pokemon, nat}{multiconj(pokemon)}{}
+	\tadOperacion{listaExpulsados}{TODO NO SE QUE PASARLE}{conj(jugador)}{}
+	
+	\tadAxioma{listasPoke(cs, dic)}
+	{\IF vacia?(cs) THEN
+		$\emptyset$
+	ELSE
+		$\langle$ agregarPoke(dameUno(cs),obtener(dameUno(cs),dic)) $\bigcup$ listasPoke(sinUno(cs), dic)
+	FI}
+	
+	\tadAxioma{agregarPoke(p, n)}
+	{\IF n == 0 THEN
+		$\emptyset$
+	ELSE
+		$\langle$ Ag(p, agregarPoke(p, n-1))
+	FI}
+	%TODO dado que los jugadores estan implicitos, es una boludez decirle "cucha, para cada numero que tenes en jugadores, existe esa posicion en el vector" asi que también queda medio implicito ese observador, pero capaz hay una mejor forma de hacerlo y dejarlo retratado :)
 
 
 \end{Representacion}
