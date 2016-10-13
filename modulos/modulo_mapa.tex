@@ -1,9 +1,11 @@
+\newcommand\compmatriz{lat_{max} \times long_{max}}
+
 \section{Módulo Mapa}
 
 Las posiciones se almacenan en una grilla dinámica.
 El mapa asegura la posibililidad de encontrar conexiones rápidamente al costo de agregado lento. En cada posición se almacena el grupo del conexiones al que pertenece: se considera que dos posiciones están conectadas si pertenecen al mismo grupo. Al ser agregada una posición, las nuevas conexiones se calculan automáticamente.
 
-Usaremos $lat_{max}$ y $long_{max}$ para denotar las máximas dimensiones entre las posiciones válidas.
+Usaremos $lat_{max}$ y $long_{max}$ para denotar las máximas dimensiones entre las posiciones existentes del mapa.
 
 \begin{Interfaz}
 	\textbf{se explica con}: \tadNombre{mapa}.
@@ -20,12 +22,12 @@ Usaremos $lat_{max}$ y $long_{max}$ para denotar las máximas dimensiones entre 
 	\InterfazFuncion{AgregarCoor}{\In{c}{coor}, \Inout{m}{map}}{}
 	[$m \igobs m_0$]
 	{$m \igobs agregarCoor(c,m_0)$}
-	[$O(lat_{max} \times long_{max})$]
+	[$O(\compmatriz)$]
 	[agrega la coordenada al mapa.]
 
 	\InterfazFuncion{Coordenadas}{\In{m}{map}}{conj(coor)}
 	{$res \igobs coordenadas(m)$}
-	[$O(lat_{max} \times long_{max})$]
+	[$O(\compmatriz)$]
 	[devuelve las coordenadas de un mapa]
 
 	\InterfazFuncion{PosExistente}{\In{c}{coor}, \In{m}{map}}{bool}
@@ -50,10 +52,11 @@ Usaremos $lat_{max}$ y $long_{max}$ para denotar las máximas dimensiones entre 
 			\tupItem{alto}{nat}
 			\tupItem{ancho}{nat}
 			\tupItem{posiciones}{vector(vector(dataPos))}
+			\tupItem{proxGrupo}{nat}
 		\end{Tupla}
 
 		\begin{Tupla}[dataPos]
-			\tupItem{posValida}{bool}
+			\tupItem{existe}{bool}
 			\tupItem{grupo}{nat}
 		\end{Tupla}
 	\end{Estructura}
@@ -65,20 +68,24 @@ Usaremos $lat_{max}$ y $long_{max}$ para denotar las máximas dimensiones entre 
 		
 		\item La longitud de cada uno de los vectores dentro del vector posiciones es igual o menor al ancho del mapa
 
-		\item Existe al menos un vector dentro del vector posiciones cuya longitud es igual al ancho del mapa 
+		\item Existe al menos un vector dentro del vector posiciones cuya longitud es igual al ancho del mapa
+
+		\item Las posiciones existentes adyacentes deben tener el mismo grupo
+
+		\item TODO ALGO SOBRE LAS POSICIONES EN GRUPOS DISTINTOS
  		
 	\end{enumerate}
 	\Rep[eMap][e]{
-		e.alto = long(e.posiciones) $\yluego$ \\
-		($\exists i$: nat)(i $<$ e.alto $\implies$ long(e.posiciones[i]) = e.ancho) $\land$ \\
-		($\forall i$: nat)(i $<$ e.alto $\implies$ long(e.posiciones[i]) $\leq$ e.ancho)
+		e.alto = Longitud(e.posiciones) $\yluego$ \\
+		($\exists i$: nat) (i $<$ e.alto $\implies$ Longitud(e.posiciones[i]) = e.ancho) $\land$ \\
+		($\forall i$: nat) (i $<$ e.alto $\implies$ Longitud(e.posiciones[i]) $\leq$ e.ancho) $\land$ %% TODO mas rep
 	}
 
 	\TituloDis{Función de Abstracción}
 
 	\Abs[eMap]{map}[e]{m}{
 		($\forall c$: coor) (c $\in$ coordenadas(m) $\iff$ \\
-		latitud(c) $<$ e.alto $\yluego$ longitud(c) $<$ long(e.posiciones[latitud(c)]) $\yluego$ e.posiciones[latitud(c)][longitud(c)].posValida)
+		latitud(c) $<$ e.alto $\yluego$ longitud(c) $<$ Longitud(e.posiciones[latitud(c)]) $\yluego$ e.posiciones[latitud(c)][longitud(c)].existe)
 	}
 \end{Representacion}
 
@@ -91,54 +98,131 @@ Usaremos $lat_{max}$ y $long_{max}$ para denotar las máximas dimensiones entre 
 		res.alto $\leftarrow$ 0\OdeLinea{1}
 		res.ancho $\leftarrow$ 0\OdeLinea{1}
 		res.posiciones $\leftarrow$ Vacia()\OdeLinea{1}
+		res.proxGrupo $\leftarrow$ 1\OdeLinea{1}
 	\end{algorithm}
 
-	\complejidad: $O()$
+	\complejidad: $O(1)$
 
-	\justifcomp:
+	\justifcomp: solo se inicializan las variables y se crea el vector vacío.
 
 	~
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{iAgregarCoor}{\In{c}{coor}, \Inout{m}{map}}{}}
+		\tcp{se agregan los vectores vacíos necesarios}
+		\While(\OdeBloque{lat_{max}}){Longitud(m.posiciones) $\leq$ Latitud(c)}{
+			AgregarAtras(m.posiciones, Vacia())\OdeLinea{f(lat_{max})}
+		}
+		\If{m.alto $\leq$ Latitud(c)}{
+			m.alto $\leftarrow$ Latitud(c)\OdeLinea{1}
+		}
+		\tcp{se agregan las posiciones inexistentes necesarias}
+		\While(\OdeBloque{long_{max}}){Longitud(m.posiciones[Latitud(c)]) $\leq$ Longitud(c)}{
+			AgregarAtras(m.posiciones, CrearDataPos())\OdeLinea{f(long_{max})}
+		}
+		\If{m.ancho $\leq$ Longitud(c)}{
+			m.ancho $\leftarrow$ Longitud(c)\OdeLinea{1}
+		}
+		\tcp{se modifica la posición a existente y se unen los grupos pertinentes}
+		m.posiciones[Latitud(c)][Longitud(c)].existe $\leftarrow$ true\OdeLinea{1}
+		m.posiciones[Latitud(c)][Longitud(c)].grupo $\leftarrow$ m.proxGrupo\OdeLinea{1}
+		Unir(c, CoordenadaArriba(c), m)\OdeLinea{\compmatriz}
+		\If{Latitud(c) $>$ 0}{
+			Unir(c, CoordenadaAbajo(c), m)\OdeLinea{\compmatriz}
+		}
+		Unir(c, CoordenadaALaDerecha(c), m)\OdeLinea{\compmatriz}
+		\If{Longitud(c) $>$ 0}{
+			Unir(c, CoordenadaALaIzquierda(c), m)\OdeLinea{\compmatriz}
+		}
+		\tcp{si no se une con nada, se aumenta el próximo grupo}
+		\If{m.posiciones[Latitud(c)][Longitud(c)].grupo $==$ m.proxGrupo}{
+			m.proxGrupo $\leftarrow$  m.proxGrupo + 1\OdeLinea{1}
+		}
 	\end{algorithm}
 
-	\complejidad: $O()$
+	\complejidad: $O(\compmatriz)$
 
-	\justifcomp:
+	\justifcomp: más allá de si la nueva posición tiene la mayor longitud o latitud, se debe iterar el conjunto entero para unir las posiciones que correspondan. Los costos redimensionar los vectores son menores (si se considera el costo de copiar coordenadas $\Theta(1)$) ya que luego se deben iterar todos los vectores del mapa.
 
 	~
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
-		\caption{\algoritmo{iCoordenadas}{\In{m}{map}}{}}
+		\caption{\algoritmo{CrearDataPos}{}{dataPos}}
+		res.existe $\leftarrow$ false\OdeLinea{1}
+		%% esta inicializacion se puede omitir
+		res.grupo $\leftarrow$ 0\OdeLinea{1}
 	\end{algorithm}
 
-	\complejidad: $O()$
+	\complejidad: $O(1)$
 
-	\justifcomp:
+	\justifcomp: solo se crea una posición no existente.
 
 	~
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
-		\caption{\algoritmo{iPosExistente}{\In{c}{coor}, \In{m}{map}}{}}
+		\caption{\algoritmo{Unir}{\In{c1}{coor}, \In{c2}{coor}, \In{m}{map}}{bool}}
+		\If(\OdeBloque{\compmatriz}){PosExistente(c1) \textbf{and} PosExistente(c2) \textbf{and not} HayCamino(c1, c2, m)}{
+			nat : grupoViejo $\leftarrow$ m.posiciones[Latitud(c1)][Longitud(c1)].grupo\OdeLinea{1}
+			nat : grupoUnido $\leftarrow$ m.posiciones[Latitud(c2)][Longitud(c2)].grupo\OdeLinea{1}
+			itConj(coor) : it $\leftarrow$ CrearIt(Coordenadas(m))\OdeLinea{\compmatriz}
+			\While(\OdeBloque{\compmatriz}){HaySiguiente(it)}{
+				coor : pos $\leftarrow$ Siguiente(it)\OdeLinea{1}
+				\If{m.posiciones[Latitud(pos)][Longitud(pos)].grupo $==$ grupoViejo}{
+					m.posiciones[Latitud(pos)][Longitud(pos)].grupo $\leftarrow$ grupoUnido\OdeLinea{1}
+				}
+			}
+		}
 	\end{algorithm}
 
-	\complejidad: $O()$
+	\complejidad: $O(\compmatriz)$
 
-	\justifcomp:
+	\justifcomp: para poder unir se debe crear un iterador del conjunto de las coordenadas existentes. La máxima cantidad de iteraciones a realizar con ese iterador es la misma cantidad de coordenadas existentes. En el mejor caso no se deben unir las posiciones, y no se realiza ninguna operación ($\Theta(1)$).
 
 	~
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
-		\caption{\algoritmo{iHayCamino}{\In{c1}{coor}, \In{c2}{coor}, \In{m}{map}}{}}
+		\caption{\algoritmo{iCoordenadas}{\In{m}{map}}{conj(coor)}}
+		res $\leftarrow$ Vacío()\OdeLinea{1}
+		\For(\OdeBloque{\compmatriz}){$i \leftarrow 0$ \KwTo m.alto}{
+			\For(\OdeBloque{long_{max}}){$j \leftarrow 0$ \KwTo Longitud(m.posiciones[i])}{
+				\If(\OdeBloque{1}){m.posiciones[i][j].existe}{
+					coor: pos $\leftarrow$ CrearCoor(i,j)\OdeLinea{1}
+					AgregarRapido(res, pos)\OdeLinea{1}
+				}
+			}
+		}
 	\end{algorithm}
 
-	\complejidad: $O()$
+	\complejidad: $O(\compmatriz)$
 
-	\justifcomp:
+	\justifcomp: se deben leer todas las posiciones de los vectores para agregar las existentes al conjunto. En el peor caso, el mapa es rectangular y todos los vectores tienen la misma longitud. Cada agregado individual es constante (se sabe que esa coordenada no estaba anteriormente).
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iPosExistente}{\In{c}{coor}, \In{m}{map}}{bool}}
+		res $\leftarrow$ Latitud(c) $<$ m.alto \textbf{and} Longitud(c) $<$ Long(m.posiciones[Latitud(c)]) \textbf{and} m.posiciones[Latitud(c1)][Longitud(c1)].existe\OdeLinea{1}
+	\end{algorithm}
+
+	\complejidad: $O(1)$
+
+	\justifcomp: solo se comparan números y se accede a posiciones de los vectores.
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iHayCamino}{\In{c1}{coor}, \In{c2}{coor}, \In{m}{map}}{bool}}
+		res $\leftarrow$ m.posiciones[Latitud(c1)][Longitud(c1)].grupo = m.posiciones[Latitud(c2)][Longitud(c2)].grupo\OdeLinea{1}
+	\end{algorithm}
+
+	\complejidad: $O(1)$
+
+	\justifcomp: solo se accede a posiciones de los vectores. Las uniones se calculan al agregar las posiciones.
 
 \end{Algoritmos}
