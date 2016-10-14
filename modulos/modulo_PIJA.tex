@@ -163,6 +163,21 @@
 		res.raiz $\leftarrow$ NULL\;
 	\end{algorithm}
 
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{buscar}{\In{a}{RELLENAR}, \Inout{padre}{puntero(Nodo)}, \Inout{hijo}{puntero(Nodo)}}}
+		\While{hijo $\neq$ NULL $\yluego$ hijo.idJugador $\neq$ a}{
+			padre $\leftarrow$ hijo\;
+			\eIf{hijo.cant $<$ a.cant $\lor$ (hijo.cant = a.cant $\land$ hijo.id $<$ a.id}{
+				hijo $\leftarrow$ hijo.hijoIzq\;
+			}{
+				hijo $\leftarrow$ hijo.hijoDer\;
+			}
+		}
+
+	\end{algorithm}
+
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{iAgregar}{\In{a}{RELLENAR}, \Inout{h}{chupaPij}}{}}
