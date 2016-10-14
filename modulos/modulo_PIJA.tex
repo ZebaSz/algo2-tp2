@@ -1,0 +1,192 @@
+\section{Módulo Chupense una Pija}
+	Description %%TODO habria que decir que la raiz es el elemento minimo
+
+\begin{Interfaz}
+	\textbf{se explica con}: \tadNombre{CONJ?}. %%TODO
+
+	\textbf{géneros}: \TipoVariable{chupaPij}.
+
+	\TituloDis{Operaciones básicas de Chupense una Pija}
+
+	\InterfazFuncion{Vacia}{}{chupaPij}
+	[]
+	{$res \igobs \emptyset$}
+	[]
+	[]
+	[]
+
+	\InterfazFuncion{Agregar}{\In{a}{RELLENAR}, \Inout{h}{chupaPij}}{}
+	[]
+	{$h \igobs$ Ag($a, h_0$)}
+	[]
+	[]
+	[]
+
+	\InterfazFuncion{Vacia?}{\In{h}{chupaPij}}{bool}
+	{$res \igobs$ $\emptyset$?($h$)]}
+	[]
+	[]
+
+	\InterfazFuncion{Pertenece?}{\In{a}{RELLENAR}, \In{h}{chupaPij}}{bool}
+	{$res \igobs$ a $\in$ h]}
+	[]
+	[]	
+
+	\InterfazFuncion{Borrar}{\In{a}{RELLENAR}, \Inout{h}{chupaPij}}{}
+	[$h \igobs h_0$]
+	{$h \igobs$ $h_0 - a$}
+	[]
+	[]
+	[]
+
+	%%TODO EXTENDER TAD
+	\InterfazFuncion{Menor}{\In{a}{RELLENAR}, \Inout{h}{chupaPij}}{RELLENAR}
+	[]
+	{}
+	[]
+	[]
+	[]
+
+\end{Interfaz}
+
+
+\begin{Representacion}
+	\TituloDis{Representación de chupaPij}
+
+	\begin{Estructura}{ pija }[ePij]
+		\begin{Tupla}[ePij]
+			\tupItem{raiz}{puntero(Nodo)}
+		\end{Tupla}
+		\begin{Tupla}[Nodo]
+			\tupItem{hijoIzq}{puntero(Nodo)}
+			\tupItem{hijoDer}{puntero(Nodo)}				
+			\tupItem{cantPokemons}{nat}
+			\tupItem{idJugador}{nat}
+			\tupItem{factor}{nat}
+		\end{Tupla}
+	\end{Estructura}
+
+	\TituloDis{Invariante de Representación}
+
+	\begin{enumerate}
+		
+		\item No hay idJugador repetidos
+
+		\item Los nodos de la izquierda tienen mayor prioridad
+
+		\item Los nodos de la derecha tienen menor prioridad
+
+		\item El factor de balanceo es la diferencia de la cantidad de nodos del hijo izquierdo por la del hijo derecho
+
+		\item Los factores son -1, 0 o +1
+
+	\end{enumerate}
+	
+
+	\Rep[ePij][e]{
+		sinRepetidos(e.raiz, $\emptyset$) $\land$ ABB?(e.raiz) $\land$ factorValido?(e.raiz)
+	}
+
+
+	\tadOperacion{sinRepetidos}{puntero(nodo), conj(nat)}{}
+	\tadOperacion{ABB?}{puntero(Nodo)/nodo}{bool}{}
+	\tadOperacion{menor?}{puntero(Nodo)/padre, puntero(Nodo)/hijo}{bool}{padre $\neq$ NULL}
+	\tadOperacion{balanceado?}(puntero(nodo)){bool}{}
+	\tadOperacion{cantidadHijos}{puntero(Nodo)}{}
+
+ 	~
+
+	\tadAxioma{sinRepetidos(padre, ids)}{
+		padre $\neq$ NULL $\oluego$( padre.idJugador $\not\in$ ids $\land$ \\
+		sinRepetidos(padre.hijoIzq, Ag(padre.idJugador, c)) $\land$ \\
+		sinRepetidos(padre.hijoDer, Ag(padre.idJugador, c)))
+	}
+
+	~
+
+	\tadAxioma{ABB?(nodo)}{
+		(nodo = NULL) $\oluego$ \\ 
+		(menor?(nodo, nodo.hijoIzq) $\land$ $\neq$menor?(nodo, nodo.hijoDer) $\land$ \\
+		ABB?(nodo.hijoIzq) $\land$ ABB?(nodo.hijoDer))
+	}
+
+	~
+
+	\tadAxioma{menor?(padre, hijo)}{
+		(hijo = NULL) $\oluego$ padre.cantPokemons $<$ hijo.cantPokemons $\lor$ \\
+		(padre.cantPokemons = hijo.cantPokemons $\land$ padre.idJugador $<$ hijo.idJugador)
+	}
+
+	~
+	%%TODO ARREGLAR/PREGUNTAR ESE MENOS UNO
+	\tadAxioma{factorValido?(nodo)}{
+		nodo = NULL $\oluego$ \\
+		(nodo.factor = cantidadHijos(nodo.hijoDer) - cantidadHijos(nodo.hijoDer) $\land$ \\
+		(nodo.factor = 0 $\lor$ nodo.factor = 1 $\lor$ nodo.factor = -1) $\land$ \\
+		factorValido?(nodo.hijoIzq) $\land$ factorValido?(nodo.hijoDer))
+	}
+
+	~
+
+	\tadAxioma{cantidadHijos(nodo)}{
+		{\IF nodo = NULL THEN
+			0
+		ELSE
+			$\beta$(nodo.hijoIzq $\neq$ NULL) + cantidadHijos(nodo.hijoIzq) + \\
+			$\beta$(nodo.hijoDer $\neq$ NULL) + cantidadHijos(nodo.hijoDer) \\			
+		}
+	}
+
+	\TituloDis{Función de Abstracción}
+
+	\Abs[ePij]{chupaPij}[e]{c}{
+		($\forall$ a: RELLENAR) a $\in$ c $\iff$ a $\in$ conjunto(c)
+	} 
+
+	\tadOperacion{conjunto}{puntero(Nodo)}{bool}{}
+	\tadAxioma{conjunto(nodo)}{
+		{\IF nodo = NULL THEN
+			$\emptyset$
+		ELSE
+			Ag(nodo.idJugador, (conjunto(nodo.hijoIzq) $\cup$ conjunto(nodo.hijoDer)))	
+		FI}
+	}
+
+\end{Representacion}
+
+\begin{Algoritmos}
+	\TituloDis{Algorítmos de Chupense una Pija}
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iVacia}{}{chupaPij}}
+		res.raiz $\leftarrow$ NULL\;
+	\end{algorithm}
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iAgregar}{\In{a}{RELLENAR}, \Inout{h}{chupaPij}}{}}
+	\end{algorithm}
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iVacia?}{\In{h}{chupaPij}}{bool}}
+	\end{algorithm}
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iPertenece?}{\In{a}{RELLENAR}, \In{h}{chupaPij}}{bool}}
+	\end{algorithm}
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iBorrar}{\In{a}{RELLENAR}, \Inout{h}{chupaPij}}{}}
+	\end{algorithm}
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iMenor}{\In{a}{RELLENAR}, \Inout{h}{chupaPij}}{RELLENAR}}
+	\end{algorithm}
+
+
+\end{Algoritmos}
