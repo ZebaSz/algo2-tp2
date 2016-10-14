@@ -35,32 +35,38 @@ Usaremos $copy(s)$ para denotar el costo de copiar el elemento $s \in \alpha$. L
 	\InterfazFuncion{CrearDiccionario}{}{\dicString}
 	{$res$ $\igobs$ vacío()}
 	[$O(1)$]
-	[creación de un diccionario vacío.]
+	[crea de un diccionario vacío.]
 
 	\InterfazFuncion{Definir}{\Inout{d}{\dicString}, \In{c}{string}, \In{s}{$\alpha$}}{}
 	[$d \igobs d_0$]
 	{$d \igobs$ definir($c, s, d_0$)}
 	[$O(|c_{max}| + copy(s))$]
-	[define sobre la clave $c$ el signigicado $s$ en el diccionario $d$.]
-	[se almacena una copia de $c$ y de $s$.]
+	[define una clave en el diccionario.]
+	[se almacenan copias de $c$ y $s$.]
 
 	\InterfazFuncion{Definido?}{\In{d}{\dicString}, \In{c}{string}}{bool}
 	{$res \igobs$ def?($c, d$)]}
 	[$O(|c_{max}|)$]
-	[devuelve true si la clave $c$ esta definida en el diccionario.]
+	[devuelve \texttt{true} si la clave esta definida en el diccionario.]
 
 	\InterfazFuncion{Obtener}{\In{d}{\dicString}, \In{c}{string}}{$\alpha$}
 	[def?($c, d$)]
 	{alias($res \igobs$ obtener($c$, $d$))}
 	[$O(|c_{max}|)$]
-	[devuelve el significado de la clave $c$ en $d$]
+	[devuelve el significado de la clave en el diccionario.]
 	[$res$ es modificable si y sólo si $d$ es modificable.]
 
 	\InterfazFuncion{Borrar}{\Inout{d}{\dicString}, \In{c}{string}}{}
 	[$d \igobs d_0 \land$ def?($c, d_0$)]
 	{$d \igobs$ borrar($c, d_0$)}
 	[$O(|c_{max}| * \#c)$]
-	[borra la clave $c$ y su significado del diccionario $d$.]
+	[borra una clave y su significado del diccionario.]
+
+	\InterfazFuncion{Claves}{\In{d}{\dicString}}{conj(string)}
+	{alias($res =$ claves($d$))}
+	[$O(1)$]
+	[devuelve el conjunto de las claves del diccionario.]
+	[$res$ no es modificable.]
 
 
 	\TituloDis{Operaciones del iterador}
@@ -335,6 +341,20 @@ Usaremos $copy(s)$ para denotar el costo de copiar el elemento $s \in \alpha$. L
 	\complejidad: $O(|c_{max}| * \#c)$
 
 	\justifcomp: el ciclo itera hasta el largo de la clave a borrar y luego asigna un booleano, y borra la clave del conjunto
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iClaves}{\In{dic}{dicStr}}{conj(String)}}
+		res $\leftarrow$ dic.claves\OdeLinea{1}
+	\end{algorithm}
+
+	\complejidad: $O(1)$
+
+	\justifcomp: el conjunto de claves se devuelve por referencia
+
+	~
 
 	\TituloDis{Algorítmos del iterador}
 

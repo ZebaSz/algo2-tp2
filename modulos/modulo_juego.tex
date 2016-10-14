@@ -113,7 +113,7 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 	[$O()$]
 	[devuelve si hay algún pokémon cerca de la posición.]
 
-	\InterfazFuncion{PosPókemonCercano}{\In{j}{juego}, \In{c}{coor}}{coor}
+	\InterfazFuncion{PosPokémonCercano}{\In{j}{juego}, \In{c}{coor}}{coor}
 	[hayPokémonCercano($c,j$)]
 	{$res \igobs$ posPokémonCercano($c,j$)}
 	[$O()$]
@@ -173,14 +173,18 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 		
 		\item Todas las coordenadas pertenecientes a posConPokemons pertenecen a las coordenadas válidas del mapa
 
-		\item La suma de todos los significados del diccionario pokemons más la longitud de posConPokemons es igual a cantPokemons
+		\item La suma de todos los significados del diccionario pokemons es igual a cantPokemons
 		%TODO no se como meter bien la sumatoria en esta condicion :(
 		
 		\item No hay dos coordenadas pertenecientes a posConPokemons a menos de 5 de distancia
 		
 		\item Para cada miembro de jugadores, las claves de pokemonsCapturados pertenecen a las claves de pokemons
 
-		\item En pokemons, para cada clave su significado es la suma de todos los significados de infoJugadores donde la clave existe y el jugador no tiene 5 sanciones, más la cantidad de coordenadas de posConPokemons donde el pokemon se encuentra
+		\item Para cada clave de pokemons, su significado es la suma de:
+		\begin{itemize}
+			\item todos los significados de esa misma clave en los pokemonsCapturados de cada miembro de jugadores donde la clave existe y el jugador no fue eliminado
+			\item la cantidad de coordenadas de posConPokemons donde se encuentra un pokemon igual a esa clave
+		\end{itemize}
 		%TODO no se como meter bien la sumatoria en esta condicion AGAIN
 				
 		\item Para cada miembro de jugadores, si el jugador tiene 5 sanciones no puede estar conectado 
@@ -188,17 +192,11 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 		
 		\item Para cada miembro de jugadores, si el jugador esta conectado su posición tiene que pertenecer a las coordenadas válidas del mapa
 		
-		\item Para cada miembro de jugadores, si el jugador no esta conectado QUE CARAJO LE PASA A SU POSICION
-		
-		\item Para cada miembro de jugadores, si el jugador no esta conectado QUE CARAJO PASA CON EL DICCIONARIO POKEMONS CAPTURADOS
- 
- %TODO uso la función claves, ¿se puede agregar a diccString pls?
-		
 	\end{enumerate}
 
 
 	\Rep[pokego][e]{
-	($\forall c$: coor)(c $\in$ e.posConPokemons $\implies$ c $\in$ coordenadas(e.mapa)) $\land$ ($\forall c,d$: coor)(c $\in$ e.posConPokemons $\land$ d $\in$ e.posConPokemons $\implies$ distEuclidea(c,d) == 0 $\lor$ distEuclidea(c,d) $>$ 25) $\land$ ($\forall i$:infoJugador)(i $\in$ e.jugadores $\implies$ claves(i.pokemonsCapturados) $\subseteq$ claves(e.pokemons)) $\land$ ($\forall i$:infoJugador)(i.sanciones == 5 $\implies$ $\neg$i.conectado) $\yluego$ ($\forall i$:infoJugador)(i.conectado $\implies$ i.posicion $\in$ coordenadas(e.mapa))
+	($\forall c$: coor)(c $\in$ e.posConPokemons $\implies$ c $\in$ coordenadas(e.mapa)) $\land$ ($\forall c,d$: coor)(c $\in$ e.posConPokemons $\land$ d $\in$ e.posConPokemons $\implies$ c = d $\lor$ distEuclidea(c,d) $>$ 25) $\land$ ($\forall i$:infoJugador)(i $\in$ e.jugadores $\implies$ claves(i.pokemonsCapturados) $\subseteq$ claves(e.pokemons)) $\land$ ($\forall i$:infoJugador)(i.sanciones == 5 $\implies \neg$i.conectado?) $\yluego$ ($\forall i$:infoJugador)(i.conectado? $\implies$ i.posicion $\in$ coordenadas(e.mapa))
 	}
 	
 	\TituloDis{Función de Abstracción}
@@ -238,6 +236,344 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 
 \begin{Algoritmos}
 
-% TODO algoritmos
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iCrearJuego}{\In{m}{mapa}}{pokego}}
+		res.mapa $\leftarrow$ m\;
+		res.pokemons $\leftarrow$ CrearDiccionario()\;
+		res.posConPokemons $\leftarrow$ Vacio()\;
+		res.jugadores $\leftarrow$ Vacio()\;
+		res.cantPokemons $\leftarrow$ 0\;
+	\end{algorithm}
+
+	\complejidad: $O()$
+
+	\justifcomp:
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iAgregarPokémon}{\Inout{j}{pokego}, \In{pk}{pokemon}, \In{c}{coor}}{}}
+		j.cantPokemons $\leftarrow$ j.cantPokemons + 1\;
+		\eIf{Definido(j.pokemons, pk)}{
+			nat: nuevaCant $\leftarrow$ Obtener(j.pokemons, pk) + 1\;
+			Definir(j.pokemons, pk, nuevaCant)\;
+		}{
+			Definir(j.pokemons, pk, 1)\;
+		}
+		% TODO algo sobre el contador de movs de las posiciones cercanas
+	\end{algorithm}
+
+	\complejidad: $O()$
+
+	\justifcomp:
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iAgregarJugador}{\Inout{j}{pokego}}{nat}}
+		res $\leftarrow$ Longitud(j.jugadores)\; 
+		AgregarAtras(j.jugadores, CrearInfoJugador())\;
+	\end{algorithm}
+
+	\complejidad: $O()$
+
+	\justifcomp:
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{CrearInfoJugador}{}{infoJugador}}
+		res.sanciones $\leftarrow$ 0\;
+		res.conectado? $\leftarrow$ false\;
+		% res.posicion $\leftarrow$ CREO QUE NADA, PREGUNTAR SI SE PUEDE DEJAR SIN INIT
+		res.pokemonsCapturados $\leftarrow$ CrearDiccionario()\;
+	\end{algorithm}
+
+	\complejidad: $O()$
+
+	\justifcomp:
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iConectarse}{\Inout{j}{pokego}, \In{e}{jugador}, \In{c}{coor}}{}}
+		j.jugadores[e].conectado? $\leftarrow$ true\;
+		j.jugadores[e].posicion $\leftarrow$ c\;
+	\end{algorithm}
+
+	\complejidad: $O()$
+
+	\justifcomp:
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iDesconectarse}{\Inout{j}{pokego}, \In{e}{jugador}}{}}
+		j.jugadores[e].conectado? $\leftarrow$ false\;
+	\end{algorithm}
+
+	\complejidad: $O()$
+
+	\justifcomp:
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iMoverse}{\Inout{j}{pokego}, \In{e}{jugador}, \In{c}{coor}}{}}
+		\If{\textbf{not} HayCamino(j.mapa, Posicion(j,e), c) \textbf{or} DistEuclidea(Posicion(j,e), c) $>$ 100}{
+			j.jugadores[e].sanciones $\leftarrow$ j.jugadores[e].sanciones + 1\;
+		}
+		\eIf{j.jugadores[e].sanciones = 5}{
+			%% BORRAR TODOS LOS POKEMONS
+		}{
+			j.jugadores[e].posicion $\leftarrow$ c\;
+			%% COMP AUTO DE CAPTURA, ETC
+		}
+	\end{algorithm}
+
+	\complejidad: $O()$
+
+	\justifcomp:
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iMapa}{\In{j}{pokego}}{mapa}}
+		res $\leftarrow$ j.mapa\;
+	\end{algorithm}
+
+	\complejidad: $O()$
+
+	\justifcomp:
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iJugadores}{\In{j}{pokego}}{itBi(jugador)}}
+		%% ITERADOR A LOS JUGADORES? PERO LOS JUGADORES SON NAAAAAAAAAAAAAATS
+	\end{algorithm}
+
+	\complejidad: $O()$
+
+	\justifcomp:
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iEstaConectado}{\In{j}{pokego}, \In{e}{jugador}}{bool}}
+		res $\leftarrow$ j.jugadores[e].conectado?\;
+	\end{algorithm}
+
+	\complejidad: $O()$
+
+	\justifcomp:
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iSanciones}{\In{j}{pokego}, \In{e}{jugador}}{nat}}
+		res $\leftarrow$ j.jugadores[e].sanciones\;
+	\end{algorithm}
+
+	\complejidad: $O()$
+
+	\justifcomp:
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iPosicion}{\In{j}{pokego}, \In{e}{jugador}}{coor}}
+		res $\leftarrow$ CrearCoor(Latitud(j.jugadores[e].posicion), Longitud(j.jugadores[e].posicion))\;
+	\end{algorithm}
+
+	\complejidad: $O()$
+
+	\justifcomp:
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iPokémons}{\In{j}{pokego}}{itBi(tupla(pokemon, nat))}}
+		res $\leftarrow$ CrearIterador(j.pokemons)\;
+	\end{algorithm}
+
+	\complejidad: $O()$
+
+	\justifcomp:
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iExpulsados}{\In{j}{pokego}}{itBi(jugador)}}
+		%% MISMO QUE ANTES, EL IT ES SOLO UN CONTADOR QUE AVANZA MAS DE UNO CUANDO EL SUCESOR (NO) ESTA EXPULSADO
+	\end{algorithm}
+
+	\complejidad: $O()$
+
+	\justifcomp:
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iPosConPokémons}{\In{j}{pokego}}{conj(coor)}}
+		res $\leftarrow$ j.posConPokemons\;
+	\end{algorithm}
+
+	\complejidad: $O()$
+
+	\justifcomp:
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iPokémonEnPos}{\In{j}{pokego}, \In{c}{coor}}{pokemon}}
+		%% ESTUPIDA GRILLA
+	\end{algorithm}
+
+	\complejidad: $O()$
+
+	\justifcomp:
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iPuedoAgregarPokémon}{\In{j}{pokego}, \In{c}{coor}}{bool}}
+		res $\leftarrow$ PosExistente(j, c) \textbf{and} HayPokémonEnDistancia(j, c, 25)\;
+	\end{algorithm}
+
+	\complejidad: $O()$
+
+	\justifcomp:
+
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{HayPokémonEnDistancia}{\In{j}{pokego}, \In{c}{coor}, \In{n}{nat}}{bool}}
+		res $\leftarrow$ false\;
+		nat : i $\leftarrow$ 0\;
+		\While{i $<$ 5}{
+			nat : j $\leftarrow$ 0\;
+			\While{DistEuclidea(c, CrearCoor(i,j)) $\leq$ n}{
+				coor : d $\leftarrow$ CrearCoor(i,j)\;
+				\If{Pertenece(j.posConPokemons, d)}{
+					res $\leftarrow$ true\;
+					%% ES LEGAL USAR RETURN?
+					\textbf{return}\;
+				}
+				j $\leftarrow$ j + 1\;
+			}
+			i $\leftarrow$ i + 1\;
+		}
+	\end{algorithm}
+
+	\complejidad: $O()$
+
+	\justifcomp:
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iHayPokémonCercano}{\In{j}{pokego}, \In{c}{coor}}{bool}}
+		res $\leftarrow$ HayPokémonEnDistancia(j, c, 4)\;
+	\end{algorithm}
+
+	\complejidad: $O()$
+
+	\justifcomp:
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iPosPokémonCercano}{\In{j}{pokego}, \In{c}{coor}}{coor}}
+		nat : i $\leftarrow$ 0\;
+		\While{i $<$ 5}{
+			nat : j $\leftarrow$ 0\;
+			\While{DistEuclidea(c, CrearCoor(i,j)) $\leq$ n}{
+				coor : d $\leftarrow$ CrearCoor(i,j)\;
+				\If{Pertenece(j.posConPokemons, d)}{
+					res $\leftarrow$ d\;
+					%% ES LEGAL USAR RETURN?
+					\textbf{return}\;
+				}
+				j $\leftarrow$ j + 1\;
+			}
+			i $\leftarrow$ i + 1\;
+		}
+	\end{algorithm}
+
+	\complejidad: $O()$
+
+	\justifcomp:
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iEntrenadoresPosibles}{\In{j}{pokego}, \In{c}{coor}}{conj(jugador)}}
+		%% CREAR ALGO QUE OBTENGA EL CONJ DE LOS JUGADORES DE LA COLA DE PRIOR
+	\end{algorithm}
+
+	\complejidad: $O()$
+
+	\justifcomp:
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iIndiceRareza}{\In{j}{pokego}, \In{pk}{pokemon}}{nat}}
+		nat : cantPk $\leftarrow$ Obtener(j.pokemones, pk)\; 
+		%% LA DIVISION DE NATS
+		res $\leftarrow$ 100 - (cantPk $\times$ 100 $\div$ j.cantPokemons)\;
+	\end{algorithm}
+
+	\complejidad: $O()$
+
+	\justifcomp:
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iCantPokémonsTotales}{\In{j}{pokego}}{nat}}
+		res $\leftarrow$ j.cantPokemons\;
+	\end{algorithm}
+
+	\complejidad: $O()$
+
+	\justifcomp:
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iCantMismaEspecie}{\In{j}{pokego}, \In{pk}{pokemon}}{nat}}
+		res $\leftarrow$ Obtener(j.pokemones, pk)\; 
+	\end{algorithm}
+
+	\complejidad: $O()$
+
+	\justifcomp:
 
 \end{Algoritmos}
