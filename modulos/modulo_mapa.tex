@@ -70,15 +70,17 @@ Usaremos $lat_{max}$ y $long_{max}$ para denotar las máximas dimensiones entre 
 
 		\item Existe al menos un vector dentro del vector posiciones cuya longitud es igual al ancho del mapa
 
-		\item Las posiciones existentes adyacentes deben tener el mismo grupo
-
-		\item TODO ALGO SOBRE LAS POSICIONES EN GRUPOS DISTINTOS
+		\item Las posiciones existentes adyacentes entre sí deben tener el mismo grupo
+		
+		\item Las posiciones que no tienen ninguna posición adyacente válida pertenecen a un grupo distinto a todas las demás posiciones
  		
 	\end{enumerate}
 	\Rep[eMap][e]{
 		e.alto = Longitud(e.posiciones) $\yluego$ \\
 		($\exists i$: nat) (i $<$ e.alto $\implies$ Longitud(e.posiciones[i]) = e.ancho) $\land$ \\
-		($\forall i$: nat) (i $<$ e.alto $\implies$ Longitud(e.posiciones[i]) $\leq$ e.ancho) $\land$ %% TODO mas rep
+		($\forall i$: nat) (i $<$ e.alto $\implies$ Longitud(e.posiciones[i]) $\leq$ e.ancho) $\land$
+		($\forall i,j$: nat) (i $<$ long(e.posiciones) $\land$ j $<$ long(e.posiciones[i]) $\yluego$ e.posiciones[i][j].existe $\implies$ (j + 1 $<$ long(e.posiciones[i]) $\yluego$ e.posiciones[i][j+1].existe $\implies$ e.posiciones[i][j+1].grupo == e.posiciones[i][j].grupo) $\land$ (i + 1 $<$ long(e.posiciones) $\yluego$ e.posiciones[i+1][j].existe $\implies$ e.posiciones[i+1][j].grupo == e.posiciones[i][j].grupo) $\land$ (j - 1 $\geq$ 0 $\yluego$ e.posiciones[i][j-1].existe $\implies$ e.posiciones[i][j-1].grupo == e.posiciones[i][j].grupo) $\land$ (i - 1 $\geq$ 0 $\yluego$ e.posiciones[i-1][j].existe $\implies$ e.posiciones[i-1][j].grupo == e.posiciones[i][j].grupo)) $\land$
+		($\forall i,j$: nat) (i $<$ long(e.posiciones) $\land$ j $<$ long(e.posiciones[i]) $\yluego$ e.posiciones[i][j].existe $\land$ (j+1 $<$ long(e.posiciones[i]) $\implies$ $\neg$e.posiciones[i][j+1].existe) $\land$ (i+1 $<$ long(e.posiciones) $\implies$ $\neg$e.posiciones[i+1][j].existe) $\land$ (j-1 $\geq$ 0 $\implies$ $\neg$e.posiciones[i][j-1].existe) $\land$ (i-1 $\geq$ 0 $\implies$ $\neg$e.posiciones[i-1][j].existe) $\implies$ ($\forall n,m$: nat)((n $<$ long(e.posiciones) $\land$ m $<$ long(e.posiciones[i]) $\implies$ e.posiciones[n][m].grupo $\neq$ e.posiciones[i][j].grupo   %% TODO mas rep
 	}
 
 	\TituloDis{Función de Abstracción}
