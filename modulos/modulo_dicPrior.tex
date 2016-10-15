@@ -25,13 +25,6 @@
 	[$log(\#j)$]
 	[devuelve \texttt{true} si el jugador esta definido en el diccionario.]
 
-	\InterfazFuncion{Obtener}{\In{p}{prior}, \In{j}{jugador}}{nat}
-	[def?($j, p$)]
-	{alias($res \igobs$ obtener($j$, $p$))}
-	[$log(\#j)$]
-	[devuelve la cantidad de pokemons de un jugador en el diccionario.]
-	[$res$ es modificable si y sólo si $p$ es modificable.]
-
 	\InterfazFuncion{Borrar}{\Inout{p}{prior}, \In{j}{jugador}}{}
 	[$p \igobs p_0 \land$ def?($j, d_0$)]
 	{$p \igobs$ borrar($j, p_0$)}
@@ -250,51 +243,71 @@
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
-		\caption{\algoritmo{iVacia}{}{prior}}
-		res.raiz $\leftarrow$ NULL\;
-	\end{algorithm}
-
-
-	% \begin{algorithm}[H]
-	% 	\NoCaptionOfAlgo
-	% 	\caption{\algoritmo{Buscar}{\In{a}{RELLENAR}, \Inout{hijo}{puntero(Nodo)}}}
-	% 	\While{hijo $\neq$ NULL $\yluego$ hijo.id $\neq$ a}{
-	% 		\eIf{hijo.cant $<$ a.cant $\lor$ (hijo.cant = a.cant $\land$ hijo.id $<$ a.id}{
-	% 			hijo $\leftarrow$ hijo.hijoIzq\;
-	% 		}{
-	% 			hijo $\leftarrow$ hijo.hijoDer\;
-	% 		}
-	% 	}
-	% \end{algorithm}
-
-	\begin{algorithm}[H]
-		\NoCaptionOfAlgo
-		\caption{\algoritmo{iAgregar}{\In{a}{RELLENAR}, \Inout{h}{prior}}{}}
+		\caption{\algoritmo{iVacio}{}{prior}}
+		res.raizJugadores $\leftarrow$ NULL\;
+		res.raizCantidad $\leftarrow$ NULL\;
 	\end{algorithm}
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
-		\caption{\algoritmo{CrearNodo}{\In{a}{RELLNAR}}{puntero(Nodo)}}
-		Nodo: nuevo\;
-		nuevo.valor $\leftarrow$ a\; %%TODO CAMBIAR
-		nuevo.hijoIzq $\leftarrow$ NULL\;
-		nuevo.hijoDer $\leftarrow$ NULL\;
-		nuevo.alto $\leftarrow$ 1\;
-		res $\leftarrow$ \&nuevo\;
+		\caption{\algoritmo{iDefinido?}{\In{p}{prior}, \In{j}{jugador}}{bool}}
+		res $\leftarrow$ BuscarJ(p.raizJugadores) $\neq$ NULL\;
 	\end{algorithm}
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
-		\caption{\algoritmo{Insertar}{\In{a}{RELLENAR}, \Inout{nodo}{puntero(Nodo)}}{puntero(Nodo)}}
-		
-		\eIf{nodo = NULL}{
-			res $\leftarrow$ CrearNodo(a)\;
-		}{	
-			%%TODO hacer bien la comapracion
-			\eIf{n.valor $<$ a}{
-				nodo.hijoIzq $\leftarrow$ Insertar(a, nodo.hijoIzq)\;
+		\caption{\algoritmo{iDefinir}{\Inout{p}{prior}, \In{j}{jugador}, \In{n}{nat}}{}}
+		\If{Definido?(p, j)}{
+			Borrar(p, j)\;
+		}
+		InsertarJ(j, n, p.raizJugadores)\;
+		InsertarN(j, n, p.raizCantidad)\;
+	\end{algorithm}
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iBorrar}{\Inout{p}{prior}, \In{j}{jugador}}{}}
+		puntero(Nodo): nodo $\leftarrow$ BuscarJ(j, p.raizJugadores)\;
+		RemoverJ(j, p.raizJugadores)\;
+		RemoverN(j, nodo.cantPokemons, p.raizCantidad)\;
+	\end{algorithm}
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iClaves}{\In{p}{prior}}{conj(string)}}
+	\end{algorithm}
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iMenor}{\In{p}{prior}}{jugador}}
+		puntero(Nodo): nodo $\leftarrow$ BuscarMinimo(j, p.raizCantidad)\;
+		res $\leftarrow$ nodo.id\;
+	\end{algorithm}
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{BuscarJ}{\In{j}{jugador}, \In{nodo}{puntero(Nodo)}}{puntero(Nodo)}}
+		\eIf{nodo = NULL $\oluego$ nodo.id = jugador}{
+			res $\leftarrow$ nodo\;
+		}{
+			\eIf{j $<$ nodo.id}{
+				res $\leftarrow$ BuscarJ(j, nodo.hijoIzq)\;
 			}{
-				nodo.hijoDer $\leftarrow$ Insertar(a, nodo.hijoDer)\;
+				res $\leftarrow$ BuscarJ(j, nodo.hijoDer)\;
+			}
+		}
+	\end{algorithm}
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{InsertarJ}{\In{j}{jugador}, \In{n}{nat}, \Inout{nodo}{puntero(Nodo)}}{puntero(Nodo)}}
+		\eIf{nodo = NULL}{
+			res $\leftarrow$ CrearNodo(j, n)\;
+		}{	
+			\eIf{j $<$ n.id}{
+				nodo.hijoIzq $\leftarrow$ InsertarJ(j, n, nodo.hijoIzq)\;
+			}{
+				nodo.hijoDer $\leftarrow$ InsertarJ(j, n, nodo.hijoDer)\;
 			}
 			res $\leftarrow$ Balancear(nodo)\;
 		}
@@ -302,45 +315,167 @@
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
+		\caption{\algoritmo{RemoverJ}{\In{j}{jugador}, \In{nodo}{puntero(Nodo)}}{puntero(Nodo)}}
+		\eIf{nodo = NULL}{
+			res $\leftarrow$ nodo\;
+		}{
+			\eIf{j $<$ nodo.id}{
+				nodo.hijoIzq $\leftarrow$ RemoverJ(j, nodo.hijoIzq)\;
+				res $\leftarrow$ Balancear(nodo)\;
+			}{
+				\eIf{j $>$ nodo.id}{
+					nodo.hijoDer $\leftarrow$ RemoverJ(j, nodo.hijoDer)\;
+					res $\leftarrow$ Balancear(nodo)\;
+				}{
+					puntero(Nodo): i $\leftarrow$ nodo.hijoIzq\;
+					puntero(Nodo): d $\leftarrow$ nodo.hijoDer\;
+					delete nodo\;
+					\eIf{ d = NULL}{
+						res $\leftarrow$ i\;
+					}{	
+						puntero(Nodo): minimo $\leftarrow$ BuscarMinimo(d)\;
+						minimo.hijoDer $\leftarrow$ RemoverMinimo(d)\;
+						minimo.hijoIzq $\leftarrow$ i\;
+						res $\leftarrow$ Balancear(minimo)\;
+					}
+				}
+			}
+		}
+	\end{algorithm}
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{BuscarMinimo}{\In{nodo}{puntero(Nodo)}}{puntero(Nodo)}}
+		\eIf{nodo.hijoIzq = NULL}{
+			res $\leftarrow$ nodo\;
+		}{
+			res $\leftarrow$ BuscarMinimo(nodo.hijoIzq)\;
+		}
+	\end{algorithm}
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{RemoverMinimo}{\In{nodo}{puntero(Nodo)}}{puntero(Nodo)}}
+		\eIf{nodo.hijoIzq = NULL}{
+			res $\leftarrow$ nodo.hijoDer\;
+		}{
+			nodo.hijoIzq = RemoverMinimo(nodo.hijoIzq)\;
+			res $\leftarrow$ balance(nodo)\;
+		}
+	\end{algorithm}
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{BuscarN}{\In{j}{jugador}, \In{n}{nat} \In{nodo}{puntero(Nodo)}}{puntero(Nodo)}}
+		\eIf{nodo = NULL $\oluego$ (nodo.id = jugador $\land$ nodo.cantPokemons = n)}{
+			res $\leftarrow$ nodo\;
+		}{
+			\eIf{n $<$ nodo.cantPokemons $\lor$ (n = nodo.cantPokemons $\land$ j $<$ nodo.id)}{
+				res $\leftarrow$ BuscarN(j, n, nodo.hijoIzq)\;
+			}{
+				res $\leftarrow$ BuscarN(j, n, nodo.hijoDer)\;
+			}
+		}
+	\end{algorithm}
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{InsertarN}{\In{j}{jugador}, \In{n}{nat}, \Inout{nodo}{puntero(Nodo)}}{puntero(Nodo)}}
+		\eIf{nodo = NULL}{
+			res $\leftarrow$ CrearNodo(j, n)\;
+		}{	
+			\eIf{n $<$ nodo.cantPokemons $\lor$ (n = nodo.cantPokemons $\land$ j $<$ nodo.id)}{
+				nodo.hijoIzq $\leftarrow$ InsertarN(j, n, nodo.hijoIzq)\;
+			}{
+				nodo.hijoDer $\leftarrow$ InsertarN(j, n, nodo.hijoDer)\;
+			}
+			res $\leftarrow$ Balancear(nodo)\;
+		}
+	\end{algorithm}
+
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{CrearNodo}{\In{j}{jugador}, \In{n}{nat}}{puntero(Nodo)}}
+		Nodo: nuevo\;
+		nuevo.hijoIzq $\leftarrow$ NULL\;
+		nuevo.hijoDer $\leftarrow$ NULL\;
+		nuevo.alto $\leftarrow$ 1\;
+		nuevo.id $\leftarrow$ j\;
+		nuevo.cantPokemons $\leftarrow$ n\;
+		res $\leftarrow$ \&nuevo\;
+	\end{algorithm}
+
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
 		\caption{\algoritmo{Balancear}{\Inout{nodo}{puntero(Nodo)}}{puntero(Nodo)}}
-		%%TODO ArreglarFactor(nodo)
-		% \eIf(FactorDeBalanceo(nodo) = 2){
-		% 	\eIf(FactorDeBalanceo(nodo.hijoDer) $<$ 0){
-		% 		nodo.hijoDer $\leftarrow$ rotarDer(nodo.hijoDer);
-		% 	}{}
-		% 	res $\leftarrow$ rotarIzq(nodo)\;
-		% }{
-		% 	\eIf(FactorDeBalanceo(nodo) = -2){
-		% 		\eIf(FactorDeBalanceo(nodo.hijoDer) $>$ 0){
-		% 			nodo.hijoIzq $\leftarrow$ rotarIzq(nodo.hijoIzq);
-		% 		}{}
-		% 		res $\leftarrow$ rotarDer(nodo)\;
-		% 	}{
-		% 		res $\leftarrow$ nodo\;
-		% 	}
-		% }
-	\end{algorithm}
-
-
-	\begin{algorithm}[H]
-		\NoCaptionOfAlgo
-		\caption{\algoritmo{iVacia?}{\In{h}{prior}}{bool}}
+		ArreglarAlto(nodo)\;
+		\eIf{FactorDeBalance(nodo) = 2}{
+			\If{FactorDeBalance(nodo.hijoDer) $<$ 0}{
+				nodo.hijoDer $\leftarrow$ rotarDer(nodo.hijoDer);
+			}
+			res $\leftarrow$ rotarIzq(nodo)\;
+		}{
+			\eIf{FactorDeBalance(nodo) = -2}{
+				\If{FactorDeBalance(nodo.hijoDer) $>$ 0}{
+					nodo.hijoIzq $\leftarrow$ rotarIzq(nodo.hijoIzq);
+				}
+				res $\leftarrow$ rotarDer(nodo)\;
+			}{
+				res $\leftarrow$ nodo\;
+			}
+		}
 	\end{algorithm}
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
-		\caption{\algoritmo{iPertenece?}{\In{a}{RELLENAR}, \In{h}{prior}}{bool}}
+		\caption{\algoritmo{ArreglarAlto}{\Inout{nodo}{puntero(Nodo)}}{}}
+		nat: alturaIzq $\leftarrow$ Altura(p.hijoIzq)\;
+		nat: alturaDer $\leftarrow$ Altura(p.hijoDer)\;
+		\eIf{alturaIzq $<$ alturaDer}{
+			nodo.altura $\leftarrow$  alturaDer + 1\;
+		}{
+			nodo.altura $\leftarrow$  alturaIzq + 1\;
+		}
 	\end{algorithm}
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
-		\caption{\algoritmo{iBorrar}{\In{a}{RELLENAR}, \Inout{h}{prior}}{}}
+		\caption{\algoritmo{Altura}{\In{nodo}{puntero(Nodo)}}{nat}}
+		\eIf{nodo = NULL}{
+			res $\leftarrow$ 0\;
+		}{
+			res $\leftarrow$ nodo.alto\;
+		}
 	\end{algorithm}
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
-		\caption{\algoritmo{iMenor}{\In{a}{RELLENAR}, \Inout{h}{prior}}{RELLENAR}}
+		\caption{\algoritmo{FactorDeBalance}{\In{nodo}{puntero(Nodo)}}{nat}}
+		res $\leftarrow$ Altura(nodo.hijoDer) - Altura(nodo.hijoIzq)\;
 	\end{algorithm}
 
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{rotarDer}{\In{nodo}{puntero(Nodo)}}{puntero(Nodo)}}
+		puntero(nodo) aux $\leftarrow$ nodo.hijoIzq\;
+		nodo.hijoIzq $\leftarrow$ aux.hijoDer\;
+		aux.hijoDer $\leftarrow$ nodo\;
+		ArreglarAlto(nodo)\;
+		ArreglarAlto(aux)\;
+		res $\leftarrow$ aux\;
+	\end{algorithm}
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{rotarIzq}{\In{nodo}{puntero(Nodo)}}{puntero(Nodo)}}
+		puntero(nodo) aux $\leftarrow$ nodo.hijoDer\;
+		nodo.hijoDer $\leftarrow$ aux.hijoIzq\;
+		aux.hijoIzq $\leftarrow$ nodo\;
+		ArreglarAlto(nodo)\;
+		ArreglarAlto(aux)\;
+		res $\leftarrow$ aux\;
+	\end{algorithm}
 
 \end{Algoritmos}
