@@ -163,8 +163,7 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 			\tupItem{sanciones}{nat}
 			\tupItem{conectado?}{bool}
 			\tupItem{posicion}{coor}
-			\tupItem{capturando?}{bool}
-			\tupItem{posPokeCaptura}{coor}
+			\tupItem{cantPokemons}{nat}
 			\tupItem{\\pokemonsCapturados}{diccString(nat)}
 		\end{Tupla}
 
@@ -343,8 +342,7 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 		\caption{\algoritmo{iConectarse}{\Inout{j}{pokego}, \In{e}{jugador}, \In{c}{coor}}{}}
 		(*j.jugadores[e]).conectado? $\leftarrow$ true\;
 		(*j.jugadores[e]).posicion $\leftarrow$ c\;
-
-		%% AGREGARLO A LOS CONJUNTOS DE ESPERA
+		AgregarAColas(j, e)\;
 		%% RESETEAR LOS CONTADORES
 	\end{algorithm}
 
@@ -358,7 +356,7 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{iDesconectarse}{\Inout{j}{pokego}, \In{e}{jugador}}{}}
 		(*j.jugadores[e]).conectado? $\leftarrow$ false\;
-		RemoverDeCola(j, e)\;
+		RemoverDeColas(j, e)\;
 	\end{algorithm}
 
 	\complejidad: $O()$
@@ -371,11 +369,18 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
-		\caption{\algoritmo{RemoverDeCola}{\Inout{j}{pokego}, \In{e}{jugador}}{}}
-		\IF{(*j.jugadores[e]).capturando?}{
-			coor: c $\leftarrow$ (*j.jugadores[e]).posPokeCaptura\;
-			(*j.jugadores[e]).capturando? $\leftarrow$ false\;
-			Borrar(j.grillaPos[Latitud(c)][Longitud(c)].jugEsperandoCaptura, e)
+		\caption{\algoritmo{RemoverDeColas}{\Inout{j}{pokego}, \In{e}{jugador}}{}}
+		coor: c $\leftarrow$ (*j.jugadores[e]).posPokeCaptura\;
+		nat : i $\leftarrow$ 0\;
+		\While{i $<$ 5}{
+			nat : j $\leftarrow$ 0\;
+			\While{DistEuclidea(c, CrearCoor(Latitud(c) + i, Longitud(c) + j)) $\leq$ 4}{
+				\If{PosExistente(j.mapa, CrearCoor(Latitud(c) + i, Longitud(c) + j))}{
+					Borrar(j.grillaPos[i][j].jugEsperandoCaptura, e)\;
+				}
+				j $\leftarrow$ j + 1\;
+			}
+			i $\leftarrow$ i + 1\;
 		}
 	\end{algorithm}
 
@@ -387,9 +392,20 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
-		\caption{\algoritmo{AgregarACola}{\Inout{j}{pokego}, \In{e}{jugador}}{}}
+		\caption{\algoritmo{AgregarAColas}{\Inout{j}{pokego}, \In{e}{jugador}}{}}
 			coor: c $\leftarrow$ (*j.jugadores[e]).posPokeCaptura\;
-			Borrar(j.grillaPos[Latitud(c)][Longitud(c)].jugEsperandoCaptura, e)
+			nat : i $\leftarrow$ 0\;
+			\While{i $<$ 5}{
+				nat : j $\leftarrow$ 0\;
+				\While{DistEuclidea(c, CrearCoor(Latitud(c) + i, Longitud(c) + j)) $\leq$ 4}{
+					\If{PosExistente(j.mapa, CrearCoor(Latitud(c) + i, Longitud(c) + j))}{
+						Definir(j.grillaPos[i][j].jugEsperandoCaptura, e, (*j.jugadores[e]).cantPokemons)\;
+					}
+					j $\leftarrow$ j + 1\;
+				}
+				i $\leftarrow$ i + 1\;
+			}
+			Definir(j.grillaPos[Latitud(c)][Longitud(c)].jugEsperandoCaptura, (*j.jugadores[e]))
 	\end{algorithm}
 
 	\complejidad: $O()$
