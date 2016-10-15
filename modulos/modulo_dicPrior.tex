@@ -230,18 +230,13 @@
 
 	\TituloDis{Función de Abstracción}
 
-	\Abs[ePrior]{prior}[e]{c}{
-		($\forall$ a: RELLENAR) a $\in$ c $\iff$ a $\in$ conjunto(c)
-	} 
 
-	\tadOperacion{conjunto}{puntero(Nodo)}{bool}{}
-	\tadAxioma{conjunto(nodo)}{
-		{\IF nodo = NULL THEN
-			$\emptyset$
-		ELSE
-			Ag(nodo.id, (conjunto(nodo.hijoIzq) $\cup$ conjunto(nodo.hijoDer)))	
-		FI}
+	\Abs[ePrior]{prior}[e]{d}
+	{($\forall j$: jugador)
+	(def?(j, d) = definido?(j, e.raizJugadores) $\yluego$ \\
+	(def?(j, d) $\impluego$ obtener(j, d) = obtener(j, e.raizJugadores)))
 	}
+
 
 \end{Representacion}
 
