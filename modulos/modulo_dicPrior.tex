@@ -9,13 +9,6 @@
 	\TituloDis{Operaciones básicas de Diccionario de Prioridad de atrape}
 
 	\InterfazFuncion{Vacio}{}{prior}
-	[]
-	{res $\igobs$ vacío}
-	[$O(1)$]
-	[Crea el diccionario vacío]
-
-
-	\InterfazFuncion{Vacio}{}{prior}
 	{res $\igobs$ vacío}
 	[$O(1)$]
 	[Crea el diccionario vacío]
@@ -58,7 +51,7 @@
 	[devuelve el jugador con menos pokemons en el diccionario]
 	[]
 
-  \Titulo{Especificación de las operaciones auxiliares utilizadas en la interfaz}
+  \TituloDis{Especificación de las operaciones auxiliares utilizadas en la interfaz}
 
   \begin{tad}{Diccionario(Jugador, Nat) Extendido}
     \parskip=0pt
@@ -120,11 +113,25 @@
 	
 
 	\Rep[ePrior][e]{
-		sinRepetidos(e.raizJugadores, $\emptyset$) $\land$ ABB?(e.raizJugadores) $\land$ altoValido?(e.raizJugadores) $\land$ \\
-		sinRepetidos(e.raizCantidad, $\emptyset$) $\land$ ABB?(e.raizCantidad) $\land$ altoValido?(e.raizCantidad) $\land$ \\
+		sinRepetidos(e.raizJugadores, $\emptyset$) $\land$\\
+		sinRepetidos(e.raizCantidad, $\emptyset$) $\land$\\
+		ABB?(e.raizJugadores) $\land$\\
+		altoValido?(e.raizJugadores) $\land$\\
+		ABB?(e.raizCantidad) $\land$\\
+		altoValido?(e.raizCantidad) $\land$\\
 		($\forall$ j: jugador) (definido?(j, e.raizJugadores) = definido?(j, e.raizCantidad) $\yluego$ \\
 			definido?(j, e.raizJugadores) $\impluego$ obtener(j, e.raizJugadores) = obtener(j, e.raizCantidad))
 	}
+
+	\TituloDis{Función de Abstracción}
+
+	\Abs[ePrior]{prior}[e]{d}
+	{($\forall j$: jugador)
+	(def?(j, d) = definido?(j, e.raizJugadores) $\yluego$ \\
+	(def?(j, d) $\impluego$ obtener(j, d) = obtener(j, e.raizJugadores)))
+	}
+
+	\TituloDis{Operaciones auxiliares}
 
 	\tadOperacion{sinRepetidos}{puntero(nodo), conj(nat)}{bool}{}
 	\tadOperacion{ABB?}{puntero(Nodo)/nodo}{bool}{}
@@ -137,6 +144,7 @@
 	\tadOperacion{cantidadHijos}{puntero(Nodo)}{nat}{}
 	\tadOperacion{definido?}{jugador, puntero(nodo)}{bool}{}
 	\tadOperacion{obtener}{jugador/j, puntero(nodo)/p}{nat}{definido?(j,p)}
+
  	~
 
 	\tadAxioma{sinRepetidos(padre, ids)}{
@@ -232,15 +240,6 @@
 				obtener(j, p.hijoDer)
 			FI}
 		FI}
-	}
-
-	\TituloDis{Función de Abstracción}
-
-
-	\Abs[ePrior]{prior}[e]{d}
-	{($\forall j$: jugador)
-	(def?(j, d) = definido?(j, e.raizJugadores) $\yluego$ \\
-	(def?(j, d) $\impluego$ obtener(j, d) = obtener(j, e.raizJugadores)))
 	}
 
 
