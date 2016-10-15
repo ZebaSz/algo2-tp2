@@ -77,12 +77,12 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 	[$O()$]
 	[devuelve la posición actual del jugador.]
 
-	\InterfazFuncion{Pokémons}{\In{j}{juego}}{itBi(tupla(pokemon, nat))}
+	\InterfazFuncion{Pokémons}{\In{j}{juego} \In{e}{jugador}}{itBi(tupla(pokemon, nat))}
 	% TODO fucking tuplas
 	% TODO fucking metapredicado alias e iteradores
 	{$res \igobs$ crearItBi($\secuvacia$, pokemons($j$)) $\land$ alias(esPermutacion(SecuSuby($res$), pokemons($j$)))}
 	[$O()$]
-	[devuelve un iterador al conjunto de los pokémons y la cantidad de los mismos.]
+	[devuelve un iterador al conjunto de los pokémons capturados por un jugador, y la cantidad de los mismos.]
 	[el iterador se invalida si y sólo si se elimina el elemento siguiente del iterador.]
 
 	\InterfazFuncion{Expulsados}{\In{j}{juego}}{itBi(jugador)}
@@ -154,7 +154,8 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 			\tupItem{mapa}{mapa}
 			\tupItem{pokemons}{diccString(nat)}
 			\tupItem{posConPokemons}{conj(coor)}
-			\tupItem{jugadores}{vector(infoJugador)}
+			\tupItem{jugadores}{vector(puntero(infoJugador))}
+			\tupItem{grillaPos}{arreglo\_dimensionable de (arreglo\_dimensionable de infoPos)}
 			\tupItem{cantPokemons}{nat}
 		\end{Tupla}
 
@@ -163,6 +164,12 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 			\tupItem{conectado?}{bool}
 			\tupItem{posicion}{coor}
 			\tupItem{pokemonsCapturados}{diccString(nat)}
+		\end{Tupla}
+
+		\begin{Tupla}[infoPos]
+			\tupItem{pokemon}{pokemon}
+			\tupItem{contadorCaptura}{nat}
+			\tupItem{jugEsperandoCaptura}{conj(jugador))}
 		\end{Tupla}
 
 	\end{Estructura}
@@ -186,7 +193,7 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 		\end{itemize}
 		%TODO definir como se saca que poke hay en cada posicion
 				
-		\item Para cada miembro de jugadores, si el jugador tiene 5 sanciones no puede estar conectado ¡
+		\item Para cada miembro de jugadores, si el jugador tiene 5 sanciones no puede estar conectado
 		
 		\item Para cada miembro de jugadores, si el jugador esta conectado su posición tiene que pertenecer a las coordenadas válidas del mapa
 		
@@ -194,7 +201,7 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 
 
 	\Rep[pokego][e]{
-	($\forall c$: coor)(c $\in$ e.posConPokemons $\implies$ c $\in$ coordenadas(e.mapa)) $\land$ e.cantPokemons == sumaSignificadosPoke(claves(e.pokemons), e.pokemons) $\land$ ($\forall c,d$: coor)(c $\in$ e.posConPokemons $\land$ d $\in$ e.posConPokemons $\implies$ c = d $\lor$ distEuclidea(c,d) $>$ 25) $\land$ ($\forall i$:nat)(i $<$ long(e.jugadores) $\implies$ claves(e.jugadores[i].pokemonsCapturados) $\subseteq$ claves(e.pokemons)) $\land$ ($\forall i$:nat)(i $<$ long(e.jugadores)$\implies$(e.jugadores[i].sanciones == 5 $\implies \neg$e.jugadores[i].conectado?)) $\yluego$ ($\forall i$:nat)(i $<$ long(e.jugadores) $/implies$ e.jugadores[i].conectado $\implies$ e.jugadores[i].posicion $\in$ coordenadas(e.mapa))
+	($\forall c$: coor)(c $\in$ e.posConPokemons $\implies$ c $\in$ coordenadas(e.mapa)) $\land$ e.cantPokemons == sumaSignificadosPoke(claves(e.pokemons), e.pokemons) $\land$ ($\forall c,d$: coor)(c $\in$ e.posConPokemons $\land$ d $\in$ e.posConPokemons $\implies$ c = d $\lor$ distEuclidea(c,d) $>$ 25) $\land$ ($\forall i$:nat)(i $<$ long(e.jugadores) $\implies$ claves(e.jugadores[i].pokemonsCapturados) $\subseteq$ claves(e.pokemons)) $\land$ ($\forall i$:nat)(i $<$ long(e.jugadores)$\implies$(e.jugadores[i].sanciones == 5 $\implies \neg$e.jugadores[i].conectado?)) $\yluego$ ($\forall i$:nat)(i $<$ long(e.jugadores) $\implies$ e.jugadores[i].conectado $\implies$ e.jugadores[i].posicion $\in$ coordenadas(e.mapa))
 	}
 	
 	~
@@ -257,6 +264,10 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 		res.posConPokemons $\leftarrow$ Vacio()\;
 		res.jugadores $\leftarrow$ Vacio()\;
 		res.cantPokemons $\leftarrow$ 0\;
+		res.grillaPos $\leftarrow$ CrearArreglo(Alto(m))\;
+		\For{$i \leftarrow 0$ \KwTo Alto($m$)}{
+			res.grillaPos[i] $\leftarrow$ CrearArreglo(Ancho(m))\;
+		}
 	\end{algorithm}
 
 	\complejidad: $O()$
@@ -275,7 +286,20 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 		}{
 			Definir(j.pokemons, pk, 1)\;
 		}
-		% TODO algo sobre el contador de movs de las posiciones cercanas
+
+		j.grilla[Latitud(c)][Longitud(c)].pokemon $\leftarrow$ pk\;
+
+		nat : i $\leftarrow$ 0\;
+		\While{i $<$ 5}{
+			nat : j $\leftarrow$ 0\;
+			\While{DistEuclidea(c, CrearCoor(Latitud(c) + i, Longitud(c) + j)) $\leq$ 4}{
+				\If{PosExistente(j.mapa, CrearCoor(Latitud(c) + i, Longitud(c) + j))}{
+					j.grilla[i][j].contadorCaptura $\leftarrow$ 0\;
+				}
+				j $\leftarrow$ j + 1\;
+			}
+			i $\leftarrow$ i + 1\;
+		}
 	\end{algorithm}
 
 	\complejidad: $O()$
@@ -315,8 +339,11 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{iConectarse}{\Inout{j}{pokego}, \In{e}{jugador}, \In{c}{coor}}{}}
-		j.jugadores[e].conectado? $\leftarrow$ true\;
-		j.jugadores[e].posicion $\leftarrow$ c\;
+		(*j.jugadores[e]).conectado? $\leftarrow$ true\;
+		(*j.jugadores[e]).posicion $\leftarrow$ c\;
+
+		%% AGREGARLO A LOS CONJUNTOS DE ESPERA
+		%% RESETEAR LOS CONTADORES
 	\end{algorithm}
 
 	\complejidad: $O()$
@@ -328,7 +355,9 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{iDesconectarse}{\Inout{j}{pokego}, \In{e}{jugador}}{}}
-		j.jugadores[e].conectado? $\leftarrow$ false\;
+		(*j.jugadores[e]).conectado? $\leftarrow$ false\;
+
+		%% SACARLO DE LOS CONJUNTOS DE ESPERA
 	\end{algorithm}
 
 	\complejidad: $O()$
@@ -341,14 +370,21 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{iMoverse}{\Inout{j}{pokego}, \In{e}{jugador}, \In{c}{coor}}{}}
 		\If{\textbf{not} HayCamino(j.mapa, Posicion(j,e), c) \textbf{or} DistEuclidea(Posicion(j,e), c) $>$ 100}{
-			j.jugadores[e].sanciones $\leftarrow$ j.jugadores[e].sanciones + 1\;
+			(*j.jugadores[e]).sanciones $\leftarrow$ (*j.jugadores[e]).sanciones + 1\;
 		}
-		\eIf{j.jugadores[e].sanciones = 5}{
-			%% BORRAR TODOS LOS POKEMONS
+		\eIf{(*j.jugadores[e]).sanciones = 5}{
+			itDiccString(nat) : pokesABorrar $\leftarrow$ CrearIt((*j.jugadores[e]).pokemonsCapturados)\;
+			\While{HaySiguiente(pokesABorrar)}{
+				tupla(calve: String, significado: Nat) : sig $\leftarrow$ Siguiente(pokesABorrar)\;
+
+				nat: nuevaCant $\leftarrow$ Obtener(j.pokemons, sig.clave) - sig.significado\;
+				Definir(j.pokemons, pk, nuevaCant)\;
+				j.cantPokemons $\leftarrow$ j.cantPokemons - sig.significado\;
+			}
 		}{
-			j.jugadores[e].posicion $\leftarrow$ c\;
-			%% COMP AUTO DE CAPTURA, ETC
+			(*j.jugadores[e]).posicion $\leftarrow$ c\;
 		}
+		%% COMP AUTO DE CAPTURA, ETC
 	\end{algorithm}
 
 	\complejidad: $O()$
@@ -384,7 +420,7 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{iEstaConectado}{\In{j}{pokego}, \In{e}{jugador}}{bool}}
-		res $\leftarrow$ j.jugadores[e].conectado?\;
+		res $\leftarrow$ (*j.jugadores[e]).conectado?\;
 	\end{algorithm}
 
 	\complejidad: $O()$
@@ -396,7 +432,7 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{iSanciones}{\In{j}{pokego}, \In{e}{jugador}}{nat}}
-		res $\leftarrow$ j.jugadores[e].sanciones\;
+		res $\leftarrow$ (*j.jugadores[e]).sanciones\;
 	\end{algorithm}
 
 	\complejidad: $O()$
@@ -408,7 +444,7 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{iPosicion}{\In{j}{pokego}, \In{e}{jugador}}{coor}}
-		res $\leftarrow$ CrearCoor(Latitud(j.jugadores[e].posicion), Longitud(j.jugadores[e].posicion))\;
+		res $\leftarrow$ CrearCoor(Latitud((*j.jugadores[e]).posicion), Longitud((*j.jugadores[e]).posicion))\;
 	\end{algorithm}
 
 	\complejidad: $O()$
@@ -419,8 +455,8 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
-		\caption{\algoritmo{iPokémons}{\In{j}{pokego}}{itBi(tupla(pokemon, nat))}}
-		res $\leftarrow$ CrearIterador(j.pokemons)\;
+		\caption{\algoritmo{iPokémons}{\In{j}{pokego}, \In{e}{jugador}}{itBi(tupla(pokemon, nat))}}
+		res $\leftarrow$ CrearIterador((*j.jugadores[e]).pokemonsCapturados)\;
 	\end{algorithm}
 
 	\complejidad: $O()$
@@ -485,8 +521,8 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 		nat : i $\leftarrow$ 0\;
 		\While{i $<$ 5}{
 			nat : j $\leftarrow$ 0\;
-			\While{DistEuclidea(c, CrearCoor(i,j)) $\leq$ n}{
-				coor : d $\leftarrow$ CrearCoor(i,j)\;
+			\While{DistEuclidea(c, CrearCoor(Latitud(c) + i, Longitud(c) + j)) $\leq$ n}{
+				coor : d $\leftarrow$ CrearCoor(Latitud(c) + i, Longitud(c) + j)\;
 				\If{Pertenece(j.posConPokemons, d)}{
 					res $\leftarrow$ true\;
 					%% ES LEGAL USAR RETURN?
@@ -522,8 +558,8 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 		nat : i $\leftarrow$ 0\;
 		\While{i $<$ 5}{
 			nat : j $\leftarrow$ 0\;
-			\While{DistEuclidea(c, CrearCoor(i,j)) $\leq$ n}{
-				coor : d $\leftarrow$ CrearCoor(i,j)\;
+			\While{DistEuclidea(c, CrearCoor(Latitud(c) + i, Longitud(c) + j)) $\leq$ n}{
+				coor : d $\leftarrow$ CrearCoor(Latitud(c) + i, Longitud(c) + j)\;
 				\If{Pertenece(j.posConPokemons, d)}{
 					res $\leftarrow$ d\;
 					%% ES LEGAL USAR RETURN?
@@ -556,8 +592,7 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{iIndiceRareza}{\In{j}{pokego}, \In{pk}{pokemon}}{nat}}
-		nat : cantPk $\leftarrow$ Obtener(j.pokemones, pk)\; 
-		%% LA DIVISION DE NATS
+		nat : cantPk $\leftarrow$ Obtener(j.pokemones, pk)\;
 		res $\leftarrow$ 100 - (cantPk $\times$ 100 $\div$ j.cantPokemons)\;
 	\end{algorithm}
 

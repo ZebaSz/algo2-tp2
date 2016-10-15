@@ -397,7 +397,7 @@ Usaremos $copy(s)$ para denotar el costo de copiar el elemento $s \in \alpha$. L
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
-		\caption{\algoritmo{iSiguiente}{\In{it}{itDicStr}}{tupla(String, $\alpha$)}}
+		\caption{\algoritmo{iSiguiente}{\In{it}{itDicStr}}{tupla(calve: String, significado: $\alpha$)}}
 		String: clave $\leftarrow$ Siguiente(it.itClaves)\OdeLinea{1}
 		res $\leftarrow \langle$ clave, Obtener(*it.dic, clave) $\rangle$\OdeLinea{|c_{max}|}
 	\end{algorithm}
@@ -410,7 +410,7 @@ Usaremos $copy(s)$ para denotar el costo de copiar el elemento $s \in \alpha$. L
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
-		\caption{\algoritmo{iAnterior}{\In{it}{itDicStr}}{tupla(String, $\alpha$)}}
+		\caption{\algoritmo{iAnterior}{\In{it}{itDicStr}}{tupla(calve: String, significado: $\alpha$)}}
 		String: clave $\leftarrow$ Anterior(it.itClaves)\OdeLinea{1}
 		res $\leftarrow \langle$ clave, Obtener(*it.dic, clave) $\rangle$\OdeLinea{|c_{max}|}
 	\end{algorithm}

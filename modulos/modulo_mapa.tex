@@ -41,6 +41,16 @@ Usaremos $lat_{max}$ y $long_{max}$ para denotar las máximas dimensiones entre 
 	[$O(1)$]
 	[verifica si hay un camino entre dos coordenadas.]
 
+	\InterfazFuncion{Alto}{\In{m}{map}}{nat}
+	{$res \igobs alto(m)$}
+	[$O(1)$]
+	[devuelve el alto del mapa.]
+
+	\InterfazFuncion{Ancho}{\In{m}{map}}{nat}
+	{$res \igobs ancho(m)$}
+	[$O(1)$]
+	[devuelve el ancho del mapa.]
+
 \end{Interfaz}
 
 
@@ -80,7 +90,9 @@ Usaremos $lat_{max}$ y $long_{max}$ para denotar las máximas dimensiones entre 
 		($\exists i$: nat) (i $<$ e.alto $\implies$ Longitud(e.posiciones[i]) = e.ancho) $\land$ \\
 		($\forall i$: nat) (i $<$ e.alto $\implies$ Longitud(e.posiciones[i]) $\leq$ e.ancho) $\land$
 		($\forall i,j$: nat) (i $<$ long(e.posiciones) $\land$ j $<$ long(e.posiciones[i]) $\yluego$ e.posiciones[i][j].existe $\implies$ (j + 1 $<$ long(e.posiciones[i]) $\yluego$ e.posiciones[i][j+1].existe $\implies$ e.posiciones[i][j+1].grupo == e.posiciones[i][j].grupo) $\land$ (i + 1 $<$ long(e.posiciones) $\yluego$ e.posiciones[i+1][j].existe $\implies$ e.posiciones[i+1][j].grupo == e.posiciones[i][j].grupo) $\land$ (j - 1 $\geq$ 0 $\yluego$ e.posiciones[i][j-1].existe $\implies$ e.posiciones[i][j-1].grupo == e.posiciones[i][j].grupo) $\land$ (i - 1 $\geq$ 0 $\yluego$ e.posiciones[i-1][j].existe $\implies$ e.posiciones[i-1][j].grupo == e.posiciones[i][j].grupo)) $\land$
-		($\forall i,j$: nat) (i $<$ long(e.posiciones) $\land$ j $<$ long(e.posiciones[i]) $\yluego$ e.posiciones[i][j].existe $\land$ (j+1 $<$ long(e.posiciones[i]) $\implies$ $\neg$e.posiciones[i][j+1].existe) $\land$ (i+1 $<$ long(e.posiciones) $\implies$ $\neg$e.posiciones[i+1][j].existe) $\land$ (j-1 $\geq$ 0 $\implies$ $\neg$e.posiciones[i][j-1].existe) $\land$ (i-1 $\geq$ 0 $\implies$ $\neg$e.posiciones[i-1][j].existe) $\implies$ ($\forall n,m$: nat)((n $<$ long(e.posiciones) $\land$ m $<$ long(e.posiciones[i]) $\implies$ e.posiciones[n][m].grupo $\neq$ e.posiciones[i][j].grupo   %% TODO mas rep
+		($\forall i,j$: nat) (i $<$ long(e.posiciones) $\land$ j $<$ long(e.posiciones[i]) $\yluego$ e.posiciones[i][j].existe $\land$ (j+1 $<$ long(e.posiciones[i]) $\implies$ $\neg$e.posiciones[i][j+1].existe) $\land$ (i+1 $<$ long(e.posiciones) $\implies$ $\neg$e.posiciones[i+1][j].existe) $\land$ (j-1 $\geq$ 0 $\implies$ $\neg$e.posiciones[i][j-1].existe) $\land$ (i-1 $\geq$ 0 $\implies$ $\neg$e.posiciones[i-1][j].existe) $\implies$ ($\forall n,m$: nat)((n $<$ long(e.posiciones) $\land$ m $<$ long(e.posiciones[i]) $\implies$ e.posiciones[n][m].grupo $\neq$ e.posiciones[i][j].grupo
+
+		%% TODO extender el tad con alto y ancho, luego mas rep
 	}
 
 	\TituloDis{Función de Abstracción}
