@@ -394,7 +394,7 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 		nat : i $\leftarrow$ 0\;
 		itJug: it $\leftarrow$ Jugadores(j)\;
 		\While{it.haymas()}{
-			jugador: jug <- it.actual()
+			jugador: jug $\leftarrow$ it.actual()\;
 			\If{DistEuclidea(c, (*j.jugadores[jug]).posicion) $\leq$ 4}{
 				AgregarAColas(j, jug)\;
 			}
