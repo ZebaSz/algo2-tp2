@@ -376,14 +376,12 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 
 	\justifcomp:
 
-	\begin
-
 	~
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{RemoverDeCola}{\Inout{j}{pokego}, \In{e}{jugador}}{}}
-		\IF{(*j.jugadores[e]).capturando?}{
+		\If{(*j.jugadores[e]).capturando?}{
 			coor: c $\leftarrow$ (*j.jugadores[e]).posPokeCaptura\;
 			(*j.jugadores[e]).capturando? $\leftarrow$ false\;
 			Borrar(j.grillaPos[Latitud(c)][Longitud(c)].jugEsperandoCaptura, e)
