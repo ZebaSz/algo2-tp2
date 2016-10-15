@@ -78,6 +78,8 @@ Usaremos $\#j$ para denotar la cantidad de entradas del diccionario.
 		\begin{Tupla}[dicPri]
 			\tupItem{raizJugadores}{puntero(Nodo)}
 			\tupItem{raizCantidad}{puntero(Nodo)}
+			\tupItem{menorID}{jugador}
+			\tupItem{menor}{nat}
 		\end{Tupla}
 
 		~ 
@@ -111,7 +113,7 @@ Usaremos $\#j$ para denotar la cantidad de entradas del diccionario.
 
 	\end{enumerate}
 	
-
+	%Agregar menor
 	\Rep[dicPri][e]{
 		sinRepetidos(e.raizJugadores, $\emptyset$) $\land$ sinRepetidos(e.raizCantidad, $\emptyset$) $\land$\\
 		ABB?(e.raizJugadores) $\land$ altoValido?(e.raizJugadores) $\land$\\
@@ -272,6 +274,10 @@ Usaremos $\#j$ para denotar la cantidad de entradas del diccionario.
 		\If{Definido?(p, j)}{
 			Borrar(p, j)\OdeLinea{log(\#j)}
 		}
+		\If{res.raizJugadores $\oluego$ n $<$ p.menor $\lor$ (n = p.menor $\land$ j $<$ p.menorId}{
+			p.menor $\leftarrow$ n\;
+			p.menorId $\leftarrow$ j\;
+		}
 		p.raizJugadores $\leftarrow$ InsertarJ(j, n, p.raizJugadores)\OdeLinea{log(\#j)}
 		p.raizCantidad $\leftarrow$ InsertarN(j, n, p.raizCantidad)\OdeLinea{log(\#j)}
 	\end{algorithm}
@@ -284,6 +290,11 @@ Usaremos $\#j$ para denotar la cantidad de entradas del diccionario.
 		puntero(Nodo): nodo $\leftarrow$ BuscarJ(j, p.raizJugadores)\OdeLinea{log(\#j)}
 		p.raizCantidad $\leftarrow$ RemoverN(j, (*nodo).cantPokemons, p.raizCantidad)\OdeLinea{log(\#j)}
 		p.raizJugadores $\leftarrow$ RemoverJ(j, p.raizJugadores)\OdeLinea{log(\#j)}
+		\If{j = p.menorId $\land$ p.raizCantidad $\neq$ NULL}{
+			puntero(Nodo): minimo $\leftarrow$ BuscarMinimo(p.raizCantidad)\;
+			p.menor $\leftarrow$ (*minimo).cantPokemons\;
+			p.menorId $\leftarrow$ (*minimo).id\;	
+		}
 	\end{algorithm}
 
 	~
@@ -291,8 +302,7 @@ Usaremos $\#j$ para denotar la cantidad de entradas del diccionario.
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{iMenor}{\In{p}{dicPri}}{jugador}}
-		puntero(Nodo): nodo $\leftarrow$ BuscarMinimo(j, p.raizCantidad)\OdeLinea{log(\#j)}
-		res $\leftarrow$ (*nodo).id\OdeLinea{1}
+		res $\leftarrow$ p.menorId\OdeLinea{1}
 	\end{algorithm}
 
 	~
