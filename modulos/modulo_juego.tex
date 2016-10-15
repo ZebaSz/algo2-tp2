@@ -193,8 +193,6 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 			\item la cantidad de coordenadas de posConPokemons donde se encuentra un pokemon igual a esa clave
 		\end{itemize}
 		%TODO definir como se saca que poke hay en cada posicion
-				
-		\item Para cada miembro de jugadores, si el jugador tiene 5 sanciones no puede estar conectado
 		
 		\item Para cada miembro de jugadores, si el jugador esta conectado su posición tiene que pertenecer a las coordenadas válidas del mapa
 		
@@ -202,7 +200,7 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 
 
 	\Rep[pokego][e]{
-	($\forall c$: coor)(c $\in$ e.posConPokemons $\implies$ c $\in$ coordenadas(e.mapa)) $\land$ e.cantPokemons == sumaSignificadosPoke(claves(e.pokemons), e.pokemons) $\land$ ($\forall c,d$: coor)(c $\in$ e.posConPokemons $\land$ d $\in$ e.posConPokemons $\implies$ c = d $\lor$ distEuclidea(c,d) $>$ 25) $\land$ ($\forall i$:nat)(i $<$ long(e.jugadores) $\implies$ claves(e.jugadores[i].pokemonsCapturados) $\subseteq$ claves(e.pokemons)) $\land$ ($\forall i$:nat)(i $<$ long(e.jugadores)$\implies$(e.jugadores[i].sanciones == 5 $\implies \neg$e.jugadores[i].conectado?)) $\yluego$ ($\forall i$:nat)(i $<$ long(e.jugadores) $\implies$ e.jugadores[i].conectado $\implies$ e.jugadores[i].posicion $\in$ coordenadas(e.mapa))
+	($\forall c$: coor)(c $\in$ e.posConPokemons $\implies$ c $\in$ coordenadas(e.mapa)) $\land$ e.cantPokemons == sumaSignificadosPoke(claves(e.pokemons), e.pokemons) $\land$ ($\forall c,d$: coor)(c $\in$ e.posConPokemons $\land$ d $\in$ e.posConPokemons $\implies$ c = d $\lor$ distEuclidea(c,d) $>$ 25) $\land$ ($\forall i$:nat)(i $<$ long(e.jugadores) $\implies$ claves(e.jugadores[i]$\rightarrow$pokemonsCapturados) $\subseteq$ claves(e.pokemons)) $\land$  ($\forall i$:nat)(i $<$ long(e.jugadores) $\yluego$ e.jugadores[i]$\rightarrow$sanciones $<$ 5 $\implies$ e.jugadores[i]$\rightarrow$conectado $\implies$ e.jugadores[i]$\rightarrow$posicion $\in$ coordenadas(e.mapa))
 	}
 	
 	~
@@ -223,15 +221,15 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 	\TituloDis{Función de Abstracción}
 
 	\Abs[pokego]{juego}[e]{j}{
-		mapa(j) == e.mapa $\land$ ($\forall p:$ jugador))(p $\in$ jugadores(j) $\implies$ long(e.jugadores) $\geq$ p $\yluego$ estaConectado(p,j) == e.jugadores[p].conectado? $\land$ sanciones(p,j) == e.jugadores[p].sanciones $\land$ (estaConectado(p,j) $\impluego$ posicion(p,j) == e.jugadores[p].posicion)) $\land$ pokemons(j) == listaPoke(claves(e.pokemons), e.pokemons) $\land$ expulsados(j) == listaExpulsados(e.jugadores) $\land$ ($\forall c:$ coor) (c $\in$ posConPokemons(j) == c $\in$ e.posConPokemons) $\land$ TODO POKEMON EN POS, TODO MOV PARA CAPTURA
+		mapa(j) == e.mapa $\land$ ($\forall p:$ jugador)(p $\in$ jugadores(j) $=$ long(e.jugadores) $>$ p $\yluego$ sanciones(p, j) == e.jugadores[p]$\rightarrow$sanciones $\land$ (sanciones(p, j) $<$ 5 $\impluego$ estaConectado(p, j) == e.jugadores[p]$\rightarrow$conectado?) $\land$ (estaConectado(p, j) $\impluego$ posicion(p, j) == e.jugadores[p]$\rightarrow$posicion)) $\land$ pokemons(j) == listaPoke(claves(e.pokemons), e.pokemons) $\land$ expulsados(j) == listaExpulsados(e, long(e.jugadores)) $\land$ ($\forall c:$ coor) (c $\in$ posConPokemons(j) == c $\in$ e.posConPokemons) $\land$ TODO POKEMON EN POS, TODO MOV PARA CAPTURA
 	}
 	
 	~
 
 	\tadOperacion{listaPoke}{conj(pokemon)/cs, dicc(String{,}Nat)/dic}{multiconj(pokemon)}{cs $\subseteq$ claves(dic)}
 	\tadOperacion{agregarPoke}{pokemon, nat}{multiconj(pokemon)}{}
-	\tadOperacion{listaExpulsados}{TODO NO SE QUE PASARLE}{conj(jugador)}{}
-		
+	\tadOperacion{listaExpulsados}{pokego, nat}{conj(jugador)}{}
+		 
 	~
 
 	\tadAxioma{listasPoke(cs, dic)}
@@ -249,7 +247,20 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 	ELSE
 		Ag(p, agregarPoke(p, n-1))
 	FI}
-	%TODO dado que los jugadores estan implicitos, es una boludez decirle "cucha, para cada numero que tenes en jugadores, existe esa posicion en el vector" asi que también queda medio implicito ese observador, pero capaz hay una mejor forma de hacerlo y dejarlo retratado :)
+	
+	\tadAxioma{listaExpulsados(p, n)}
+	{\IF n = 0 THEN
+		$\emptyset$
+	ELSE
+		{\IF p.jugadores[n-1]$\rightarrow$sanciones = 5 THEN
+			Ag(*p.jugadores[n-1],listaExpulsados(p,n-1))
+		ELSE
+			listaExpulsados(p,n-1)
+		FI}
+	FI}
+	
+	
+	%TODO iterador de jugadores :)
 
 
 \end{Representacion}
@@ -362,8 +373,6 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 	\complejidad: $O()$
 
 	\justifcomp:
-
-	\begin
 
 	~
 
