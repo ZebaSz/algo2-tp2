@@ -460,6 +460,7 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{iMoverse}{\Inout{j}{pokego}, \In{e}{jugador}, \In{c}{coor}}{}}
+		RemoverDeColas(j, e)\;
 		\If{\textbf{not} HayCamino(j.mapa, Posicion(j,e), c) \textbf{or} DistEuclidea(Posicion(j,e), c) $>$ 100}{
 			(*j.jugadores[e]).sanciones $\leftarrow$ (*j.jugadores[e]).sanciones + 1\;
 		}
@@ -474,8 +475,31 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 			}
 		}{
 			(*j.jugadores[e]).posicion $\leftarrow$ c\;
+			AgregarAColas(j, e, c)\;
 		}
+
 		%% COMP AUTO DE CAPTURA, ETC
+		it $\leftarrow$ CrearItUni(j.posConPokemons)\;
+		\While{HayMas?(it)}{ %%Itero la posiciones con pks
+			coor: coorConPk $\leftarrow$ Actual(it)\; 
+			\If{DistEuclidead(c, coorConPk) $>$ 4}{ %me fijo si es mas lejos que el rango de captura
+				infoPos: posPk $\leftarrow$ j.grillaPos[Latitud(coorConPk)][Longitud(coorConPk)]\;
+				posPk.contadorCaptura $\leftarrow$ posPk.contadorCaptura +1 \;
+				\If{posPk.contadorCaptura = 10}{ 
+					%%--Captura--
+					pokemon: pk $\leftarrow$ posPk.pokemon\;
+					jugador: captor $\leftarrow$ Menor(posPk.jugEsperandoCaptura)\; %Busca el menor
+					(*j.jugadores[captor]).cantPokemons $\leftarrow$ (*j.jugadores[captor]).cantPokemons + 1\; %Aumenta la catidad de polkemons
+					\eIf{Definido((*j.jugadores[captor]).pokemonsCapturados, pk)}{ %Define que pokemon captura en el dic
+						nat: nuevaCant $\leftarrow$ Obtener((*j.jugadores[captor]).pokemonsCapturados, pk) + 1\;
+						Definir((*j.jugadores[captor]).pokemonsCapturados, pk, nuevaCant)\;
+					}{
+						Definir((*j.jugadores[captor]).pokemonsCapturados, pk, 1)\;
+					}
+					AgregarAColas(captor, e)\; %Actualiza las prioridades de la proxima captura
+				}
+			}
+		}
 	\end{algorithm}
 
 	\complejidad: $O()$
