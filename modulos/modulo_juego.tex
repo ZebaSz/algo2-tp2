@@ -154,22 +154,22 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 			\tupItem{mapa}{mapa}
 			\tupItem{pokemons}{diccString(nat)}
 			\tupItem{posConPokemons}{conj(coor)}
-			\tupItem{jugadores}{vector(puntero(infoJugador))}
-			\tupItem{grillaPos}{arreglo\_dimensionable de (arreglo\_dimensionable de infoPos)}
-			\tupItem{cantPokemons}{nat}
+			\tupItem{\\jugadores}{vector(puntero(infoJugador))}
+			\tupItem{\\grillaPos}{arreglo\_dimensionable de (arreglo\_dimensionable de infoPos)}
+			\tupItem{\\cantPokemons}{nat}
 		\end{Tupla}
 
 		\begin{Tupla}[infoJugador]
 			\tupItem{sanciones}{nat}
 			\tupItem{conectado?}{bool}
 			\tupItem{posicion}{coor}
-			\tupItem{pokemonsCapturados}{diccString(nat)}
+			\tupItem{\\pokemonsCapturados}{diccString(nat)}
 		\end{Tupla}
 
 		\begin{Tupla}[infoPos]
 			\tupItem{pokemon}{pokemon}
 			\tupItem{contadorCaptura}{nat}
-			\tupItem{jugEsperandoCaptura}{conj(jugador))}
+			\tupItem{jugEsperandoCaptura}{dicPrior}
 		\end{Tupla}
 
 	\end{Estructura}
