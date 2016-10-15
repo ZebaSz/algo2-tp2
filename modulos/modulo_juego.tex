@@ -460,43 +460,43 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{iMoverse}{\Inout{j}{pokego}, \In{e}{jugador}, \In{c}{coor}}{}}
-		RemoverDeColas(j, e)\;
+		RemoverDeColas(j, e)\; %log EC
 		\If{\textbf{not} HayCamino(j.mapa, Posicion(j,e), c) \textbf{or} DistEuclidea(Posicion(j,e), c) $>$ 100}{
 			(*j.jugadores[e]).sanciones $\leftarrow$ (*j.jugadores[e]).sanciones + 1\;
 		}
 		\eIf{(*j.jugadores[e]).sanciones = 5}{
 			itDiccString(nat) : pokesABorrar $\leftarrow$ CrearIt((*j.jugadores[e]).pokemonsCapturados)\;
-			\While{HaySiguiente(pokesABorrar)}{
+			\While{HaySiguiente(pokesABorrar)}{ % PC ∗ |P|
 				tupla(calve: String, significado: Nat) : sig $\leftarrow$ Siguiente(pokesABorrar)\;
 
-				nat: nuevaCant $\leftarrow$ Obtener(j.pokemons, sig.clave) - sig.significado\;
-				Definir(j.pokemons, pk, nuevaCant)\;
-				j.cantPokemons $\leftarrow$ j.cantPokemons - sig.significado\;
+				nat: nuevaCant $\leftarrow$ Obtener(j.pokemons, sig.clave) - sig.significado\; %|P|
+				Definir(j.pokemons, pk, nuevaCant)\; %|P|
+				j.cantPokemons $\leftarrow$ j.cantPokemons - sig.significado\; 
 			}
 		}{
 			(*j.jugadores[e]).posicion $\leftarrow$ c\;
-			AgregarAColas(j, e, c)\;
+			AgregarAColas(j, e, c)\; %log EC
 		}
 
 		%% COMP AUTO DE CAPTURA, ETC
 		it $\leftarrow$ CrearItUni(j.posConPokemons)\;
-		\While{HayMas?(it)}{ %%Itero la posiciones con pks
+		\While{HayMas?(it)}{ %%Itero la posiciones con pks    PS * |P|
 			coor: coorConPk $\leftarrow$ Actual(it)\; 
 			\If{DistEuclidead(c, coorConPk) $>$ 4}{ %me fijo si es mas lejos que el rango de captura
-				infoPos: posPk $\leftarrow$ j.grillaPos[Latitud(coorConPk)][Longitud(coorConPk)]\;
+				infoPos: posPk $\leftarrow$ j.grillaPos[Latitud(coorConPk)][Longitud(coorConPk)]\; 
 				posPk.contadorCaptura $\leftarrow$ posPk.contadorCaptura +1 \;
 				\If{posPk.contadorCaptura = 10}{ 
 					%%--Captura--
-					pokemon: pk $\leftarrow$ posPk.pokemon\;
-					jugador: captor $\leftarrow$ Menor(posPk.jugEsperandoCaptura)\; %Busca el menor
+					pokemon: pk $\leftarrow$ posPk.pokemon\; 
+					jugador: captor $\leftarrow$ Menor(posPk.jugEsperandoCaptura)\; %Busca el menor o(1)
 					(*j.jugadores[captor]).cantPokemons $\leftarrow$ (*j.jugadores[captor]).cantPokemons + 1\; %Aumenta la catidad de polkemons
-					\eIf{Definido((*j.jugadores[captor]).pokemonsCapturados, pk)}{ %Define que pokemon captura en el dic
+					\eIf{Definido((*j.jugadores[captor]).pokemonsCapturados, pk)}{ %Define que pokemon captura en el dic |P|
 						nat: nuevaCant $\leftarrow$ Obtener((*j.jugadores[captor]).pokemonsCapturados, pk) + 1\;
-						Definir((*j.jugadores[captor]).pokemonsCapturados, pk, nuevaCant)\;
+						Definir((*j.jugadores[captor]).pokemonsCapturados, pk, nuevaCant)\; %|P|
 					}{
-						Definir((*j.jugadores[captor]).pokemonsCapturados, pk, 1)\;
+						Definir((*j.jugadores[captor]).pokemonsCapturados, pk, 1)\; %|P|
 					}
-					AgregarAColas(captor, e)\; %Actualiza las prioridades de la proxima captura
+					AgregarAColas(captor, e)\; %Actualiza las prioridades de la proxima captura 
 				}
 			}
 		}
