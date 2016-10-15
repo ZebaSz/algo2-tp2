@@ -441,7 +441,21 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 		}{
 			(*j.jugadores[e]).posicion $\leftarrow$ c\;
 		}
+
 		%% COMP AUTO DE CAPTURA, ETC
+		it $\leftarrow$ CrearItUni(j.posConPokemons)\;
+		\While{HayMas?(it)}{
+			coor: coorConPk $\leftarrow$ Actual(it)\;
+			\If{DistEuclidead(c, coorConPk) $>$ 4}{
+				j.grillaPos[Latitud(coorConPk)][Longitud(coorConPk)].contadorCaptura $\leftarrow$ j.grillaPos[Latitud(coorConPk)][Longitud(coorConPk)].contadorCaptura +1 \;
+				\If{j.grillaPos[Latitud(coorConPk)][Longitud(coorConPk)].contadorCaptura = 10}{
+					%%TODO CAPTURA
+				}
+			}
+
+		}
+
+
 	\end{algorithm}
 
 	\complejidad: $O()$
