@@ -62,7 +62,7 @@
 			\tupItem{hijoDer}{puntero(Nodo)}				
 			\tupItem{cantPokemons}{nat}
 			\tupItem{idJugador}{nat}
-			\tupItem{factor}{nat}
+			\tupItem{alto}{nat}
 		\end{Tupla}
 	\end{Estructura}
 
@@ -76,7 +76,7 @@
 
 		\item Los nodos de la derecha tienen menor prioridad
 
-		\item El factor de balanceo es la diferencia de la cantidad de nodos del hijo izquierdo por la del hijo derecho
+		\item La altura de un Nodo es la altura del hijo con mayor altura mas 1
 
 		\item Los factores son -1, 0 o +1
 
@@ -91,7 +91,9 @@
 	\tadOperacion{sinRepetidos}{puntero(nodo), conj(nat)}{}
 	\tadOperacion{ABB?}{puntero(Nodo)/nodo}{bool}{}
 	\tadOperacion{menor?}{puntero(Nodo)/padre, puntero(Nodo)/hijo}{bool}{padre $\neq$ NULL}
-	\tadOperacion{balanceado?}(puntero(nodo)){bool}{}
+	\tadOperacion{altoValido?}(puntero(nodo)){bool}{}
+	\tadOperacion{mayorAltura}{nat, nat}{nat}{}
+	\tadOperacion{factorDeBalanceo}{nat, nat}{nat}{}
 	\tadOperacion{cantidadHijos}{puntero(Nodo)}{}
 
  	~
@@ -118,12 +120,21 @@
 	}
 
 	~
-	%%TODO ARREGLAR/PREGUNTAR ESE MENOS UNO
-	\tadAxioma{factorValido?(nodo)}{
+
+	\tadAxioma{altoValido?(nodo)}{
 		nodo = NULL $\oluego$ \\
-		(nodo.factor = cantidadHijos(nodo.hijoDer) - cantidadHijos(nodo.hijoDer) $\land$ \\
-		(nodo.factor = 0 $\lor$ nodo.factor = 1 $\lor$ nodo.factor = -1) $\land$ \\
-		factorValido?(nodo.hijoIzq) $\land$ factorValido?(nodo.hijoDer))
+		(nodo.alto = mayorAltura(nodo.hijoIzq, nodo.hijoDer) + 1 $\land$ \\
+		factorDeBalanceo(cantidadHijos(nodo.hijoIzq), cantidadHijos(nodo.hijoDer)) $\leq$ 1 
+	}
+
+	~
+
+	\tadAxioma{mayorAltura(izq, der)}{
+		{\IF cantidadHijos(izq) $<$ cantidadHijos(der) THEN
+			cantidadHijos(izq)
+		ELSE
+			cantidadHijos(der)
+		FI}
 	}
 
 	~
@@ -133,8 +144,18 @@
 			0
 		ELSE
 			$\beta$(nodo.hijoIzq $\neq$ NULL) + cantidadHijos(nodo.hijoIzq) + \\
-			$\beta$(nodo.hijoDer $\neq$ NULL) + cantidadHijos(nodo.hijoDer) \\			
-		}
+			$\beta$(nodo.hijoDer $\neq$ NULL) + cantidadHijos(nodo.hijoDer)		
+		FI}
+	}
+
+	~
+
+	\tadAxioma{factorDeBalanceo(izq, der)}{
+		{\IF izq $<$ der THEN
+			der - izq 
+		ELSE
+			izq - der
+		FI}
 	}
 
 	\TituloDis{Función de Abstracción}
@@ -164,24 +185,72 @@
 	\end{algorithm}
 
 
-	\begin{algorithm}[H]
-		\NoCaptionOfAlgo
-		\caption{\algoritmo{buscar}{\In{a}{RELLENAR}, \Inout{padre}{puntero(Nodo)}, \Inout{hijo}{puntero(Nodo)}}}
-		\While{hijo $\neq$ NULL $\yluego$ hijo.idJugador $\neq$ a}{
-			padre $\leftarrow$ hijo\;
-			\eIf{hijo.cant $<$ a.cant $\lor$ (hijo.cant = a.cant $\land$ hijo.id $<$ a.id}{
-				hijo $\leftarrow$ hijo.hijoIzq\;
-			}{
-				hijo $\leftarrow$ hijo.hijoDer\;
-			}
-		}
-
-	\end{algorithm}
+	% \begin{algorithm}[H]
+	% 	\NoCaptionOfAlgo
+	% 	\caption{\algoritmo{Buscar}{\In{a}{RELLENAR}, \Inout{hijo}{puntero(Nodo)}}}
+	% 	\While{hijo $\neq$ NULL $\yluego$ hijo.idJugador $\neq$ a}{
+	% 		\eIf{hijo.cant $<$ a.cant $\lor$ (hijo.cant = a.cant $\land$ hijo.id $<$ a.id}{
+	% 			hijo $\leftarrow$ hijo.hijoIzq\;
+	% 		}{
+	% 			hijo $\leftarrow$ hijo.hijoDer\;
+	% 		}
+	% 	}
+	% \end{algorithm}
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{iAgregar}{\In{a}{RELLENAR}, \Inout{h}{chupaPij}}{}}
 	\end{algorithm}
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{CrearNodo}{\In{a}{RELLNAR}}{puntero(Nodo)}}
+		Nodo: nuevo\;
+		nuevo.valor $\leftarrow$ a\; %%TODO CAMBIAR
+		nuevo.hijoIzq $\leftarrow$ NULL\;
+		nuevo.hijoDer $\leftarrow$ NULL\;
+		nuevo.alto $\leftarrow$ 1\;
+		res $\leftarrow$ \&nuevo\;
+	\end{algorithm}
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{Insertar}{\In{a}{RELLENAR}, \Inout{nodo}{puntero(Nodo)}}{puntero(Nodo)}}
+		
+		\eIf{nodo = NULL}{
+			res $\leftarrow$ CrearNodo(a)\;
+		}{	
+			%%TODO hacer bien la comapracion
+			\eIf{n.valor $<$ a}{
+				nodo.hijoIzq $\leftarrow$ Insertar(a, nodo.hijoIzq)\;
+			}{
+				nodo.hijoDer $\leftarrow$ Insertar(a, nodo.hijoDer)\;
+			}
+			res $\leftarrow$ Balancear(nodo)\;
+		}
+	\end{algorithm}
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{Balancear}{\Inout{nodo}{puntero(Nodo)}}{puntero(Nodo)}}
+		%%TODO ArreglarFactor(nodo)
+		\eIf(FactorDeBalanceo(nodo) = 2){
+			\If(FactorDeBalanceo(nodo.hijoDer) $<$ 0){
+				nodo.hijoDer $\leftarrow$ rotarDer(nodo.hijoDer);
+			}
+			res $\leftarrow$ rotarIzq(nodo)\;
+		}{
+			\eIf(FactorDeBalanceo(nodo) = -2){
+				\If(FactorDeBalanceo(nodo.hijoDer) $>$ 0){
+					nodo.hijoIzq $\leftarrow$ rotarIzq(nodo.hijoIzq);
+				}
+				res $\leftarrow$ rotarDer(nodo)\;
+			}{
+				res $\leftarrow$ nodo\;
+			}
+		}
+	\end{algorithm}
+
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
