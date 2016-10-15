@@ -53,11 +53,11 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 	[devuelve el mapa del juego.]
 	[$res$ no es modificable.]
 
-	\InterfazFuncion{Jugadores}{\In{j}{juego}}{itBi(jugador)}
-	{$res \igobs$ crearItBi($\secuvacia$, jugadores($j$)) $\land$ alias(esPermutacion(SecuSuby($res$), jugadores($j$))) $\land$ vacia?(Anteriores($res$))}
+	\InterfazFuncion{Jugadores}{\In{j}{juego}}{itUni(jugador)}
+	{$res \igobs$ crearItUni(jugadores($j$))}
 	[$O(1)$]
 	[devuelve un iterador del conjunto de jugadores registrados (no expulsados).]
-	[el iterador se invalida si se expulsa al siguiente jugador del iterador, o si se agrega un nuevo jugador y el iterador había llegado al final. Además, anteriores($res$) y siguientes($res$) podrían cambiar completamente ante cualquier operación que modifique la lista de jugadores.]
+	[el iterador se invalida si se expulsa al siguiente jugador del iterador, o si se agrega un nuevo jugador y el iterador había llegado al final. Además, siguientes($res$) podría cambiar completamente ante cualquier operación que modifique la lista de jugadores.]
 
 	\InterfazFuncion{EstaConectado}{\In{j}{juego}, \In{e}{jugador}}{bool}
 	[$e \in$ jugadores($j$)]
@@ -85,11 +85,11 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 	[devuelve un iterador al conjunto de los pokémons capturados por un jugador, y la cantidad de los mismos.]
 	[el iterador se invalida si y sólo si se elimina el elemento siguiente del iterador.]
 
-	\InterfazFuncion{Expulsados}{\In{j}{juego}}{itBi(jugador)}
-	{$res \igobs$ crearItBi($\secuvacia$, expulsados($j$)) $\land$ alias(esPermutacion(SecuSuby($res$), expulsados($j$))) $\land$ vacia?(Anteriores($res$))}
+	\InterfazFuncion{Expulsados}{\In{j}{juego}}{itUni(jugador)}
+	{$res \igobs$ crearItUni(expulsados($j$))}
 	[$O()$]
 	[devuelve un iterador del conjunto de jugadores expulsados.]
-	[el iterador se invalida si se expulsa al siguiente jugador del iterador, o si se agrega un nuevo jugador y el iterador había llegado al final. Además, anteriores($res$) y siguientes($res$) podrían cambiar completamente ante cualquier operación que modifique la lista de jugadores.]
+	[el iterador se invalida si se expulsa al siguiente jugador del iterador, o si se agrega un nuevo jugador y el iterador había llegado al final. Además, siguientes($res$) podría cambiar completamente ante cualquier operación que modifique la lista de jugadores.]
 
 	\InterfazFuncion{PosConPokémons}{\In{j}{juego}}{conj(coor)}
 	{alias($res$ = posConPokémons(j))}
@@ -151,24 +151,24 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 
 
 	\InterfazFuncion{CrearIt}{\In{j}{juego}, \In{elim?}{bool}}{itJugadores}
-	{($\neg$elim? $\land$ esPermutacion(SecuSuby($res$), jugadores($j$))) $\land$ (elim? $\land$ esPermutacion(SecuSuby($res$), expulsados($j$))) $\land$ vacia?(Anteriores($res$))}
+	{true}
 	[$O(1)$]
-	[crea un iterador bidireccional de los jugadores validos o expulsados.]
-	[el iterador se invalida si se expulsa al siguiente jugador del iterador, o si se agrega un nuevo jugador y el iterador había llegado al final. Además, siguientes($res$) podrían cambiar completamente ante cualquier operación que modifique la lista de jugadores.]
+	[crea un iterador unidireccional de los jugadores validos o expulsados.]
+	[el iterador se invalida si se expulsa al siguiente jugador del iterador, o si se agrega un nuevo jugador y el iterador había llegado al final. Además, siguientes($res$) podría cambiar completamente ante cualquier operación que modifique la lista de jugadores.]
 
-	\InterfazFuncion{HaySiguiente}{\In{it}{itJugadores}}{bool}
-	{$res$ $\igobs$ haySiguiente?($it$)}
+	\InterfazFuncion{HayMas}{\In{it}{itJugadores}}{bool}
+	{$res$ $\igobs$ hayMas?($it$)}
 	[$O(1)$]
 	[devuelve \texttt{true} si y sólo si en el iterador todavía quedan elementos para avanzar.]
 
-	\InterfazFuncion{Siguiente}{\In{it}{itJugadores}}{jugador}
-	[HaySiguiente?($it$)]
-	{$res$ $\igobs$ Siguiente($it$)}
+	\InterfazFuncion{Actual}{\In{it}{itJugadores}}{jugador}
+	[HayMas?($it$)]
+	{$res$ $\igobs$ Actual($it$)}
 	[$O(|c_{max}|))$]
 	[devuelve el elemento siguiente a la posición del iterador, como tupla clave-valor.]
 
 	\InterfazFuncion{Avanzar}{\Inout{it}{itJugadores}}{}
-	[$it = it_0$ $\land$ HaySiguiente?($it$)]
+	[$it = it_0$ $\land$ HayMas?($it$)]
 	{$it$ $\igobs$ Avanzar($it_0$)}
 	[$O(1)$]
 	[avanza a la posición siguiente del iterador.]
@@ -316,13 +316,11 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 
 	\TituloDis{Función de Abstracción del iterador}
 
-	\Abs[itJug]{itBi(nat)}[it]{b}{Anteriores(b) $=$ seleccionar(primeros(*it.listaJugadores, it.contador), it.eliminados?) \\ $\land$ Siguientes(b) $=$ seleccionar(ultimos(*it.listaJugadores, it.contador), it.eliminados?)}
+	\Abs[itJug]{itUni(nat)}[it]{b}{Siguientes(b) $=$ seleccionar(ultimos(*it.listaJugadores, it.contador), it.eliminados?)}
 
 	~
 
 	\tadOperacion{selecionar}{secu(infoJugador)/js,  bool/elim?}{secu(nat)}{}
-
-	\tadOperacion{primeros}{secu(infoJugador)/js,  nat/n}{secu(infoJugador)}{}
 
 	\tadOperacion{ultimos}{secu(infoJugador)/js,  nat/n}{secu(infoJugador)}{}
 
@@ -334,14 +332,6 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 	ELSE
 		{\IF (ult(js).sanciones $<$ 5) = elim? THEN  seleccionar(com(js), elim?) \circulito (long(js) - 1)) ELSE seleccionar(com(js), elim?) FI}
 	FI}
-
-	\tadAxioma{primeros(js, n)}
-	{\IF 0?(n) $\lor$ vacia?(js) THEN
-		\secuvacia
-	ELSE
-		prim(js) \puntito primeros(fin(js), n-1)
-	FI}
-
 
 	\tadAxioma{ultimos(js, n)}
 	{\IF 0?(n) $\lor$ vacia?(js) THEN
@@ -611,7 +601,7 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
-		\caption{\algoritmo{iJugadores}{\In{j}{pokego}}{itBi(jugador)}}
+		\caption{\algoritmo{iJugadores}{\In{j}{pokego}}{itJugadores}}
 		res $\leftarrow$ CrearIt(j, false)\OdeLinea{1}
 	\end{algorithm}
 
@@ -671,7 +661,7 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
-		\caption{\algoritmo{iExpulsados}{\In{j}{pokego}}{itBi(jugador)}}
+		\caption{\algoritmo{iExpulsados}{\In{j}{pokego}}{itJugadores}}
 		res $\leftarrow$ CrearIt(j, true)\OdeLinea{1}
 	\end{algorithm}
 
@@ -849,7 +839,7 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
-		\caption{\algoritmo{HaySiguiente}{\In{it}{itJugadores}}{bool}}
+		\caption{\algoritmo{HayMas}{\In{it}{itJugadores}}{bool}}
 		nat: i $\leftarrow$ it.contador\OdeLinea{1}
 		res $\leftarrow$ false\OdeLinea{1}
 		\While(\OdeBloque{\#j}){i $<$ long(*it.listaJugadores)}{
@@ -865,7 +855,7 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
-		\caption{\algoritmo{Siguiente}{\In{it}{itJugadores}}{jugador}}
+		\caption{\algoritmo{Actual}{\In{it}{itJugadores}}{jugador}}
 		nat: i $\leftarrow$ it.contador\OdeLinea{1}
 		\While(\OdeBloque{\#j}){i $<$ long(*it.listaJugadores)}{
 			\If{((*it.listaJugadores)[i].sanciones $<5$) = it.eliminados?}{
