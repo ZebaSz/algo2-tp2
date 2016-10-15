@@ -74,10 +74,10 @@ Usaremos $copy(s)$ para denotar el costo de copiar el elemento $s \in \alpha$. L
 	El iterador que presentamos no permite modificar el diccionario recorrido.
 
 	\InterfazFuncion{CrearIt}{\In{d}{DiccString($\alpha$)}}{\itDicString}
-	{alias(esPermutacion?(SecuSuby($res$), $d.claves$)) $\land$ vacia?(Anteriores($res$))}
+	{alias(esPermutacion?(SecuSuby($res.itClaves$), $d.claves$)) $\land$ vacia?(Anteriores($res$))}
 	[$O(1)$]
 	[crea un iterador bidireccional del diccionario usando el iterador del conjunto de sus claves.]
-	[el iterador se invalida si y sólo si se elimina el elemento siguiente del iterador. Además, anteriores($res$) y siguientes($res$) podrían cambiar completamente ante cualquier operación que modifique $d$ sin utilizar las funciones del iterador.]
+	[el iterador se invalida si y sólo si se elimina el elemento siguiente del iterador. Además, anteriores($res$) y siguientes($res$) podrían cambiar completamente ante cualquier operación que modifique $d$.]
 
 	\InterfazFuncion{HaySiguiente}{\In{it}{\itDicString}}{bool}
 	{$res$ $\igobs$ haySiguiente?($it$)}

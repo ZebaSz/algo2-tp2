@@ -6,7 +6,7 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 
 	\textbf{se explica con}: \tadNombre{Juego}.
 
-	\textbf{géneros}: \TipoVariable{juego}.
+	\textbf{géneros}: \TipoVariable{juego}, \TipoVariable{itJugadores}.
 
 	\textbf{servicios usados}: \tadNombre{Vector($\alpha$)}, \tadNombre{DiccionarioString($\alpha$)}, \tadNombre{Conjunto Lineal($\alpha$)}
 
@@ -54,10 +54,10 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 	[$res$ no es modificable.]
 
 	\InterfazFuncion{Jugadores}{\In{j}{juego}}{itBi(jugador)}
-	{$res \igobs$ crearItBi($\secuvacia$, jugadores($j$)) $\land$ alias(esPermutacion(SecuSuby($res$), jugadores($j$)))}
+	{$res \igobs$ crearItBi($\secuvacia$, jugadores($j$)) $\land$ alias(esPermutacion(SecuSuby($res$), jugadores($j$))) $\land$ vacia?(Anteriores($res$))}
 	[$O(1)$]
 	[devuelve un iterador del conjunto de jugadores registrados (no expulsados).]
-	[el iterador se invalida si y sólo si se elimina el elemento siguiente del iterador.]
+	[el iterador se invalida si se expulsa al siguiente jugador del iterador, o si se agrega un nuevo jugador y el iterador había llegado al final. Además, anteriores($res$) y siguientes($res$) podrían cambiar completamente ante cualquier operación que modifique la lista de jugadores.]
 
 	\InterfazFuncion{EstaConectado}{\In{j}{juego}, \In{e}{jugador}}{bool}
 	[$e \in$ jugadores($j$)]
@@ -86,10 +86,10 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 	[el iterador se invalida si y sólo si se elimina el elemento siguiente del iterador.]
 
 	\InterfazFuncion{Expulsados}{\In{j}{juego}}{itBi(jugador)}
-	{$res \igobs$ crearItBi($\secuvacia$, expulsados($j$)) $\land$ alias(esPermutacion(SecuSuby($res$), expulsados($j$)))}
+	{$res \igobs$ crearItBi($\secuvacia$, expulsados($j$)) $\land$ alias(esPermutacion(SecuSuby($res$), expulsados($j$))) $\land$ vacia?(Anteriores($res$))}
 	[$O()$]
 	[devuelve un iterador del conjunto de jugadores expulsados.]
-	[el iterador se invalida si y sólo si se elimina el elemento siguiente del iterador.]
+	[el iterador se invalida si se expulsa al siguiente jugador del iterador, o si se agrega un nuevo jugador y el iterador había llegado al final. Además, anteriores($res$) y siguientes($res$) podrían cambiar completamente ante cualquier operación que modifique la lista de jugadores.]
 
 	\InterfazFuncion{PosConPokémons}{\In{j}{juego}}{conj(coor)}
 	{alias($res$ = posConPokémons(j))}
@@ -145,9 +145,39 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 	[$O(|pk_{max}|)$]
 	[devuelve la cantidad de pokémons de la especie especificada en juego.]
 
+	\TituloDis{Operaciones del iterador de jugadores}
+
+	El iterador que presentamos permite recorrer tanto los jugadores registrados válidos como los expulsados de forma unidireccional. El iterador es solo un contador (devuelve las IDs de los jugadores, no su detalle).
+
+
+	\InterfazFuncion{CrearIt}{\In{j}{juego}, \In{elim?}{bool}}{itJugadores}
+	{($\neg$elim? $\land$ esPermutacion(SecuSuby($res$), jugadores($j$))) $\land$ (elim? $\land$ esPermutacion(SecuSuby($res$), expulsados($j$))) $\land$ vacia?(Anteriores($res$))}
+	[$O(1)$]
+	[crea un iterador bidireccional de los jugadores validos o expulsados.]
+	[el iterador se invalida si se expulsa al siguiente jugador del iterador, o si se agrega un nuevo jugador y el iterador había llegado al final. Además, siguientes($res$) podrían cambiar completamente ante cualquier operación que modifique la lista de jugadores.]
+
+	\InterfazFuncion{HaySiguiente}{\In{it}{itJugadores}}{bool}
+	{$res$ $\igobs$ haySiguiente?($it$)}
+	[$O(1)$]
+	[devuelve \texttt{true} si y sólo si en el iterador todavía quedan elementos para avanzar.]
+
+	\InterfazFuncion{Siguiente}{\In{it}{itJugadores}}{jugador}
+	[HaySiguiente?($it$)]
+	{$res$ $\igobs$ Siguiente($it$)}
+	[$O(|c_{max}|))$]
+	[devuelve el elemento siguiente a la posición del iterador, como tupla clave-valor.]
+
+	\InterfazFuncion{Avanzar}{\Inout{it}{itJugadores}}{}
+	[$it = it_0$ $\land$ HaySiguiente?($it$)]
+	{$it$ $\igobs$ Avanzar($it_0$)}
+	[$O(1)$]
+	[avanza a la posición siguiente del iterador.]
+
 \end{Interfaz}
 
 \begin{Representacion}
+
+	\TituloDis{Representación de Juego}
 
 	\begin{Estructura}{Juego}[pokego]
 		\begin{Tupla}[pokego]
@@ -175,7 +205,7 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 
 	\end{Estructura}
 	
-	\TituloDis{Invariante de Representación del Diccionario}
+	\TituloDis{Invariante de Representación del Juego}
 
 	\begin{enumerate}
 		
@@ -263,10 +293,69 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 	%TODO iterador de jugadores :)
 
 
+	\TituloDis{Representación del iterador de jugadores}
+
+	\begin{Estructura}{itJugadores}[itJug]
+		\begin{Tupla}[itJug]
+			\tupItem{puntero(vector(puntero(infoJugador)))}{listaJugadores}
+			\tupItem{nat}{contador}
+			\tupItem{bool}{eliminados?}
+		\end{Tupla}
+	\end{Estructura}
+
+	\TituloDis{Invariante de Representación del iterador}
+
+	\begin{enumerate}
+
+		\item La lista de jugadores no es nula
+
+	\end{enumerate}
+
+	\Rep[itJug][it]{it.listaJugadores $\neq$ NULL}
+
+
+	\TituloDis{Función de Abstracción del iterador}
+
+	\Abs[itJug]{itBi(nat)}[it]{b}{Anteriores(b) $=$ seleccionar(primeros(*it.listaJugadores, it.contador), it.eliminados?) \\ $\land$ Siguientes(b) $=$ seleccionar(ultimos(*it.listaJugadores, it.contador), it.eliminados?)}
+
+	~
+
+	\tadOperacion{selecionar}{secu(infoJugador)/js,  bool/elim?}{secu(nat)}{}
+
+	\tadOperacion{primeros}{secu(infoJugador)/js,  nat/n}{secu(infoJugador)}{}
+
+	\tadOperacion{ultimos}{secu(infoJugador)/js,  nat/n}{secu(infoJugador)}{}
+
+	~
+
+	\tadAxioma{selecionar(js, elim?)}
+	{\IF vacia?(js) THEN
+		\secuvacia
+	ELSE
+		{\IF (ult(js).sanciones $<$ 5) = elim? THEN  seleccionar(com(js), elim?) \circulito (long(js) - 1)) ELSE seleccionar(com(js), elim?) FI}
+	FI}
+
+	\tadAxioma{primeros(js, n)}
+	{\IF 0?(n) $\lor$ vacia?(js) THEN
+		\secuvacia
+	ELSE
+		prim(js) \puntito primeros(fin(js), n-1)
+	FI}
+
+
+	\tadAxioma{ultimos(js, n)}
+	{\IF 0?(n) $\lor$ vacia?(js) THEN
+		\secuvacia
+	ELSE
+		ultimos(com(js), n-1) \circulito ult(js)
+	FI}
+
 \end{Representacion}
 
 
 \begin{Algoritmos}
+
+	\TituloDis{Algorítmos de Juego}
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
@@ -523,7 +612,7 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{iJugadores}{\In{j}{pokego}}{itBi(jugador)}}
-		%% ITERADOR A LOS JUGADORES? PERO LOS JUGADORES SON NAAAAAAAAAAAAAATS
+		res $\leftarrow$ CrearIt(j, false)\OdeLinea{1}
 	\end{algorithm}
 
 	\complejidad: $O()$
@@ -583,7 +672,7 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{iExpulsados}{\In{j}{pokego}}{itBi(jugador)}}
-		%% MISMO QUE ANTES, EL IT ES SOLO UN CONTADOR QUE AVANZA MAS DE UNO CUANDO EL SUCESOR (NO) ESTA EXPULSADO
+		res $\leftarrow$ CrearIt(j, true)\OdeLinea{1}
 	\end{algorithm}
 
 	\complejidad: $O()$
@@ -740,5 +829,73 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 	\complejidad: $O()$
 
 	\justifcomp:
+
+
+	\TituloDis{Algorítmos del iterador}
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{CrearIt}{\In{j}{pokego}, \In{elim?}{bool}}{itJugadores}}
+		res.listaJugadores $\leftarrow$ \&(j.jugadores)\OdeLinea{1}
+		res.contador $\leftarrow$ 0\OdeLinea{1}
+		res.eliminados $\leftarrow$ elim?\OdeLinea{1}
+	\end{algorithm}
+
+	\complejidad: $O(1)$
+
+	\justifcomp: solo se inicializa el iterador.
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{HaySiguiente}{\In{it}{itJugadores}}{bool}}
+		nat: i $\leftarrow$ it.contador\OdeLinea{1}
+		res $\leftarrow$ false\OdeLinea{1}
+		\While(\OdeBloque{\#j}){i $<$ long(*it.listaJugadores)}{
+			\If{((*it.listaJugadores)[i].sanciones $<5$) = it.eliminados?}{
+				res $\leftarrow$ true\OdeLinea{1}
+				\textbf{return}\;
+			}
+			i $\leftarrow$ i + 1\OdeLinea{1}
+		}
+	\end{algorithm}
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{Siguiente}{\In{it}{itJugadores}}{jugador}}
+		nat: i $\leftarrow$ it.contador\OdeLinea{1}
+		\While(\OdeBloque{\#j}){i $<$ long(*it.listaJugadores)}{
+			\If{((*it.listaJugadores)[i].sanciones $<5$) = it.eliminados?}{
+				res $\leftarrow$ i\OdeLinea{1}
+				\textbf{return}\;
+			}
+			i $\leftarrow$ i + 1\OdeLinea{1}
+		}
+	\end{algorithm}
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{Avanzar}{\Inout{it}{itJugadores}}{}}
+		nat: i $\leftarrow$ it.contador\OdeLinea{1}
+		\While(\OdeBloque{\#j}){i $<$ long(*it.listaJugadores)}{
+			\If{((*it.listaJugadores)[i].sanciones $<5$) = it.eliminados?}{
+				it.contador $\leftarrow$ i + 1\OdeLinea{1}
+				\textbf{return}\;
+			}
+			i $\leftarrow$ i + 1\OdeLinea{1}
+		}
+	\end{algorithm}
+
+	\complejidad: $O(\#j)$
+
+	\justifcomp: como la lista de jugadores y la de eliminados son la misma, debe revisarla en su totalidad hasta encontrar otro elemento válido.
+
+	~
+
 
 \end{Algoritmos}
