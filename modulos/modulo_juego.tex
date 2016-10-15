@@ -389,17 +389,16 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 		}
 
 		j.grilla[Latitud(c)][Longitud(c)].pokemon $\leftarrow$ pk\;
+		j.grila[Latitud(c)][Longitud(c)].contadorCaptura $\leftarrow$ 0\;
 
 		nat : i $\leftarrow$ 0\;
-		\While{i $<$ 5}{
-			nat : j $\leftarrow$ 0\;
-			\While{DistEuclidea(c, CrearCoor(Latitud(c) + i, Longitud(c) + j)) $\leq$ 4}{
-				\If{PosExistente(j.mapa, CrearCoor(Latitud(c) + i, Longitud(c) + j))}{
-					j.grilla[i][j].contadorCaptura $\leftarrow$ 0\;
-				}
-				j $\leftarrow$ j + 1\;
+		itJug: it $\leftarrow$ Jugadores(j)\;
+		\While{it.haymas()}{
+			jugador: jug <- it.actual()
+			\If{DistEuclidea(c, (*j.jugadores[jug]).posicion) $\leq$ 4}{
+				AgregarAColas(j, jug)\;
 			}
-			i $\leftarrow$ i + 1\;
+			it.avanzar()\;
 		}
 	\end{algorithm}
 
@@ -571,7 +570,7 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 		it $\leftarrow$ CrearItUni(j.posConPokemons)\;
 		\While{HayMas?(it)}{ %%Itero la posiciones con pks    PS * |P|
 			coor: coorConPk $\leftarrow$ Actual(it)\; 
-			\If{DistEuclidead(c, coorConPk) $>$ 4}{ %me fijo si es mas lejos que el rango de captura
+			\If{DistEuclidea(c, coorConPk) $>$ 4}{ %me fijo si es mas lejos que el rango de captura
 				infoPos: posPk $\leftarrow$ j.grillaPos[Latitud(coorConPk)][Longitud(coorConPk)]\; 
 				posPk.contadorCaptura $\leftarrow$ posPk.contadorCaptura +1 \;
 				\If{posPk.contadorCaptura = 10}{ 
