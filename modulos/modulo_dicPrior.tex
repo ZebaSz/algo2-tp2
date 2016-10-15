@@ -10,8 +10,14 @@
 
 	\InterfazFuncion{Vacio}{}{prior}
 	[]
-	{res $\igob$ vacío}
-	[$O(1)$]]
+	{res $\igobs$ vacío}
+	[$O(1)$]
+	[Crea el diccionario vacío]
+
+
+	\InterfazFuncion{Vacio}{}{prior}
+	{res $\igobs$ vacío}
+	[$O(1)$]
 	[Crea el diccionario vacío]
 
 	\InterfazFuncion{Definir}{\Inout{p}{prior}, \In{j}{jugador}, \In{c}{nat}}{}
@@ -120,7 +126,7 @@
 			definido?(j, e.raizJugadores) $\impluego$ obtener(j, e.raizJugadores) = obtener(j, e.raizCantidad))
 	}
 
-	\tadOperacion{sinRepetidos}{puntero(nodo), conj(nat)}{}
+	\tadOperacion{sinRepetidos}{puntero(nodo), conj(nat)}{bool}{}
 	\tadOperacion{ABB?}{puntero(Nodo)/nodo}{bool}{}
 	\tadOperacion{menor?}{puntero(Nodo)/padre, puntero(Nodo)/hijo}{bool}{padre $\neq$ NULL}
 	\tadOperacion{ABBespecial?}{puntero(Nodo)/nodo}{bool}{}
@@ -128,9 +134,9 @@
 	\tadOperacion{altoValido?}(puntero(nodo)){bool}{}
 	\tadOperacion{mayorAltura}{nat, nat}{nat}{}
 	\tadOperacion{factorDeBalanceo}{nat, nat}{nat}{}
-	\tadOperacion{cantidadHijos}{puntero(Nodo)}{}
-	\tadOperacion{definido?}{jugador, puntero(nodo)}{}
-	\tadOperacion{obtener}{jugador/j, puntero(nodo)/p}{definido?(j,p)}
+	\tadOperacion{cantidadHijos}{puntero(Nodo)}{nat}{}
+	\tadOperacion{definido?}{jugador, puntero(nodo)}{bool}{}
+	\tadOperacion{obtener}{jugador/j, puntero(nodo)/p}{nat}{definido?(j,p)}
  	~
 
 	\tadAxioma{sinRepetidos(padre, ids)}{
@@ -299,21 +305,21 @@
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{Balancear}{\Inout{nodo}{puntero(Nodo)}}{puntero(Nodo)}}
 		%%TODO ArreglarFactor(nodo)
-		\eIf(FactorDeBalanceo(nodo) = 2){
-			\If(FactorDeBalanceo(nodo.hijoDer) $<$ 0){
-				nodo.hijoDer $\leftarrow$ rotarDer(nodo.hijoDer);
-			}
-			res $\leftarrow$ rotarIzq(nodo)\;
-		}{
-			\eIf(FactorDeBalanceo(nodo) = -2){
-				\If(FactorDeBalanceo(nodo.hijoDer) $>$ 0){
-					nodo.hijoIzq $\leftarrow$ rotarIzq(nodo.hijoIzq);
-				}
-				res $\leftarrow$ rotarDer(nodo)\;
-			}{
-				res $\leftarrow$ nodo\;
-			}
-		}
+		% \eIf(FactorDeBalanceo(nodo) = 2){
+		% 	\eIf(FactorDeBalanceo(nodo.hijoDer) $<$ 0){
+		% 		nodo.hijoDer $\leftarrow$ rotarDer(nodo.hijoDer);
+		% 	}{}
+		% 	res $\leftarrow$ rotarIzq(nodo)\;
+		% }{
+		% 	\eIf(FactorDeBalanceo(nodo) = -2){
+		% 		\eIf(FactorDeBalanceo(nodo.hijoDer) $>$ 0){
+		% 			nodo.hijoIzq $\leftarrow$ rotarIzq(nodo.hijoIzq);
+		% 		}{}
+		% 		res $\leftarrow$ rotarDer(nodo)\;
+		% 	}{
+		% 		res $\leftarrow$ nodo\;
+		% 	}
+		% }
 	\end{algorithm}
 
 
