@@ -163,6 +163,8 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 			\tupItem{sanciones}{nat}
 			\tupItem{conectado?}{bool}
 			\tupItem{posicion}{coor}
+			\tupItem{capturando?}{bool}
+			\tupItem{posPokeCaptura}{coor}
 			\tupItem{\\pokemonsCapturados}{diccString(nat)}
 		\end{Tupla}
 
@@ -367,8 +369,38 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{iDesconectarse}{\Inout{j}{pokego}, \In{e}{jugador}}{}}
 		(*j.jugadores[e]).conectado? $\leftarrow$ false\;
+		RemoverDeCola(j, e)\;
+	\end{algorithm}
 
-		%% SACARLO DE LOS CONJUNTOS DE ESPERA
+	\complejidad: $O()$
+
+	\justifcomp:
+
+	\begin
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{RemoverDeCola}{\Inout{j}{pokego}, \In{e}{jugador}}{}}
+		\IF{(*j.jugadores[e]).capturando?}{
+			coor: c $\leftarrow$ (*j.jugadores[e]).posPokeCaptura\;
+			(*j.jugadores[e]).capturando? $\leftarrow$ false\;
+			Borrar(j.grillaPos[Latitud(c)][Longitud(c)].jugEsperandoCaptura, e)
+		}
+	\end{algorithm}
+
+	\complejidad: $O()$
+
+	\justifcomp:
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{AgregarACola}{\Inout{j}{pokego}, \In{e}{jugador}}{}}
+			coor: c $\leftarrow$ (*j.jugadores[e]).posPokeCaptura\;
+			Borrar(j.grillaPos[Latitud(c)][Longitud(c)].jugEsperandoCaptura, e)
 	\end{algorithm}
 
 	\complejidad: $O()$
