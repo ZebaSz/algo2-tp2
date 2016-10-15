@@ -1,67 +1,93 @@
-\section{Módulo Chupense una Pija}
-	Description %%TODO habria que decir que la raiz es el elemento minimo
+\section{Módulo Diccionario de Prioridad de atrape}
+	Description %%TODO 
 
 \begin{Interfaz}
-	\textbf{se explica con}: \tadNombre{CONJ?}. %%TODO
+	\textbf{se explica con}: \tadNombre{Diccionario(Jugador, Nat)}. 
 
-	\textbf{géneros}: \TipoVariable{chupaPij}.
+	\textbf{géneros}: \TipoVariable{prior}.
 
-	\TituloDis{Operaciones básicas de Chupense una Pija}
+	\TituloDis{Operaciones básicas de Diccionario de Prioridad de atrape}
 
-	\InterfazFuncion{Vacia}{}{chupaPij}
+	\InterfazFuncion{Vacio}{}{prior}
 	[]
-	{$res \igobs \emptyset$}
-	[]
-	[]
+	{res $\igob$ vacío}
+	[$O(1)$]]
+	[Crea el diccionario vacío]
+
+	\InterfazFuncion{Definir}{\Inout{p}{prior}, \In{j}{jugador}, \In{c}{nat}}{}
+	[$p \igobs p_0$]
+	{$p \igobs$ definir($j, c, p_0$)}
+	[$log(\#j)$]
+	[define la cantidad de pokemons de un jugador en el diccionario.]
+	[se almacenan copias de $j$ y $c$.]
+
+	\InterfazFuncion{Definido?}{\In{p}{prior}, \In{j}{jugador}}{bool}
+	{$res \igobs$ def?($j, p$)]}
+	[$log(\#j)$]
+	[devuelve \texttt{true} si el jugador esta definido en el diccionario.]
+
+	\InterfazFuncion{Obtener}{\In{p}{prior}, \In{j}{jugador}}{nat}
+	[def?($j, p$)]
+	{alias($res \igobs$ obtener($j$, $p$))}
+	[$log(\#j)$]
+	[devuelve la cantidad de pokemons de un jugador en el diccionario.]
+	[$res$ es modificable si y sólo si $p$ es modificable.]
+
+	\InterfazFuncion{Borrar}{\Inout{p}{prior}, \In{j}{jugador}}{}
+	[$p \igobs p_0 \land$ def?($j, d_0$)]
+	{$p \igobs$ borrar($j, p_0$)}
+	[$log(\#j)$]
+	[borra un jugador del diccionario.]
+
+	\InterfazFuncion{Claves}{\In{p}{prior}}{conj(string)}
+	{alias($res =$ claves($p$))}
+	[]%O de N
+	[devuelve el conjunto de los jugadores del diccionario.]
+	[$res$ no es modificable.]
+
+	\InterfazFuncion{Menor}{\Inout{p}{prior}}{jugador}
+	[$\neg\emptyset$?(claves($p$))]
+	{$res \igobs$ menor($p$, claves($p$))}
+	[$log(\#j)$]
+	[devuelve el jugador con menos pokemons en el diccionario]
 	[]
 
-	\InterfazFuncion{Agregar}{\In{a}{RELLENAR}, \Inout{h}{chupaPij}}{}
-	[]
-	{$h \igobs$ Ag($a, h_0$)}
-	[]
-	[]
-	[]
+  \Titulo{Especificación de las operaciones auxiliares utilizadas en la interfaz}
 
-	\InterfazFuncion{Vacia?}{\In{h}{chupaPij}}{bool}
-	{$res \igobs$ $\emptyset$?($h$)]}
-	[]
-	[]
-
-	\InterfazFuncion{Pertenece?}{\In{a}{RELLENAR}, \In{h}{chupaPij}}{bool}
-	{$res \igobs$ a $\in$ h]}
-	[]
-	[]	
-
-	\InterfazFuncion{Borrar}{\In{a}{RELLENAR}, \Inout{h}{chupaPij}}{}
-	[$h \igobs h_0$]
-	{$h \igobs$ $h_0 - a$}
-	[]
-	[]
-	[]
-
-	%%TODO EXTENDER TAD
-	\InterfazFuncion{Menor}{\In{a}{RELLENAR}, \Inout{h}{chupaPij}}{RELLENAR}
-	[]
-	{}
-	[]
-	[]
-	[]
+  \begin{tad}{Diccionario(Jugador, Nat) Extendido}
+    \parskip=0pt
+    \tadExtiende{\tadNombre{Diccionario(Jugador, Nat)}}
+    
+    \tadTitulo{otras operaciones (exportadas)}
+    \tadOperacion{menor}{dicc(nat, nat)/d, conj(nat)/c}{nat}{$\neg\emptyset$?(c) $\land$ c $\subseteq$ claves(d)}
+    \tadAxiomas
+    \tadAxioma{menor(d,c)}{\IF $\emptyset$?(dameUno(c)) THEN 
+    	sinUno(c) 
+    ELSE 
+    	{\IF obtener(dameUno(c), d) $<$ menor(d, sinUno(c)) THEN
+    		dameUno(c)
+    	ELSE
+    		menor(d, sinUno(c))
+    	FI}
+    FI}
+  \end{tad}
 
 \end{Interfaz}
 
 
 \begin{Representacion}
-	\TituloDis{Representación de chupaPij}
+	\TituloDis{Representación de prior}
 
-	\begin{Estructura}{ pija }[ePij]
-		\begin{Tupla}[ePij]
-			\tupItem{raiz}{puntero(Nodo)}
+	\begin{Estructura}{ prior }[ePrior]
+		\begin{Tupla}[ePrior]
+			\tupItem{raizJugadores}{puntero(Nodo)}
+			\tupItem{raizCantidad}{puntero(Nodo)}
 		\end{Tupla}
 		\begin{Tupla}[Nodo]
 			\tupItem{hijoIzq}{puntero(Nodo)}
 			\tupItem{hijoDer}{puntero(Nodo)}				
+			\tupItem{id}{jugador}
 			\tupItem{cantPokemons}{nat}
-			\tupItem{idJugador}{nat}
 			\tupItem{alto}{nat}
 		\end{Tupla}
 	\end{Estructura}
@@ -70,38 +96,47 @@
 
 	\begin{enumerate}
 		
-		\item No hay idJugador repetidos
+		\item No hay jugadores repetidos
 
-		\item Los nodos de la izquierda tienen mayor prioridad
+		\item Un nodo cualquiera del arbol de jugadores su hijo izquierdo tiene menor id y su hijo derecho tiene mayor id
 
-		\item Los nodos de la derecha tienen menor prioridad
+		\item Un nodo cualquiera del arbol de cantidades su hijo izquierdo tiene menor o igual cantidad y su hijo derecho tiene mayor o igual cantidad
+
+		\item Un nodo cualquiera del arbol de cantidades su hijo izquierdo si tiene la misma cantidad tiene menor id y lo mismo para su hijo derecho pero mayor id
 
 		\item La altura de un Nodo es la altura del hijo con mayor altura mas 1
 
-		\item Los factores son -1, 0 o +1
+		\item El factor de balanceo es $\leq$ 1 (donde el factor de balanceo es el modulo de la diferencia de las alturas de los hijos)
+
+		\item Los arboles tienen los mismos elementos
 
 	\end{enumerate}
 	
 
-	\Rep[ePij][e]{
-		sinRepetidos(e.raiz, $\emptyset$) $\land$ ABB?(e.raiz) $\land$ factorValido?(e.raiz)
+	\Rep[ePrior][e]{
+		sinRepetidos(e.raizJugadores, $\emptyset$) $\land$ ABB?(e.raizJugadores) $\land$ altoValido?(e.raizJugadores) $\land$ \\
+		sinRepetidos(e.raizCantidad, $\emptyset$) $\land$ ABB?(e.raizCantidad) $\land$ altoValido?(e.raizCantidad) $\land$ \\
+		($\forall$ j: jugador) (definido?(j, e.raizJugadores) = definido?(j, e.raizCantidad) $\yluego$ \\
+			definido?(j, e.raizJugadores) $\impluego$ obtener(j, e.raizJugadores) = obtener(j, e.raizCantidad))
 	}
-
 
 	\tadOperacion{sinRepetidos}{puntero(nodo), conj(nat)}{}
 	\tadOperacion{ABB?}{puntero(Nodo)/nodo}{bool}{}
 	\tadOperacion{menor?}{puntero(Nodo)/padre, puntero(Nodo)/hijo}{bool}{padre $\neq$ NULL}
+	\tadOperacion{ABBespecial?}{puntero(Nodo)/nodo}{bool}{}
+	\tadOperacion{menorEspecial?}{puntero(Nodo)/padre, puntero(Nodo)/hijo}{bool}{padre $\neq$ NULL}
 	\tadOperacion{altoValido?}(puntero(nodo)){bool}{}
 	\tadOperacion{mayorAltura}{nat, nat}{nat}{}
 	\tadOperacion{factorDeBalanceo}{nat, nat}{nat}{}
 	\tadOperacion{cantidadHijos}{puntero(Nodo)}{}
-
+	\tadOperacion{definido?}{jugador, puntero(nodo)}{}
+	\tadOperacion{obtener}{jugador/j, puntero(nodo)/p}{definido?(j,p)}
  	~
 
 	\tadAxioma{sinRepetidos(padre, ids)}{
-		padre $\neq$ NULL $\oluego$( padre.idJugador $\not\in$ ids $\land$ \\
-		sinRepetidos(padre.hijoIzq, Ag(padre.idJugador, c)) $\land$ \\
-		sinRepetidos(padre.hijoDer, Ag(padre.idJugador, c)))
+		padre $\neq$ NULL $\oluego$( padre.id $\not\in$ ids $\land$ \\
+		sinRepetidos(padre.hijoIzq, Ag(padre.id, c)) $\land$ \\
+		sinRepetidos(padre.hijoDer, Ag(padre.id, c)))
 	}
 
 	~
@@ -114,9 +149,24 @@
 
 	~
 
+	\tadAxioma{ABBespecial?(nodo)}{
+		(nodo = NULL) $\oluego$ \\ 
+		(menorEspecial?(nodo, nodo.hijoIzq) $\land$ $\neq$menorEspecial?(nodo, nodo.hijoDer) $\land$ \\
+		ABBespecial?(nodo.hijoIzq) $\land$ ABBespecial?(nodo.hijoDer))
+	}
+
+	~
+
 	\tadAxioma{menor?(padre, hijo)}{
+		(hijo = NULL) $\oluego$ 
+		padre.id $<$ hijo.id)
+	}
+
+	~
+
+	\tadAxioma{menorEspecial?(padre, hijo)}{
 		(hijo = NULL) $\oluego$ padre.cantPokemons $<$ hijo.cantPokemons $\lor$ \\
-		(padre.cantPokemons = hijo.cantPokemons $\land$ padre.idJugador $<$ hijo.idJugador)
+		(padre.cantPokemons = hijo.cantPokemons $\land$ padre.id $<$ hijo.id)
 	}
 
 	~
@@ -158,9 +208,29 @@
 		FI}
 	}
 
+	~
+
+	\tadAxioma{definido?(j , p)}{
+		p $\neq$ NULL $\yluego$ (p.id = j $\lor$ definido?(j, p.hijoIzq) $\lor$ definido?(j, p.hijoDer))
+	}
+
+	~
+
+	\tadAxioma{obtener(j , p)}{
+		{\IF p.id = j THEN
+			p.cantPokemons
+		ELSE
+			{\IF definido?(j, p.hijoIzq) THEN
+				obtener(j, p.hijoIzq)
+			ELSE
+				obtener(j, p.hijoDer)
+			FI}
+		FI}
+	}
+
 	\TituloDis{Función de Abstracción}
 
-	\Abs[ePij]{chupaPij}[e]{c}{
+	\Abs[ePrior]{prior}[e]{c}{
 		($\forall$ a: RELLENAR) a $\in$ c $\iff$ a $\in$ conjunto(c)
 	} 
 
@@ -169,18 +239,18 @@
 		{\IF nodo = NULL THEN
 			$\emptyset$
 		ELSE
-			Ag(nodo.idJugador, (conjunto(nodo.hijoIzq) $\cup$ conjunto(nodo.hijoDer)))	
+			Ag(nodo.id, (conjunto(nodo.hijoIzq) $\cup$ conjunto(nodo.hijoDer)))	
 		FI}
 	}
 
 \end{Representacion}
 
 \begin{Algoritmos}
-	\TituloDis{Algorítmos de Chupense una Pija}
+	\TituloDis{Algorítmos de Diccionario de Prioridad de atrape}
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
-		\caption{\algoritmo{iVacia}{}{chupaPij}}
+		\caption{\algoritmo{iVacia}{}{prior}}
 		res.raiz $\leftarrow$ NULL\;
 	\end{algorithm}
 
@@ -188,7 +258,7 @@
 	% \begin{algorithm}[H]
 	% 	\NoCaptionOfAlgo
 	% 	\caption{\algoritmo{Buscar}{\In{a}{RELLENAR}, \Inout{hijo}{puntero(Nodo)}}}
-	% 	\While{hijo $\neq$ NULL $\yluego$ hijo.idJugador $\neq$ a}{
+	% 	\While{hijo $\neq$ NULL $\yluego$ hijo.id $\neq$ a}{
 	% 		\eIf{hijo.cant $<$ a.cant $\lor$ (hijo.cant = a.cant $\land$ hijo.id $<$ a.id}{
 	% 			hijo $\leftarrow$ hijo.hijoIzq\;
 	% 		}{
@@ -199,7 +269,7 @@
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
-		\caption{\algoritmo{iAgregar}{\In{a}{RELLENAR}, \Inout{h}{chupaPij}}{}}
+		\caption{\algoritmo{iAgregar}{\In{a}{RELLENAR}, \Inout{h}{prior}}{}}
 	\end{algorithm}
 
 	\begin{algorithm}[H]
@@ -254,22 +324,22 @@
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
-		\caption{\algoritmo{iVacia?}{\In{h}{chupaPij}}{bool}}
+		\caption{\algoritmo{iVacia?}{\In{h}{prior}}{bool}}
 	\end{algorithm}
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
-		\caption{\algoritmo{iPertenece?}{\In{a}{RELLENAR}, \In{h}{chupaPij}}{bool}}
+		\caption{\algoritmo{iPertenece?}{\In{a}{RELLENAR}, \In{h}{prior}}{bool}}
 	\end{algorithm}
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
-		\caption{\algoritmo{iBorrar}{\In{a}{RELLENAR}, \Inout{h}{chupaPij}}{}}
+		\caption{\algoritmo{iBorrar}{\In{a}{RELLENAR}, \Inout{h}{prior}}{}}
 	\end{algorithm}
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
-		\caption{\algoritmo{iMenor}{\In{a}{RELLENAR}, \Inout{h}{chupaPij}}{RELLENAR}}
+		\caption{\algoritmo{iMenor}{\In{a}{RELLENAR}, \Inout{h}{prior}}{RELLENAR}}
 	\end{algorithm}
 
 
