@@ -244,7 +244,7 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 
 	\Rep[pokego][e]{
 		($\forall c$: coor)(c $\in$ e.posConPokemons $\implies$ (c $\in$ coordenadas(e.mapa) $\yluego$ pokeEnGrilla(e, c))) \\
-		$\land$ e.cantPokemons == sumaSignificadosPoke(claves(e.pokemons), e.pokemons) $\land$ ($\forall c,d$: coor) \\
+		$\land$ e.cantPokemons = sumaSignificadosPoke(claves(e.pokemons), e.pokemons) $\land$ ($\forall c,d$: coor) \\
 		(c $\in$ e.posConPokemons $\land$ d $\in$ e.posConPokemons $\implies$ c = d $\lor$ distEuclidea(c,d) $>$ 25) $\land$ \\
 		($\forall i$:nat)(i $<$ long(e.jugadores) $\implies$ claves(e.jugadores[i]$\rightarrow$pokemonsCapturados) $\subseteq$ claves(e.pokemons)) \\
 		$\land$ ($\forall i$:nat)((i $<$ long(e.jugadores) $\yluego$ (e.jugadores[i]$\rightarrow$sanciones $<$ 5 $\land$ e.jugadores[i]$\rightarrow$conectado)) $\implies$ \\
@@ -271,7 +271,7 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 	\TituloDis{Función de Abstracción}
 
 	\Abs[pokego]{juego}[e]{j}{
-		mapa(j) == e.mapa $\land$ long(e.jugadores) = ProxID(j) $\yluego$ ($\forall p:$ jugador) \\
+		mapa(j) = e.mapa $\land$ long(e.jugadores) = ProxID(j) $\yluego$ ($\forall p:$ jugador) \\
 		(long(e.jugadores) $>$ p $\impluego$ (sanciones(p, j) = e.jugadores[p]$\rightarrow$sanciones $\land$ \\
 		sanciones(p, j) $<$ 5 $\impluego$ (j $\in$ jugadores(j) $\yluego$ estaConectado(p, j) = e.jugadores[p]$\rightarrow$conectado? \\
 		$\land$ (estaConectado(p, j) $\impluego$ posicion(p, j) = e.jugadores[p]$\rightarrow$posicion) $\land$ \\
@@ -297,7 +297,7 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 	~
 
 	\tadAxioma{agregarPoke(p, n)}
-	{\IF n == 0 THEN
+	{\IF n = 0 THEN
 		$\emptyset$
 	ELSE
 		Ag(p, agregarPoke(p, n-1))
@@ -354,7 +354,7 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 
 \begin{Algoritmos}
 
-	\TituloDis{Algorítmos de Juego}
+	\TituloDis{Algoritmos de Juego}
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
@@ -464,7 +464,7 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{iMoverse}{\Inout{j}{pokego}, \In{e}{jugador}, \In{c}{coor}}{}}
 		Borrar(j.grillaPos[Latitud(c)][Longitud(c)].jugadores, e)\; %log EC
-		RemoverDeCola(j, e)\OdeLinea{1}
+		RemoverDeCola(j, e)\OdeLinea{log(EC)}
 		\If(\OdeBloque{1}){\textbf{not} HayCamino(j.mapa, Posicion(j,e), c) \textbf{or} DistEuclidea(Posicion(j,e), c) $>$ 100}{
 			(*j.jugadores[e]).sanciones $\leftarrow$ (*j.jugadores[e]).sanciones + 1\OdeLinea{1}
 		}
@@ -479,7 +479,7 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 			}
 		}{
 			(*j.jugadores[e]).posicion $\leftarrow$ c\OdeLinea{1}
-			AgregarACola(j, e, c)\OdeLinea{1}
+			AgregarACola(j, e, c)\OdeLinea{log(EC)}
 			Agregar(j.grillaPos[Latitud(c)][Longitud(c)].jugadores, e)\; %log MISMOS CHABON ENUNA MISMA POSICION
 		}
 
@@ -503,7 +503,6 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 						Definir((*j.jugadores[captor]).pokemonsCapturados, pk, 1)\OdeLinea{log(|P|)}
 					}
 					EliminarSiguiente(it)\OdeLinea{1}
-					AgregarACola(captor, e)\OdeLinea{1}
 				}{
 					Avanzar(it)\OdeLinea{1}
 				}
@@ -516,11 +515,11 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 
 	\complejidad: $O((PS + PC) \times |P| + log(EC))$
 
-	\justifcomp: las validaciones del movimiento son gratuitas gracias a la implementación por grupos de mapa. Por otro lado, si el jugador queda eliminado, debe eliminarse del diccionario del sistema (|P|) cada pokémon que había capturado (PC).
+	\justifcomp: las validaciones del movimiento son gratuitas gracias a la implementación por grupos de mapa. Por otro lado, si el jugador queda eliminado, debe eliminarse del diccionario del sistema ($|P|$) cada pokémon que había capturado (PC).
 
 	En cada movimiento, el jugador que se mueve debe cambiar de conjunto y tal vez salir de o entrar en un grupo de espera de captura de un pokémon (log(EC)).
 
-	Por otro lado, para posiciones lejanas se deben procesarse las potenciales capturas (PS), agregando el pokémon al diccionario del jugador que lo captura (|P|).
+	Por otro lado, para posiciones lejanas se deben procesarse las potenciales capturas (PS), agregando el pokémon al diccionario del jugador que lo captura ($|P|$).
 
 	~
 
@@ -696,26 +695,28 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 	\justifcomp: se debe acceder al diccionario para averiguar cuántos pokemons de esa especie.
 
 
-	\TituloDis{Algorítmos auxiliares}
+	\TituloDis{Algoritmos auxiliares}
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{CrearInfoPos}{}{infoPos}}
+		\Pre{\texttt{true}}
+		\Post{la posición nueva no contiene pokémon ni jugadores}
+		\BlankLine
 		res.hayPokemon? $\leftarrow$ false\OdeLinea{1}
 		res.contadorCaptura $\leftarrow$ 0\OdeLinea{1}
 		res.jugEsperandoCaptura $\leftarrow$ Vacio()\OdeLinea{1}
 		res.jugsEnPos $\leftarrow$ Vacio()\OdeLinea{1}
 	\end{algorithm}
 	
-	\pre: true
-
-	\post: la posición nueva no contiene pokémon ni jugadores
-
 	~
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{CrearInfoJugador}{}{puntero(infoJugador)}}
+		\Pre{\texttt{true}}
+		\Post{el jugador nuevo no tiene sanciones ni pokémons y no está conectado}
+		\BlankLine
 		infoJugador : nuevo\OdeLinea{1}
 		nuevo.sanciones $\leftarrow$ 0\OdeLinea{1}
 		nuevo.conectado? $\leftarrow$ false\OdeLinea{1}
@@ -728,15 +729,14 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 
 	\justifcomp: solo se inicializan las variables.
 
-	\pre: true
-	
-	\post: el jugador nuevo no tiene sanciones ni pokémons y no está conectado
-	
 	~
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{AgregarACola}{\Inout{j}{pokego}, \In{e}{jugador}}{}}
+		\Pre{$e \in$ jugadores($j$) $\yluego$ conectado?(e, j)}
+		\Post{agrega al jugador a la lista de espera del pokémon mas cercano a él (si hay uno en rango de captura)}
+		\BlankLine
 		coor: c $\leftarrow$ (*j.jugadores[e]).posicion\OdeLinea{1}
 		conj(coor) : coorEnRango $\leftarrow$ PosicionesEnRango(j, c, 2)\OdeLinea{1}
 		itBi(coor) : itCoor $\leftarrow$ CrearIt(coorEnRango)\OdeLinea{1}
@@ -753,15 +753,14 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 
 	\justifcomp: el algoritmo recorre una cantidad menor a una constante de coordenadas alrededor del jugador, de encontrar un Pokemon, agrega al jugador al diccionarioDePrioridad que tiene insercion en $O(log(EC))$, ademas por la especificacion sabemos que un jugador puede estar capturando un solo pokemon, por lo que definir el jugador se hace una vez.
 
-	\pre: $e \in$ jugadores($j$) $\yluego$ conectado?(e, j)
-
-	\post: Agrega al jugador a la lista de espera del pokémon mas cercano a él (si hay uno en rango de captura).
-
 	~
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{RemoverDeCola}{\Inout{j}{pokego}, \In{e}{jugador}}{}}
+		\Pre{$e \in$ jugadores($j$) $\yluego$ conectado?(e, j)}
+		\Post{remueve al jugador de la lista de espera del pokémon mas cercano a él (si hay uno en rango de captura)}
+		\BlankLine
 		coor: c $\leftarrow$ (*j.jugadores[e]).posicion\OdeLinea{1}
 		conj(coor) : coorEnRango $\leftarrow$ PosicionesEnRango(j, c, 2)\OdeLinea{1}
 		itBi(coor) : itCoor $\leftarrow$ CrearIt(coorEnRango)\OdeLinea{1}
@@ -778,15 +777,14 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 
 	\justifcomp: debe iterar todas las posiciones de un cuadrado de lado predeterminado y agregar al jugador a la cola de espera de captura más cercana. Si la misma existe.
 
-	\pre: $e \in$ jugadores($j$) $\yluego$ conectado?(e, j)
-	
-	\post: Remueve al jugador de la lista de espera del pokémon mas cercano a él (si hay uno en rango de captura).
-
 	~
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{ResetearContadores}{\Inout{j}{pokego}, \In{e}{jugador}}{}}
+		\Pre{$e \in$ jugadores($j$) $\yluego$ conectado?(e, j)}
+		\Post{los contadores de captura las posiciones aledañas al jugador vuelven a 0}
+		\BlankLine
 		coor: c $\leftarrow$ (*j.jugadores[e]).posicion\OdeLinea{1}
 		conj(coor) : coorEnRango $\leftarrow$ PosicionesEnRango(j, c, 2)\OdeLinea{1}
 		itBi(coor) : itCoor $\leftarrow$ CrearIt(coorEnRango)\OdeLinea{1}
@@ -803,15 +801,14 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 
 	\justifcomp: debe iterar todas las posiciones de un cuadrado de lado predeterminado.
 
-	\pre: $e \in$ jugadores($j$) $\yluego$ conectado?(e, j)
-	
-	\post: Los contadores de captura las posiciones aledañas al jugador vuelven a 0
-
 	~
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{PosicionesEnRango}{\Inout{j}{pokego}, \In{c}{coor, \In{n}{nat}}}{conj(coor)}}
+		\Pre{\texttt{true}}
+		\Post{res es igual al conjunto de posiciones válidas cerca de $c$, con distancia euclidiana máxima de $n^2$.\footnotemark{}}
+		\BlankLine
 		res $\leftarrow$ Vacia()\OdeLinea{1}
 		\For(\OdeBloque{n^2}){$i \leftarrow 0$ \KwTo $n$}{
 			\For(\OdeBloque{n}){$j \leftarrow 0$ \KwTo $n$}{
@@ -841,16 +838,17 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 		}
 	\end{algorithm}
 
-	\pre: true
-	
-	\post: res es igual al conjunto de posiciones válidas cerca de $c$, con distancia euclidiana máxima de $n^2$.\footnote Se usa la definición de Coordenada de distancia euclidiana, que no implica la raíz cuadrada.
+	\footnotetext{Se usa la definición de Coordenada de distancia euclidiana, que no implica la raíz cuadrada.}
 
 	~
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{HayPokémonEnDistancia}{\In{j}{pokego}, \In{c}{coor}, \In{n}{nat}}{bool}}
-		res $\leftarrow$ false\OdeBloque{1}
+		\Pre{\texttt{true}}
+		\Post{res es \texttt{true} si hay un pokémon en una posición en el conjunto de posiciones válidas cerca de $c$, con distancia euclidiana máxima de $n^2$.}
+		\BlankLine
+		res $\leftarrow$ false\OdeLinea{1}
 		conj(coor) : coorEnRango $\leftarrow$ PosicionesEnRango(j, c, n)\OdeLinea{1}
 		itBi(coor) : itCoor $\leftarrow$ CrearIt(coorEnRango)\OdeLinea{1}
 		\While(\OdeBloque{n^2}){HaySiguiente(itCoor)}{
@@ -866,15 +864,15 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 
 	\justifcomp: itera n veces por latitud, multiplicado por n veces por la longitud.
 
-	\pre: true
-	
-	\post: res es \texttt{true} si hay un pokémon en una posición en el conjunto de posiciones válidas cerca de $c$, con distancia euclidiana máxima de $n^2$.
 	
 	~
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{HayPokémonEnPos}{\Inout{j}{pokego}, \In{c}{coor}}{bool}}
+		\Pre{posExistente(c, mapa($j$))}
+		\Post{res $\igobs$ c $\in$ posConPokémons(j)}
+		\BlankLine
 		res $\leftarrow$ j.grillaPos[Latitud(c)][Longitud(c)].hayPokemon\OdeLinea{1}
 	\end{algorithm}
 
@@ -882,12 +880,7 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 
 	\justifcomp: solo se accede al arreglo.
 
-	\pre: posExistente(c, mapa($j$))
-	
-	\post: res $\igobs$ c $\in$ posConPokémons(j)
-
-
-	\TituloDis{Algorítmos del iterador}
+	\TituloDis{Algoritmos del iterador}
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
