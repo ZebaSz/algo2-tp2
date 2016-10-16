@@ -32,6 +32,11 @@ Usaremos $\#j$ para denotar la cantidad de entradas del diccionario.
 	[$O(log(\#j))$]
 	[devuelve \texttt{true} si el jugador esta definido en el diccionario.]
 
+	\InterfazFuncion{EsVacio?}{\In{p}{prior}}{bool}
+	{$res \igobs$ esVacio?($p$)]}
+	[$O(1)$]
+	[devuelve \texttt{true} si el diccionario está vacio]
+
 	\InterfazFuncion{Borrar}{\Inout{p}{prior}, \In{j}{jugador}}{}
 	[$p \igobs p_0 \land$ def?($j, d_0$)]
 	{$p \igobs$ borrar($j, p_0$)}
@@ -58,6 +63,7 @@ Usaremos $\#j$ para denotar la cantidad de entradas del diccionario.
     
     \tadTitulo{otras operaciones (exportadas)}
     \tadOperacion{menor}{dicc(nat, nat)/d, conj(nat)/c}{nat}{$\neg\emptyset$?(c) $\land$ c $\subseteq$ claves(d)}
+    \tadOperacion{esVacio?}{dicc(nat, nat)}{bool}{}
     \tadAxiomas
     \tadAxioma{menor(d,c)}{\IF $\emptyset$?(dameUno(c)) THEN 
     	sinUno(c) 
@@ -68,6 +74,10 @@ Usaremos $\#j$ para denotar la cantidad de entradas del diccionario.
     		menor(d, sinUno(c))
     	FI}
     FI}
+
+    ~
+
+    \tadAxioma{esVacio?(d)}{$\emptyset$?(claves(d))}
   \end{tad}
 
 \end{Interfaz}
@@ -281,6 +291,22 @@ Usaremos $\#j$ para denotar la cantidad de entradas del diccionario.
 		res $\leftarrow$ BuscarJ(p.raizJugadores) $\neq$ NULL\OdeLinea{log(\#j)}
 	\end{algorithm}
 
+	\complejidad: $O(log(\#j))$
+
+	\justifcomp: buscar el elemento nos cuesta la altura del arbol, y por ser un AVL es $log(\#j)$
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iEsVacio?}{\In{p}{dicPri}}{bool}}
+		res $\leftarrow$ p.raizJugadores $=$ NULL\OdeLinea{1}
+	\end{algorithm}
+
+	\complejidad: $O(1)$
+
+	\justifcomp: solo se ingresa a la raiz del arbol
+
 	~
 
 	\begin{algorithm}[H]
@@ -296,6 +322,11 @@ Usaremos $\#j$ para denotar la cantidad de entradas del diccionario.
 		p.raizJugadores $\leftarrow$ InsertarJ(j, n, p.raizJugadores)\OdeLinea{log(\#j)}
 		p.raizCantidad $\leftarrow$ InsertarN(j, n, p.raizCantidad)\OdeLinea{log(\#j)}
 	\end{algorithm}
+
+	\complejidad: $O(log(\#j))$
+
+	\justifcomp: la complejidad de definir un elemento es. como máximo, recorrer todo el arbol, que por invariante de AVL sabemos que es $log(\#j)$
+
 
 	~
 
