@@ -723,18 +723,37 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 		\caption{\algoritmo{HayPokémonEnDistancia}{\In{j}{pokego}, \In{c}{coor}, \In{n}{nat}}{bool}}
 		res $\leftarrow$ false\;
 		nat : i $\leftarrow$ 0\;
-		\While{i $<$ 5}{
+		\While{i $<$ n + 1}{
 			nat : j $\leftarrow$ 0\;
-			\While{DistEuclidea(c, CrearCoor(Latitud(c) + i, Longitud(c) + j)) $\leq$ n}{
-				coor : d $\leftarrow$ CrearCoor(Latitud(c) + i, Longitud(c) + j)\;
-				\If{Pertenece(j.posConPokemons, d)}{
-					res $\leftarrow$ true\;
-					%% ES LEGAL USAR RETURN?
-					\textbf{return}\;
+			\While{j $<$ n + 1}{
+				nat : j $\leftarrow$ 0\;
+				\If{DistEuclidea(c, CrearCoor(Latitud(c) + i, Longitud(c) + j)) $\leq$ n}{
+					\If{Pertenece(j.posConPokemons, CrearCoor(Latitud(c) + i, Longitud(c) + j)}{
+						res $\leftarrow$ true\;
+						\textbf{return}\;
+					}
+				} 
+				\If {DistEuclidea(c, CrearCoor(Latitud(c) + i, Longitud(c) - j)) $\leq$ n}{
+					\If{Pertenece(j.posConPokemons, CrearCoor(Latitud(c) + i, Longitud(c) - j)}{
+						res $\leftarrow$ true\;
+						\textbf{return}\;
+					}
+				} 
+				\If {DistEuclidea(c, CrearCoor(Latitud(c) - i, Longitud(c) + j)) $\leq$ n}{
+					\If{Pertenece(j.posConPokemons, CrearCoor(Latitud(c) - i, Longitud(c) + j)}{
+						res $\leftarrow$ true\;
+						\textbf{return}\;
+					}
+				} 
+				\If {DistEuclidea(c, CrearCoor(Latitud(c) - i, Longitud(c) - j)) $\leq$ n}{
+						\If{Pertenece(j.posConPokemons, CrearCoor(Latitud(c) - i, Longitud(c) - j)}{
+							res $\leftarrow$ true\;
+							\textbf{return}\;
+					}
 				}
-				j $\leftarrow$ j + 1\;
-			}
-			i $\leftarrow$ i + 1\;
+			j $\leftarrow$ j+1\;	
+			}							
+		i $\leftarrow$ i+1\;
 		}
 	\end{algorithm}
 
@@ -760,19 +779,37 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{iPosPokémonCercano}{\In{j}{pokego}, \In{c}{coor}}{coor}}
 		nat : i $\leftarrow$ 0\;
-		\While{i $<$ 5}{
+		\While{i $<$ 3}{
 			nat : j $\leftarrow$ 0\;
-			\While{DistEuclidea(c, CrearCoor(Latitud(c) + i, Longitud(c) + j)) $\leq$ n}{
-				coor : d $\leftarrow$ CrearCoor(Latitud(c) + i, Longitud(c) + j)\;
-				\If{Pertenece(j.posConPokemons, d)}{
+			\While{j $<$ 3}{
+			\If{DistEuclidea(c, CrearCoor(Latitud(c) + i, Longitud(c) + j)) $\leq$ 4}{
+				\If{Pertenece(j.posConPokemons, CrearCoor(Latitud(c) + i, Longitud(c) + j)}{
 					res $\leftarrow$ d\;
-					%% ES LEGAL USAR RETURN?
 					\textbf{return}\;
 				}
-				j $\leftarrow$ j + 1\;
-			}
-			i $\leftarrow$ i + 1\;
-		}
+			} 
+			\If {DistEuclidea(c, CrearCoor(Latitud(c) + i, Longitud(c) - j)) $\leq$ 4}{
+				\If{Pertenece(j.posConPokemons, CrearCoor(Latitud(c) + i, Longitud(c) - j)}{
+					res $\leftarrow$ d\;
+					\textbf{return}\;
+				}
+			} 
+			\If {DistEuclidea(c, CrearCoor(Latitud(c) - i, Longitud(c) + j)) $\leq$ 4}{
+				\If{Pertenece(j.posConPokemons, CrearCoor(Latitud(c) - i, Longitud(c) + j)}{
+					res $\leftarrow$ d\;
+					\textbf{return}\;
+				}
+			} 
+			\If {DistEuclidea(c, CrearCoor(Latitud(c) - i, Longitud(c) - j)) $\leq$ 4}{
+					\If{Pertenece(j.posConPokemons, CrearCoor(Latitud(c) - i, Longitud(c) - j)}{
+						res $\leftarrow$ d\;
+						\textbf{return}\;
+					}
+				}
+			j $\leftarrow$ j+1\;	
+			}							
+		i $\leftarrow$ i+1\;
+		}	
 	\end{algorithm}
 
 	\complejidad: $O()$
