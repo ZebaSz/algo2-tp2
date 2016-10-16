@@ -4,6 +4,8 @@ Este diccionario utiliza dos criterios de ordenamiento: por la clave y por el si
 
 En el ordenamiento por significado, para los casos en los que hay dos significados iguales, se utiliza nuevamente la clave.
 
+También se almacenan los valores del mínimo elemento para retornarlos en tiempo constante.
+
 Usaremos $\#j$ para denotar la cantidad de entradas del diccionario.
 
 \begin{Interfaz}
@@ -115,14 +117,13 @@ Usaremos $\#j$ para denotar la cantidad de entradas del diccionario.
 
 	\end{enumerate}
 	
-	%Agregar menor
 	\Rep[dicPri][e]{
 		sinRepetidos(e.raizJugadores, $\emptyset$) $\land$ sinRepetidos(e.raizCantidad, $\emptyset$) $\land$\\
 		ABB?(e.raizJugadores) $\land$ altoValido?(e.raizJugadores) $\land$\\
 		ABBespecial?(e.raizCantidad) $\land$ altoValido?(e.raizCantidad) $\land$\\
 		($\forall$ j: jugador) (definido?(j, e.raizJugadores) = definido?(j, e.raizCantidad) $\yluego$ \\
 			definido?(j, e.raizJugadores) $\impluego$ obtener(j, e.raizJugadores) = obtener(j, e.raizCantidad)) $\land$\\
-		(e.raizJugadores $\neq$ NULL) $\impluego$ (e.menorID = menor(e.raizCantidad).id $\land$ e.menor = menor(e.raizCantidad).cantPokemons)
+		(e.raizCantidad $\neq$ NULL) $\impluego$ (e.menorID = menor(e.raizCantidad).id $\land$ e.menor = menor(e.raizCantidad).cantPokemons)
 	}
 
 	\TituloDis{Función de Abstracción}
