@@ -57,7 +57,7 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 	[desconecta al jugador del juego.]
 
 	\InterfazFuncion{Moverse}{\Inout{j}{juego}, \In{e}{jugador}, \In{c}{coor}}{}
-	[$j \igobs j_0 \land e \in$ jugadores($j_0$) $\yluego$ conectado($e,j_0$) $\land$ posExistente(c, mapa($j_0$))] %%TODO REVISAR ESE posEXISTENTE
+	[$j \igobs j_0 \land e \in$ jugadores($j_0$) $\yluego$ conectado($e,j_0$) $\land$ posExistente(c, mapa($j_0$))]
 	{$j \igobs$ moverse($e, c, j_0$)}
 	[$O((PS + PC)|P| + log(EC))$]
 	[mueve el jugador a la posición elegida. Si el movimiento es ilegal, sanciona al jugador o lo expulsa si excede el límite de sanciones. Aumenta los contadores de captura para otros jugadores donde corresponde y puede provocar la captura de pokémons.]
@@ -413,7 +413,7 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 	\complejidad: $O(|P| + EC \times log(EC))$
 
 	\justifcomp: todos los jugadores que se encuentran en el area (EC) deben agregarse a la lista de espera, que los ordena por prioridad (inserción en log(EC)). Al mismo tiempo debe definirse este nuevo pokémon en el diccionario global ($|P|$).
-	%% en la primera parte del algoritmo, definimos en el diccionario(Trie) la nueva cantidad de ese pokemons que hay, esta estructura tiene obtencion y definicion en O(|P|) entonces nuestro peor caso seria agregar el pokemon con el nombre mas largo. En la segunda parte iteramos sobre las coordenadas aledañas, que siempre son menores a una constante, y en cada coordenada iteramos los jugadores que se encuentran en ella, agregandolos a la estructura de DiccionarioPrioridad que tiene insercion en O(la cantidad de elementos). Cada una de esas coordenas iteradas, tiene una cantidadd menor o igual a EC, ya que EC es la suma de todos los jugadores que se encuentran en esas coordenadas. Entonces añadimos EC veces a la estructura quedando una complejidad de O(EC * log(EC)), y en total para el algoritmo $O(|P| + EC \times log(EC))$
+	% en la primera parte del algoritmo, definimos en el diccionario(Trie) la nueva cantidad de ese pokemons que hay, esta estructura tiene obtencion y definicion en O(|P|) entonces nuestro peor caso seria agregar el pokemon con el nombre mas largo. En la segunda parte iteramos sobre las coordenadas aledañas, que siempre son menores a una constante, y en cada coordenada iteramos los jugadores que se encuentran en ella, agregandolos a la estructura de DiccionarioPrioridad que tiene insercion en O(la cantidad de elementos). Cada una de esas coordenas iteradas, tiene una cantidadd menor o igual a EC, ya que EC es la suma de todos los jugadores que se encuentran en esas coordenadas. Entonces añadimos EC veces a la estructura quedando una complejidad de O(EC * log(EC)), y en total para el algoritmo $O(|P| + EC \times log(EC))$
 
 	~
 
@@ -463,12 +463,15 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 	\begin{algorithm}[H] 
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{iMoverse}{\Inout{j}{pokego}, \In{e}{jugador}, \In{c}{coor}}{}}
-		Borrar(j.grillaPos[Latitud(c)][Longitud(c)].jugadores, e)\; %log EC
+		coor : posAnterior $\leftarrow$ Posicion(j,e)\OdeLinea{1}
+		\tcc{Removemos al jugador del conjunto de su posición anterior y de 	la cola de espera}
+		Borrar(j.grillaPos[Latitud(c)][Longitud(c)].jugadores, e)\OdeLinea{log(EC)}
 		RemoverDeCola(j, e)\OdeLinea{log(EC)}
-		\If(\OdeBloque{1}){\textbf{not} HayCamino(j.mapa, Posicion(j,e), c) \textbf{or} DistEuclidea(Posicion(j,e), c) $>$ 100}{
+		\If{\textbf{not} HayCamino(j.mapa, posAnterior, c) \textbf{or} DistEuclidea(posAnterior, c) $>$ 100}{
 			(*j.jugadores[e]).sanciones $\leftarrow$ (*j.jugadores[e]).sanciones + 1\OdeLinea{1}
 		}
 		\eIf{(*j.jugadores[e]).sanciones = 5}{
+			\tcc{Si el jugador debe ser eliminado, borramos sus pokémons}
 			itDiccString(nat) : pokesABorrar $\leftarrow$ CrearIt((*j.jugadores[e]).pokemonsCapturados)\OdeLinea{1}
 			\While(\OdeBloque{PC \times |P|}){HaySiguiente(pokesABorrar)}{
 				tupla(calve: String, significado: Nat) : sig $\leftarrow$ Siguiente(pokesABorrar)\OdeLinea{|P|}
@@ -478,21 +481,22 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 				j.cantPokemons $\leftarrow$ j.cantPokemons - sig.significado\OdeLinea{1}
 			}
 		}{
+			\tcc{Si el jugador sigue siendo válido, lo agregamos al conjunto de su nueva posición y a la cola de espera}
 			(*j.jugadores[e]).posicion $\leftarrow$ c\OdeLinea{1}
 			AgregarACola(j, e, c)\OdeLinea{log(EC)}
-			Agregar(j.grillaPos[Latitud(c)][Longitud(c)].jugadores, e)\; %log MISMOS CHABON ENUNA MISMA POSICION
+			Agregar(j.grillaPos[Latitud(c)][Longitud(c)].jugadores, e)\OdeLinea{log(EC)}
 		}
 
 		it $\leftarrow$ CrearIt(j.posConPokemons)\OdeLinea{1}
-		\tcp{Itero la posiciones con pks}
+		\tcc{Iteramos las posiciones con pokémons}
+		\tcc{Iteramos las posiciones con pokémons}
 		\While(\OdeBloque{PS \times |P|}){HaySiguiente?(it)}{
 			coor: coorConPk $\leftarrow$ Siguiente(it)\OdeLinea{1}
-			\tcp{me fijo si es mas lejos que el rango de captura}
 			\eIf{DistEuclidea(c, coorConPk) $>$ 4}{
+				\tcc{Si el movimiento es lejano, sumar al contador e manejar captura si corresponde}
+				j.grillaPos[Latitud(coorConPk)][Longitud(coorConPk)].contadorCaptura $\leftarrow$ j.grillaPos[Latitud(coorConPk)][Longitud(coorConPk)].contadorCaptura +1\OdeLinea{1}
 				infoPos: posPk $\leftarrow$ j.grillaPos[Latitud(coorConPk)][Longitud(coorConPk)]\OdeLinea{1}
-				posPk.contadorCaptura $\leftarrow$ posPk.contadorCaptura +1\OdeLinea{1}
-				\eIf{posPk.contadorCaptura = 10}{ 
-					\tcp{--Captura--}
+				\eIf{posPk.contadorCaptura = 10}{
 					pokemon: pk $\leftarrow$ posPk.pokemon\OdeLinea{1}
 					jugador: captor $\leftarrow$ Menor(posPk.jugEsperandoCaptura)\OdeLinea{1}
 					(*j.jugadores[captor]).cantPokemons $\leftarrow$ (*j.jugadores[captor]).cantPokemons + 1\OdeLinea{1}
@@ -502,12 +506,17 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 					}{
 						Definir((*j.jugadores[captor]).pokemonsCapturados, pk, 1)\OdeLinea{log(|P|)}
 					}
+
+					\tcc{Si se elimina esa posición, no hay que avanzar el iterador}
 					EliminarSiguiente(it)\OdeLinea{1}
 				}{
 					Avanzar(it)\OdeLinea{1}
 				}
 			}{
-				% REINICIAR CONTADOR QUE CORRESPONDA
+				\If{DistEuclidea(posAnterior, coorConPk) $>$ 4}{
+					\tcc{Si el jugador entró a una nuevoa área de caputra, reiniciar el contador}
+					j.grillaPos[Latitud(coorConPk)][Longitud(coorConPk)].contadorCaptura $\leftarrow$ 0\OdeLinea{1}
+				}
 				Avanzar(it)\OdeLinea{1}
 			}
 		}
@@ -790,8 +799,8 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 		itBi(coor) : itCoor $\leftarrow$ CrearIt(coorEnRango)\OdeLinea{1}
 		\While(\OdeBloque{1}){HaySiguiente(itCoor)}{
 			coor: siguiente $\leftarrow$ Siguiente(itCoor)\OdeLinea{1}
-			\If(\OdeBloque{1}){HayPokémonEnPos(j, siguiente).hayPokemon}{
-				j.grillaPos[Latitud(siguiente)][Longitud(siguiente)].contadorCaptura $\leftarrow$ 0\;
+			\If{HayPokémonEnPos(j, siguiente).hayPokemon}{
+				j.grillaPos[Latitud(siguiente)][Longitud(siguiente)].contadorCaptura $\leftarrow$ 0\OdeLinea{1}
 			}
 			Avanzar(itCoor)\OdeLinea{1}
 		}
@@ -903,7 +912,7 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 		\For(\OdeBloque{J}){$i \leftarrow$ it.contador \KwTo long(*it.listaJugadores)}{
 			\If{((*it.listaJugadores)[i].sanciones $<5$) = it.eliminados?}{
 				res $\leftarrow$ true\OdeLinea{1}
-				\textbf{return}\;
+				\textbf{break}\;
 			}
 		}
 	\end{algorithm}
@@ -916,7 +925,7 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 		\For(\OdeBloque{J}){$i \leftarrow$ it.contador \KwTo long(*it.listaJugadores)}{
 			\If{((*it.listaJugadores)[i].sanciones $<5$) = it.eliminados?}{
 				res $\leftarrow$ i\OdeLinea{1}
-				\textbf{return}\;
+				\textbf{break}\;
 			}
 		}
 	\end{algorithm}
@@ -929,7 +938,7 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 		\For(\OdeBloque{J}){$i \leftarrow$ it.contador \KwTo long(*it.listaJugadores)}{
 			\If{((*it.listaJugadores)[i].sanciones $<5$) = it.eliminados?}{
 				it.contador $\leftarrow$ i + 1\OdeLinea{1}
-				\textbf{return}\;
+				\textbf{break}\;
 			}
 		}
 	\end{algorithm}

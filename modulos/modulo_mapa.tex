@@ -194,21 +194,21 @@ Usaremos $lat_{max}$ y $long_{max}$ para denotar las máximas dimensiones entre 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{iAgregarCoor}{\In{c}{coor}, \Inout{m}{map}}{}}
-		\tcp{se agregan los vectores vacíos necesarios}
+		\tcc{se agregan los vectores vacíos necesarios}
 		\While(\OdeBloque{lat_{max}}){Longitud(m.posiciones) $\leq$ Latitud(c)}{
 			AgregarAtras(m.posiciones, Vacia())\OdeLinea{f(lat_{max})}
 		}
 		\If{m.alto $\leq$ Latitud(c)}{
 			m.alto $\leftarrow$ Latitud(c)\OdeLinea{1}
 		}
-		\tcp{se agregan las posiciones inexistentes necesarias}
+		\tcc{se agregan las posiciones inexistentes necesarias}
 		\While(\OdeBloque{long_{max}}){Longitud(m.posiciones[Latitud(c)]) $\leq$ Longitud(c)}{
 			AgregarAtras(m.posiciones, CrearDataPos())\OdeLinea{f(long_{max})}
 		}
 		\If{m.ancho $\leq$ Longitud(c)}{
 			m.ancho $\leftarrow$ Longitud(c)\OdeLinea{1}
 		}
-		\tcp{se modifica la posición a existente y se unen los grupos pertinentes}
+		\tcc{se modifica la posición a existente y se unen los grupos pertinentes}
 		m.posiciones[Latitud(c)][Longitud(c)].existe $\leftarrow$ true\OdeLinea{1}
 		m.posiciones[Latitud(c)][Longitud(c)].grupo $\leftarrow$ m.proxGrupo\OdeLinea{1}
 		Unir(c, CoordenadaArriba(c), m)\OdeLinea{\compmatriz}
@@ -219,7 +219,7 @@ Usaremos $lat_{max}$ y $long_{max}$ para denotar las máximas dimensiones entre 
 		\If{Longitud(c) $>$ 0}{
 			Unir(c, CoordenadaALaIzquierda(c), m)\OdeLinea{\compmatriz}
 		}
-		\tcp{si no se une con nada, se aumenta el próximo grupo}
+		\tcc{si no se une con nada, se aumenta el próximo grupo}
 		\If{m.posiciones[Latitud(c)][Longitud(c)].grupo $=$ m.proxGrupo}{
 			m.proxGrupo $\leftarrow$  m.proxGrupo + 1\OdeLinea{1}
 		}
