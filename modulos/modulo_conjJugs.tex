@@ -5,9 +5,9 @@ Este conjunto aprovecha el orden absoluto de los jugadores (nats) para almacenar
 Usaremos $\#j$ para denotar la cantidad de entradas del diccionario.
 
 \begin{Interfaz}
-	\textbf{se explica con}: \tadNombre{Conjunto(Jugador)}. 
+	\textbf{se explica con}: \tadNombre{Conjunto(Jugador)}, \tadNombre{Iterador Unidireccional(Jugador)}.
 
-	\textbf{géneros}: \TipoVariable{conjJugs}.
+	\textbf{géneros}: \TipoVariable{conjJugs}, \TipoVariable{itConjJugs}.
 
 	\TituloDis{Operaciones básicas de ConjuntoJugadores}
 
@@ -34,6 +34,35 @@ Usaremos $\#j$ para denotar la cantidad de entradas del diccionario.
 	[$O(log(\#j))$]
 	[borra un jugador del conjunto.]
 
+
+	\TituloDis{Operaciones básicas del iterador}
+
+	El iterador que presentamos no permite modificar el conjunto recorrido.
+
+
+	\InterfazFuncion{CrearIt}{\In{c}{conjJugs}}{itConjJugs}
+	{true}
+	[$O(1)$]
+	[crea un iterador unidireccional de los jugadores validos o expulsados.]
+	[el iterador se invalida si y solo si se elimina el siguiente elemento del iterador. Además, siguientes($res$) podría cambiar completamente ante cualquier operación que modifique el conjunto.]
+
+	\InterfazFuncion{HayMas}{\In{it}{itConjJugs}}{bool}
+	{$res$ $\igobs$ hayMas?($it$)}
+	[$O(1)$]
+	[devuelve \texttt{true} si y sólo si en el iterador todavía quedan elementos para avanzar.]
+
+	\InterfazFuncion{Actual}{\In{it}{itConjJugs}}{jugador}
+	[HayMas?($it$)]
+	{$res$ $\igobs$ Actual($it$)}
+	[$O(1))$]
+	[devuelve el elemento siguiente a la posición del iterador.]
+
+	\InterfazFuncion{Avanzar}{\Inout{it}{itConjJugs}}{}
+	[$it = it_0$ $\land$ HayMas?($it$)]
+	{$it$ $\igobs$ Avanzar($it_0$)}
+	[$O(log(\#j))$]
+	[avanza a la posición siguiente del iterador.]
+
 \end{Interfaz}
 
 
@@ -55,7 +84,7 @@ Usaremos $\#j$ para denotar la cantidad de entradas del diccionario.
 		\end{Tupla}
 	\end{Estructura}
 
-	\TituloDis{Invariante de Representación}
+	\TituloDis{Invariante de Representación de ConjuntoJugadores}
 
 	\begin{enumerate}
 		
@@ -176,6 +205,72 @@ Usaremos $\#j$ para denotar la cantidad de entradas del diccionario.
 			FI}
 		FI}
 	}
+
+
+	\TituloDis{Representación del iterador}
+
+	\begin{Estructura}{itConjJugs}[itJugs]
+		\begin{Tupla}[itJugs]
+			\tupItem{conjunto}{puntero(conjJugs)}
+			\tupItem{pila}{pila(puntero(Nodo))}
+		\end{Tupla}
+	\end{Estructura}
+
+	\TituloDis{Invariante de Representación del iterador}
+
+	\begin{enumerate}
+
+		\item El conjunto no es nulo
+
+		\item Ningún elemento de la pila es nulo
+
+		\item Todo elemento de la pila es menor al anterior
+
+	\end{enumerate}
+
+	\Rep[itJugs][it]{it.conjunto $\neq$ NULL $\land$ PilaValida?(it.pila)}
+
+
+	\TituloDis{Función de Abstracción del iterador}
+
+	\Abs[itJugs]{itUni(nat)}[it]{b}{Siguientes(b) $=$ Sigs(it.pila)}
+
+	\tadOperacion{PilaValida?}{pila(puntero(Nodo))}{bool}{}
+	\tadOperacion{Sigs}{pila(puntero(Nodo))}{secu(jugador)}{}
+	\tadOperacion{Hijos}{puntero(Nodo)/n}{secu(jugador)}{n $\neq$ NULL}
+	\tadOperacion{HijosDer}{pila(puntero(Nodo))/p}{secu(jugador)}{}
+
+	~
+	\tadAxioma{PilaValida?(p)}{
+	vacia?(p) $\oluego$ (PilaValida?(desapilar(p)) $\land$ tope(p) $\neq$ NULL $\yluego$ \\
+	(vacia?(desapilar(p)) $\oluego$ (*tope(p)).id $<$ (*tope(desapilar(p))).id))}
+
+	~
+
+	\tadAxioma{Sigs(p)}{
+	\IF vacia?(p) THEN
+		\secuvacia
+	ELSE
+		Hijos(tope(p)) \& HijosDer(desapilar(p))
+	FI}
+
+
+	\tadAxioma{Hijos(n)}{
+	\IF n = NULL THEN
+		\secuvacia
+	ELSE
+		(*n).id \puntito (Hijos((*n).hijoIzq) \& Hijos((*n).hijoDer))
+	FI}
+
+	~
+
+	\tadAxioma{HijosDer(n)}{
+	\IF vacia?(p) THEN
+		\secuvacia
+	ELSE
+		Hijos((*tope(p)).hijoDer) \& HijosDer(desapilar(p))
+	FI}
+
 
 \end{Representacion}
 
@@ -464,5 +559,69 @@ Usaremos $\#j$ para denotar la cantidad de entradas del diccionario.
 	\complejidad: $O(1)$
 
 	\justifcomp: las rotaciones son una serie de comparasiones y asignaciones de punteros ($\Theta(1)$). El invariante de orden del arbol de búsqueda (ABB) se preserva luego de cada rotación. El invariante de balanceo de AVL se restaura para cada subarbol al final de \texttt{Balancear}, pero no luego de cada rotación individual (puede ser necesario rotar un subarbol de manera temporalmente imbalanceada para restaurar el balance de un arbol).
+
+	\TituloDis{Algoritmos del iterador}
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{CrearIt}{\In{c}{eJugs}}{itJugs}}
+		res.conjunto $\leftarrow$ \&(c)\OdeLinea{1}
+		res.pila $\leftarrow$ Vacía()\OdeLinea{1}
+		\If{\textbf{not} c.raiz = NULL}{
+			Apilar(res.pila, c.raiz)\OdeLinea{1}
+		}
+	\end{algorithm}
+
+	\complejidad: $O(1)$
+
+	\justifcomp: solo se inicializa el iterador.
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{HayMas}{\In{it}{itJugadores}}{bool}}
+		res $\leftarrow$ EsVacía?(it.pila)\OdeLinea{1}
+	\end{algorithm}
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{Actual}{\In{it}{itJugadores}}{jugador}}
+		res $\leftarrow$ (*Tope(it.pila)).id\OdeLinea{1}
+	\end{algorithm}
+
+	\complejidad: $O(1)$
+
+	\justifcomp: solo se utilizan operaciones básicas de pila.
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{Avanzar}{\Inout{it}{itJugadores}}{}}
+		\While(\OdeBloque{1}){\textbf{not} EsVacía(it.pila)} {
+			puntero(Nodo) : tope $\leftarrow$ Tope(it.pila)\OdeLinea{1}
+			\eIf{not (*tope).hijoIzq = NULL}{
+				Apilar(it.pila, (*tope).hijoIzq)\OdeLinea{1}
+					\textbf{break}\OdeLinea{1}
+			}{
+				Desapilar(it.pila)\OdeLinea{1}
+				\If{not (*tope).hijoDer = NULL}{
+					Apilar(it.pila, (*tope).hijoDer)\OdeLinea{1}
+					\textbf{break}\OdeLinea{1}
+				}
+			}
+		}
+	\end{algorithm}
+
+	\complejidad: $O(1)$
+
+	\justifcomp: la pila contiene aquellas posiciones para las cuales todavía no se visitó el nodo derecho, y en el caso del tope, tampoco se revisó el nodo izquierdo, además de estar ordenadas por posición en el arbol (las primeras que se agregan correpsonden a posiciones superiores).
+
+	El peor caso posible para un ABB normal es que la pila contenga todos los elementos del conjunto (ningún nodo del arbol tiene nodo derecho).
+
+	En el caso particular de los AVL la complejidad es constante porque, por el invariante de factores de balance, la cantidad de posiciones que tenemos que recorrer "hacia arriba" para encontrar un nodo derecho es como máximo 2. Por ende, la cantidad de ciclos a realizar tiene máximo constante y no depende del tamaño del arbol.
 
 \end{Algoritmos}
