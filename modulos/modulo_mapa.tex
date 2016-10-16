@@ -44,12 +44,12 @@ Usaremos $lat_{max}$ y $long_{max}$ para denotar las máximas dimensiones entre 
 	[verifica si hay un camino entre dos coordenadas.]
 
 	\InterfazFuncion{Alto}{\In{m}{map}}{nat}
-	{$res \igobs alto(m)$}
+	{$res \igobs alto(m, coordenadas(m))$}
 	[$O(1)$]
 	[devuelve el alto del mapa.]
 
 	\InterfazFuncion{Ancho}{\In{m}{map}}{nat}
-	{$res \igobs ancho(m)$}
+	{$res \igobs ancho(m, coordenadas(m))$}
 	[$O(1)$]
 	[devuelve el ancho del mapa.]
 
@@ -298,9 +298,8 @@ Usaremos $lat_{max}$ y $long_{max}$ para denotar las máximas dimensiones entre 
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
-		% TODO
 		\Pre{\texttt{true}} 
-		\Post{TODO} % se podrá poner true y ya?
+		\Post{TODO} 
 		\BlankLine
 		\caption{\algoritmo{CrearDataPos}{}{dataPos}}
 		res.existe $\leftarrow$ false\OdeLinea{1}

@@ -111,6 +111,8 @@ Usaremos $\#j$ para denotar la cantidad de entradas del diccionario.
 
 		\item Los arboles tienen los mismos elementos
 
+		\item El menor es realmente el menor
+
 	\end{enumerate}
 	
 	%Agregar menor
@@ -119,7 +121,8 @@ Usaremos $\#j$ para denotar la cantidad de entradas del diccionario.
 		ABB?(e.raizJugadores) $\land$ altoValido?(e.raizJugadores) $\land$\\
 		ABBespecial?(e.raizCantidad) $\land$ altoValido?(e.raizCantidad) $\land$\\
 		($\forall$ j: jugador) (definido?(j, e.raizJugadores) = definido?(j, e.raizCantidad) $\yluego$ \\
-			definido?(j, e.raizJugadores) $\impluego$ obtener(j, e.raizJugadores) = obtener(j, e.raizCantidad))
+			definido?(j, e.raizJugadores) $\impluego$ obtener(j, e.raizJugadores) = obtener(j, e.raizCantidad)) $\land$\\
+		(e.raizJugadores $\neq$ NULL) $\impluego$ (e.menorID = menor(e.raizCantidad).id $\land$ e.menor = menor(e.raizCantidad).cantPokemons)
 	}
 
 	\TituloDis{Función de Abstracción}
@@ -143,6 +146,8 @@ Usaremos $\#j$ para denotar la cantidad de entradas del diccionario.
 	\tadOperacion{cantidadHijos}{puntero(Nodo)}{nat}{}
 	\tadOperacion{definido?}{jugador, puntero(nodo)}{bool}{}
 	\tadOperacion{obtener}{jugador/j, puntero(nodo)/p}{nat}{definido?(j,p)}
+	\tadOperacion{menor}{puntero(nodo)/p}{puntero(nodo)}{{p $\neq$ NULL}}
+
 
  	~
 
@@ -241,6 +246,15 @@ Usaremos $\#j$ para denotar la cantidad de entradas del diccionario.
 		FI}
 	}
 
+	~
+
+	\tadAxioma{menor(p)}{
+		{\IF p.hijoIzq = NULL THEN
+			p
+		ELSE
+			menor(p.hijoIzq)
+		FI}
+	}
 
 \end{Representacion}
 
