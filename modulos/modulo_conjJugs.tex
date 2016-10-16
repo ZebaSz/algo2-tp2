@@ -1,17 +1,15 @@
-\section{Módulo Conjunto de Jugadores}
-%TODO
-% Este diccionario utiliza dos criterios de ordenamiento: por la clave y por el significado. Esto permite definir, obtener y remover cualquier elemento al igual que buscar el mínimo elemento en tiempo logarítmico.
+\section{Módulo ConjuntoJugadores}
 
-% En el ordenamiento por significado, para los casos en los que hay dos significados iguales, se utiliza nuevamente la clave.
+Este conjunto aprovecha el orden absoluto de los jugadores (nats) para almacenar los datos en un arbol de búsqueda autobalanceado (AVL). Esto permite agregar, buscar y remover cualquier elemento en tiempo logarítmico.
 
-% Usaremos $\#j$ para denotar la cantidad de entradas del diccionario.
+Usaremos $\#j$ para denotar la cantidad de entradas del diccionario.
 
 \begin{Interfaz}
 	\textbf{se explica con}: \tadNombre{Conjunto(Jugador)}. 
 
 	\textbf{géneros}: \TipoVariable{conjJugs}.
 
-	\TituloDis{Operaciones básicas de Conjunto de Jugadores}
+	\TituloDis{Operaciones básicas de ConjuntoJugadores}
 
 	\InterfazFuncion{Vacio}{}{conjJugs}
 	{res $\igobs \emptyset$ }
@@ -71,7 +69,6 @@
 
 	\end{enumerate}
 	
-	%Agregar menor
 	\Rep[eJugs][e]{
 		sinRepetidos(e.raiz, $\emptyset$) $\land$\\
 		ABB?(e.raiz) $\land$ altoValido?(e.raiz)
@@ -183,7 +180,7 @@
 \end{Representacion}
 
 \begin{Algoritmos}
-	\TituloDis{Algoritmos de Conjunto de Jugadores}
+	\TituloDis{Algoritmos de ConjuntoJugadores}
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
@@ -252,7 +249,7 @@
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{Insertar}{\In{j}{jugador}, \Inout{nodo}{puntero(Nodo)}}{puntero(Nodo)}}
 		\Pre{\texttt{true}}
-		\Post{res es igual al mismo nodo que viene por parametro pero con el nuevo nodo(id:j si ya estaba no es nuevo) y balanceado}
+		\Post{res es igual a la raiz del subarbol del nodo pasado por parámetro pero con el nuevo elemento y balanceado}
 		\BlankLine
 		\eIf{nodo = NULL}{
 			res $\leftarrow$ CrearNodo(j)\OdeLinea{1}
@@ -349,9 +346,8 @@
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{CrearNodo}{\In{j}{jugador}}{puntero(Nodo)}}
-		% TODO
-		\Pre{TODO} 
-		\Post{TODO}
+		\Pre{\texttt{true}}
+		\Post{$res$ apunta a un nodo de alto 1 con id $j$}
 		\BlankLine
 		Nodo: nuevo\OdeLinea{1}
 		nuevo.hijoIzq $\leftarrow$ NULL\OdeLinea{1}
@@ -370,9 +366,8 @@
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{ArreglarAlto}{\Inout{nodo}{puntero(Nodo)}}{}}
-		% TODO
-		\Pre{TODO} 
-		\Post{TODO}
+		\Pre{$nodo \neq$ NULL}
+		\Post{el módulo del factor de balanceo de $res$ es menor a 2}
 		\BlankLine
 		nat: alturaIzq $\leftarrow$ Altura((*nodo).hijoIzq)\OdeLinea{1}
 		nat: alturaDer $\leftarrow$ Altura((*nodo).hijoDer)\OdeLinea{1}
@@ -392,9 +387,8 @@
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{Altura}{\In{nodo}{puntero(Nodo)}}{nat}}
-		% TODO
-		\Pre{TODO} 
-		\Post{TODO}
+		\Pre{\texttt{true}}
+		\Post{$res$ es 0 si $nodo$ es nulo, o igual a la altura del nodo al que apunta en caso contrario}
 		\BlankLine
 		\eIf{nodo = NULL}{
 			res $\leftarrow$ 0\OdeLinea{1}
@@ -412,9 +406,8 @@
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{Balancear}{\Inout{nodo}{puntero(Nodo)}}{puntero(Nodo)}}
-		% TODO
-		\Pre{TODO} 
-		\Post{TODO}
+		\Pre{$nodo \neq$ NULL}
+		\Post{el módulo del factor de balanceo de $res$ es menor a 2}
 		\BlankLine
 		ArreglarAlto(nodo)\OdeLinea{1}
 		nat: alturaIzq $\leftarrow$ Altura((*nodo).hijoIzq)\OdeLinea{1}
@@ -441,9 +434,8 @@
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{rotarDer}{\In{nodo}{puntero(Nodo)}}{puntero(Nodo)}}
-		% TODO
-		\Pre{TODO} 
-		\Post{TODO}
+		\Pre{$nodo$ tiene un hijo izquierdo}
+		\Post{$res$ es el hijo izquierdo de nodo, y arbol se rota a la derecha}
 		\BlankLine
 		puntero(nodo) : aux $\leftarrow$ (*nodo).hijoIzq\OdeLinea{1}
 		(*nodo).hijoIzq $\leftarrow$ aux.hijoDer\OdeLinea{1}
@@ -458,9 +450,8 @@
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{rotarIzq}{\In{nodo}{puntero(Nodo)}}{puntero(Nodo)}}
-		% TODO
-		\Pre{TODO} 
-		\Post{TODO}
+		\Pre{$nodo$ tiene un hijo derecho}
+		\Post{$res$ es el hijo derecho de nodo, y arbol se rota a la izquierda}
 		\BlankLine
 		puntero(nodo) : aux $\leftarrow$ (*nodo).hijoDer\OdeLinea{1}
 		(*nodo).hijoDer $\leftarrow$ aux.hijoIzq\OdeLinea{1}
