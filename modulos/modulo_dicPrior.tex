@@ -368,7 +368,7 @@ Usaremos $\#j$ para denotar la cantidad de entradas del diccionario.
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{InsertarJ}{\In{j}{jugador}, \In{n}{nat}, \Inout{nodo}{puntero(Nodo)}}{puntero(Nodo)}}
 		\Pre{\texttt{true}}
-		\Post{res es igual al nodo hijo o el que viene por parametro que tenga el id del jugador a menos que no este en cuyo caso en NULL}
+		\Post{res es igual al mismo nodo que viene por parametro pero con el nuevo nodo(id:j y n) y balanceado}
 		\BlankLine
 		\eIf{nodo = NULL}{
 			res $\leftarrow$ CrearNodo(j, n)\OdeLinea{1}
@@ -389,9 +389,8 @@ Usaremos $\#j$ para denotar la cantidad de entradas del diccionario.
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{RemoverJ}{\In{j}{jugador}, \In{nodo}{puntero(Nodo)}}{puntero(Nodo)}}
-		% TODO
-		\Pre{TODO} 
-		\Post{TODO}
+		\Pre{entre los nodo que desprenden del nodo del parametro se encuentra el id j.} 
+		\Post{res es el mismo nodo pero ahora con el hijo removido en esa rama excepto que sea el nodo que hay que remover el cual se convierte en null}
 		\BlankLine
 		\uIf{nodo = NULL}{
 			res $\leftarrow$ nodo\OdeLinea{1}
@@ -419,19 +418,13 @@ Usaremos $\#j$ para denotar la cantidad de entradas del diccionario.
 	\end{algorithm}
 
 	\complejidad: $O(h)$ 
-
-	\pre: entre los nodo que desprenden del nodo del parametro se encuentra el id j.
-
-	\post: res es el mismo nodo pero ahora con el hijo removido en esa rama excepto que sea el nodo que hay que remover el cual se convierte en null
-
 	~
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{BuscarMinimo}{\In{nodo}{puntero(Nodo)}}{puntero(Nodo)}}
-		% TODO
-		\Pre{TODO} 
-		\Post{TODO}
+		\Pre{true} 
+		\Post{res es el puntero al minimo hijo del nodo(o el si es el menor)}
 		\BlankLine
 		\eIf{(*nodo).hijoIzq = NULL}{
 			res $\leftarrow$ nodo\OdeLinea{1}
@@ -445,9 +438,8 @@ Usaremos $\#j$ para denotar la cantidad de entradas del diccionario.
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{RemoverMinimo}{\In{nodo}{puntero(Nodo)}}{puntero(Nodo)}}
-		% TODO
-		\Pre{TODO} 
-		\Post{TODO}
+		\Pre{true} 
+		\Post{res es el el mismo nodo pero con el nodo de mas a la izquierda eliminado(al padre del menor, se le pasan los hijos mayores si es que tiene)}
 		\BlankLine
 		\eIf{(*nodo).hijoIzq = NULL}{
 			res $\leftarrow$ (*nodo).hijoDer\OdeLinea{1}
@@ -462,9 +454,8 @@ Usaremos $\#j$ para denotar la cantidad de entradas del diccionario.
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{BuscarN}{\In{j}{jugador}, \In{n}{nat} \In{nodo}{puntero(Nodo)}}{puntero(Nodo)}}
-		% TODO
-		\Pre{TODO} 
-		\Post{TODO}
+		\Pre{true} 
+		\Post{res es el puntero al nodo con la clave j y el significado n si no lo encuetnra es null}
 		\BlankLine
 		\eIf{nodo = NULL \textbf{or} ((*nodo).id = jugador \textbf{and} (*nodo).cantPokemons = n)}{
 			res $\leftarrow$ nodo\OdeLinea{1}
@@ -482,9 +473,8 @@ Usaremos $\#j$ para denotar la cantidad de entradas del diccionario.
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{InsertarN}{\In{j}{jugador}, \In{n}{nat}, \Inout{nodo}{puntero(Nodo)}}{puntero(Nodo)}}
-		% TODO
-		\Pre{TODO} 
-		\Post{TODO}
+		\Pre{true} 
+		\Post{res es igual al mismo nodo que viene por parametro pero con el nuevo nodo(id:j y n) y balanceado}
 		\BlankLine
 		\eIf{nodo = NULL}{
 			res $\leftarrow$ CrearNodo(j, n)\OdeLinea{1}
@@ -503,9 +493,8 @@ Usaremos $\#j$ para denotar la cantidad de entradas del diccionario.
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{RemoverN}{\In{j}{jugador}, \In{n}{nat}, \In{nodo}{puntero(Nodo)}}{puntero(Nodo)}}
-		% TODO
-		\Pre{TODO} 
-		\Post{TODO}
+		\Pre{entre los nodo que desprenden del nodo del parametro se encuentra el id j con significado n.} 
+		\Post{res es el mismo nodo pero ahora con el hijo removido en esa rama excepto que sea el nodo que hay que remover el cual se convierte en null}
 		\BlankLine
 		\uIf{nodo = NULL}{
 			res $\leftarrow$ nodo\OdeLinea{1}
@@ -543,7 +532,6 @@ Usaremos $\#j$ para denotar la cantidad de entradas del diccionario.
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{AgregarClaves}{\In{nodo}{Nodo}, \Inout{c}{conj(Jugador)}}{}}
-		% TODO
 		\Pre{TODO} 
 		\Post{TODO}
 		\BlankLine
