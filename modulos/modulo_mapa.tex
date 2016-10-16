@@ -33,13 +33,13 @@ Usaremos $lat_{max}$ y $long_{max}$ para denotar las máximas dimensiones entre 
 	[devuelve las coordenadas de un mapa]
 
 	\InterfazFuncion{PosExistente}{\In{c}{coor}, \In{m}{map}}{bool}
-	{$res \igobs posExistente(m)$}
+	{$res \igobs posExistente(c, m)$}
 	[$O(1)$]
 	[verifica si existe la coordenada.]
 
 	\InterfazFuncion{HayCamino}{\In{c1}{coor}, \In{c2}{coor}, \In{m}{map}}{bool}
 	[$c1 \in$ coordenadas(m) $\land \ c2 \in$ coordenadas(m)]
-	{$res \igobs hayCamino(m)$}
+	{$res \igobs hayCamino(c1, c2, m)$}
 	[$O(1)$]
 	[verifica si hay un camino entre dos coordenadas.]
 

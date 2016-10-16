@@ -220,7 +220,23 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 	\TituloDis{Invariante de Representación del Juego}
 
 	\begin{enumerate}
-		
+
+		\item La grilla tiene el alto y ancho del mapa %DONE
+
+		\item Los jugadores conectados estan en la grilla en la posicion en la que se encuentra
+
+		\item En los jugadores que se encutuentran en la grilla solo estan los que realmente se encuentran ahi
+
+		\item Solo las posiciones con pokemon tienen pokemons en la grilla
+
+		\item Los significados del diccionario de pokemons es igual a la cantidad de pokemons que hay capturados mas los salvajes
+
+		\item CantPokemons es igual a la suma de todas los significados del diccionario
+
+		\item Los jugadores tienen menos de 5 sanciones
+
+
+		%THE OLD ONE
 		\item Todas las coordenadas pertenecientes a posConPokemons pertenecen a las coordenadas válidas del mapa
 
 		\item La suma de todos los significados del diccionario pokemons es igual a cantPokemons
@@ -243,6 +259,16 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 
 
 	\Rep[pokego][e]{
+
+		long(e.grillaPos) = alto(e.mapa) $\yluego$\\
+		(($\forall n$: nat) n $\leq$ alto(e.mapa) $\implies$ long(e.grillaPos[n]) = ancho(e.mapa)) $\yluego$\\
+		jugadoresConectadosEstanEnLaPos(e) $\land$\\
+
+
+
+
+
+
 		($\forall c$: coor)(c $\in$ e.posConPokemons $\implies$ (c $\in$ coordenadas(e.mapa) $\yluego$ pokeEnGrilla(e, c))) \\
 		$\land$ e.cantPokemons = sumaSignificadosPoke(claves(e.pokemons), e.pokemons) $\land$ ($\forall c,d$: coor) \\
 		(c $\in$ e.posConPokemons $\land$ d $\in$ e.posConPokemons $\implies$ c = d $\lor$ distEuclidea(c,d) $>$ 25) $\land$ \\
@@ -251,6 +277,14 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 		e.jugadores[i]$\rightarrow$posicion $\in$ coordenadas(e.mapa))
 	}
 	
+
+	\tadAxioma{jugadoresConectadosEstanEnLaPos(e)}{
+		($\forall i$: nat) ((i $\leq$ long(e.jugadores) $\land$ e.jugadores[i]$\rightarrow$conectado?)$\implies$(posExistente(e.jugadores[i]$\rightarrow$posicion, e.mapa) $\yluego$ \\
+		i $\in$ e.grillaPos[longitud(e.jugadores[i]$\rightarrow$posicion)][latitud(e.jugadores[i]$\rightarrow$posicion)].jugsEnPos))
+	}
+
+
+
 	~
 	
 	\tadOperacion{pokeEnGrilla}{pokego/e, coor/c}{bool}{c $\in$ coordenadas(e.mapa)}
