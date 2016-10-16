@@ -276,8 +276,8 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 		sanciones(p, j) $<$ 5 $\impluego$ (j $\in$ jugadores(j) $\yluego$ estaConectado(p, j) = e.jugadores[p]$\rightarrow$conectado? \\
 		$\land$ (estaConectado(p, j) $\impluego$ posicion(p, j) = e.jugadores[p]$\rightarrow$posicion) $\land$ \\
 		pokemons(j) = listaPoke(claves(e.pokemons), e.pokemons)) $\land$ \\
-		sanciones(p, j) = 5 $\impluego$ j $\in$ expulsados(j))) $\land$ ($\forall c:$ coor) \\
-		(c $\in$ posConPokemons(j) = c $\in$ e.posConPokemons $\land$ TODO) %TODO POKEMON EN POS, TODO MOV PARA CAPTURA
+		(e.jugadores[p]$\rightarrow$sanciones = 5) = (p $\in$ expulsados(j)))) $\land$ ($\forall c:$ coor) \\
+		(c $\in$ posConPokemons(j) = c $\in$ e.posConPokemons $\yluego$ c $\in$ posConPokemons(j) $\impluego$ (pokemonEnPos(c, j) = j.grillaPos[Latitud(c)][Longitud(c)].pokemon $\land$ cantMovimientosParaCaptura(c, j) = j.grillaPos[Latitud(c)][Longitud(c)].contadorCaptura))
 	}
 	
 	~
@@ -513,8 +513,10 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 				}
 			}{
 				\If{DistEuclidea(posAnterior, coorConPk) $>$ 4}{
-					\tcc{Si el jugador entró a una nuevoa área de caputra, reiniciar el contador}
+					\tcc{Si el jugador entró a una nueva área de captura, reiniciar el contador}
 					j.grillaPos[Latitud(coorConPk)][Longitud(coorConPk)].contadorCaptura $\leftarrow$ 0\OdeLinea{1}
+					Definir(j.grillaPos[Latitud(coorConPk)][Longitud(coorConPk)].jugEsperandoCaptura, e, (*j.jugadores[e]).cantPokemons)\OdeLinea{log(EC)}
+					%TODO agregar jugsEnPos (Y REVISAR LOS DEMAS PROBLEMAS DONDE FALTA)
 				}
 				Avanzar(it)\OdeLinea{1}
 			}
