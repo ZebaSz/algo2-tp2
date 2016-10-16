@@ -458,7 +458,7 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 		\While(\OdeBloque{EC \times log(EC)}){HaySiguiente(itCoor)}{
 			coor: d $\leftarrow$ Siguiente(itCoor)\OdeLinea{1}
 
-			itUni(Jugador) : it $\leftarrow$ CrearIterador(j.grillaPos[Latitud(d)][Longitud(d)].jugsEnPos)\OdeLinea{1}
+			itConjJugs : it $\leftarrow$ CrearIterador(j.grillaPos[Latitud(d)][Longitud(d)].jugsEnPos)\OdeLinea{1}
 			\While(\OdeBloque{EC \times log(EC)}){HayMas(it)}{
 				jugador: jug $\leftarrow$ Actual(it)\OdeLinea{1}
 				Definir(j.grillaPos[Latitud(c)][Longitud(c)].jugEsperandoCaptura, jug, (*j.jugadores[jug]).cantPokemons)\OdeLinea{log(EC)}
