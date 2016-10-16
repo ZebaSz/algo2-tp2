@@ -277,9 +277,13 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 	}
 	
 
+
+	\tadAxioma{jugadoresConectadosEnPosValidas(e)}{
+		($\forall i$: nat) ((i $\leq$ long(e.jugadores) $\land$ e.jugadores[i]$\rightarrow$conectado?)$\implies$(posExistente(e.jugadores[i]$\rightarrow$posicion, e.mapa)))
+	}
+
 	\tadAxioma{jugadoresConectadosEstanEnLaPos(e)}{
-		($\forall i$: nat) ((i $\leq$ long(e.jugadores) $\land$ e.jugadores[i]$\rightarrow$conectado?)$\implies$(posExistente(e.jugadores[i]$\rightarrow$posicion, e.mapa) $\yluego$ \\
-		i $\in$ e.grillaPos[longitud(e.jugadores[i]$\rightarrow$posicion)][latitud(e.jugadores[i]$\rightarrow$posicion)].jugsEnPos))
+		($\forall i$: nat) ((i $\leq$ long(e.jugadores) $\land$ e.jugadores[i]$\rightarrow$conectado?)$\implies$(i $\in$ e.grillaPos[longitud(e.jugadores[i]$\rightarrow$posicion)][latitud(e.jugadores[i]$\rightarrow$posicion)].jugsEnPos))
 	}
 
 
