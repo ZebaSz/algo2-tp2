@@ -1,7 +1,5 @@
 \section{Módulo Coordenada}
 
-Descripcion TODO ¿CUALES TIENEN DESCRIPCION Y CUALES NO?
-
 \begin{Interfaz}
 
 	\textbf{se explica con}: \tadNombre{coordenada}.
@@ -64,7 +62,6 @@ Descripcion TODO ¿CUALES TIENEN DESCRIPCION Y CUALES NO?
 			\tupItem{lat}{nat}
 			\tupItem{long}{nat}
 		\end{Tupla}
-
 	\end{Estructura}
 
 
@@ -84,61 +81,80 @@ Descripcion TODO ¿CUALES TIENEN DESCRIPCION Y CUALES NO?
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{iCrearCoor}{\In{y}{nat}, \In{x}{nat}}{eCoor}}
-		res.latitud $\leftarrow$ y\;
-		res.longitud $\leftarrow$ x\;
+		res.latitud $\leftarrow$ y\OdeLinea{1}
+		res.longitud $\leftarrow$ x\OdeLinea{1}
 	\end{algorithm}
+
+	~
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{iLatitud}{\In{e}{eCoor}}{nat}}
-		res $\leftarrow$ e.latitud\;
+		res $\leftarrow$ e.latitud\OdeLinea{1}
 	\end{algorithm}
+
+	~
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{iLongitud}{\In{e}{eCoor}}{nat}}
-		res $\leftarrow$ e.longitud\;
+		res $\leftarrow$ e.longitud\OdeLinea{1}
 	\end{algorithm}
+
+	~
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{iCoordenadaArriba}{\In{e}{eCoor}}{eCoor}}
-		res $\leftarrow$ CrearCoor(Latitud(e)+1, Longitud(e))\; 
+		res $\leftarrow$ CrearCoor(Latitud(e)+1, Longitud(e))\OdeLinea{1}
 	\end{algorithm}
+
+	~
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{iCoordenadaAbajo}{\In{e}{eCoor}}{eCoor}}
-		res $\leftarrow$ CrearCoor(Latitud(e)-1, Longitud(e))\; 
+		res $\leftarrow$ CrearCoor(Latitud(e)-1, Longitud(e))\OdeLinea{1}
 	\end{algorithm}
+
+	~
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{iCoordenadaALaDerecha}{\In{e}{eCoor}}{eCoor}}
-		res $\leftarrow$ CrearCoor(Latitud(e), Longitud(e)+1)\; 
+		res $\leftarrow$ CrearCoor(Latitud(e), Longitud(e)+1)\OdeLinea{1}
 	\end{algorithm}
+
+	~
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{iCoordenadaALaIzquierda}{\In{e}{eCoor}}{eCoor}}
-		res $\leftarrow$ CrearCoor(Latitud(e), Longitud(e)-1)\; 
+		res $\leftarrow$ CrearCoor(Latitud(e), Longitud(e)-1)\OdeLinea{1}
 	\end{algorithm}
+
+	~
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{iDistEuclidea}{\In{e1}{eCoor}, \In{e2}{eCoor}}{nat}}
-		nat: la $\leftarrow$ 0\;
-		nat: lo $\leftarrow$ 0\;
+		nat: la $\leftarrow$ 0\OdeLinea{1}
+		nat: lo $\leftarrow$ 0\OdeLinea{1}
 		\eIf{Latitud(e1) $>$ Latitud(e2)}{
-			la $\leftarrow$ (Latitud(e1) - Latitud(e2)) $\times$ (Latitud(e1) - Latitud(e2))\;
+			la $\leftarrow$ (Latitud(e1) - Latitud(e2)) $\times$ (Latitud(e1) - Latitud(e2))\OdeLinea{1}
 		}{
-			la $\leftarrow$ (Latitud(e2) - Latitud(e1)) $\times$ (Latitud(e2) - Latitud(e1))\;
+			la $\leftarrow$ (Latitud(e2) - Latitud(e1)) $\times$ (Latitud(e2) - Latitud(e1))\OdeLinea{1}
 		}
 		\eIf{Longitud(e1) $>$ Longitud(e2)}{
-			lo $\leftarrow$ (Longitud(e1) - Longitud(e2)) $\times$ (Longitud(e1) - Longitud(e2))\;
+			lo $\leftarrow$ (Longitud(e1) - Longitud(e2)) $\times$ (Longitud(e1) - Longitud(e2))\OdeLinea{1}
 		}{
-			lo $\leftarrow$ (Longitud(e2) - Longitud(e1)) $\times$ (Longitud(e2) - Longitud(e1))\;
+			lo $\leftarrow$ (Longitud(e2) - Longitud(e1)) $\times$ (Longitud(e2) - Longitud(e1))\OdeLinea{1}
 		}
-		res $\leftarrow$ la + lo\; 
+		res $\leftarrow$ la + lo\OdeLinea{1}
 	\end{algorithm}
+
+	\complejidad: $O(1)$
+
+	\justifcomp: todos los algortimos de coordenadas consisten en asignaciones, accesos u operaciones aritméticas básicas en $\Theta(1)$
+
 \end{Algoritmos}

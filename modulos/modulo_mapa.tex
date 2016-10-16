@@ -12,6 +12,8 @@ Usaremos $lat_{max}$ y $long_{max}$ para denotar las máximas dimensiones entre 
 
 	\textbf{géneros}: \TipoVariable{map}.
 
+	\textbf{servicios usados}: \tadNombre{Vector($\alpha$)}
+
 	\TituloDis{Operaciones básicas de Mapa}
 
 	\InterfazFuncion{CrearMapa}{}{map}
@@ -65,6 +67,8 @@ Usaremos $lat_{max}$ y $long_{max}$ para denotar las máximas dimensiones entre 
 			\tupItem{proxGrupo}{nat}
 		\end{Tupla}
 
+		~
+
 		\begin{Tupla}[dataPos]
 			\tupItem{existe}{bool}
 			\tupItem{grupo}{nat}
@@ -74,33 +78,63 @@ Usaremos $lat_{max}$ y $long_{max}$ para denotar las máximas dimensiones entre 
 	\TituloDis{Invariante de Representación}
 	\begin{enumerate}
 	
-		\item La longitud del vector posiciones es igual al alto del mapa
+		\item La longitud del vector posiciones es igual al alto del mapa.
 		
-		\item La longitud de cada uno de los vectores dentro del vector posiciones es igual o menor al ancho del mapa
+		\item La longitud de cada uno de los vectores dentro del vector posiciones es igual o menor al ancho del mapa.
 
-		\item Existe al menos un vector dentro del vector posiciones cuya longitud es igual al ancho del mapa
+		\item Existe al menos un vector dentro del vector posiciones cuya longitud es igual al ancho del mapa.
 
-		\item Las posiciones existentes adyacentes entre sí deben tener el mismo grupo
+		\item Las posiciones existentes adyacentes entre sí deben tener el mismo grupo.
 		
-		\item Las posiciones que no tienen ninguna posición adyacente válida pertenecen a un grupo distinto a todas las demás posiciones
+		\item Si dos posiciones no tienen un camino de posiciones adyacentes de mismo grupo que las una, deben tener grupos distintos.\footnote{No pudimos expresar esto en rep, lo dejamos en castellano} % TODO esto es medio fruta
  		
 	\end{enumerate}
 	\Rep[eMap][e]{
 		e.alto = Longitud(e.posiciones) $\yluego$ \\
 		($\exists i$: nat) (i $<$ e.alto $\implies$ Longitud(e.posiciones[i]) = e.ancho) $\land$ \\
-		($\forall i$: nat) (i $<$ e.alto $\implies$ Longitud(e.posiciones[i]) $\leq$ e.ancho) $\land$
-		($\forall i,j$: nat) (i $<$ long(e.posiciones) $\land$ j $<$ long(e.posiciones[i]) $\yluego$ e.posiciones[i][j].existe $\implies$ (j + 1 $<$ long(e.posiciones[i]) $\yluego$ e.posiciones[i][j+1].existe $\implies$ e.posiciones[i][j+1].grupo == e.posiciones[i][j].grupo) $\land$ (i + 1 $<$ long(e.posiciones) $\yluego$ e.posiciones[i+1][j].existe $\implies$ e.posiciones[i+1][j].grupo == e.posiciones[i][j].grupo) $\land$ (j - 1 $\geq$ 0 $\yluego$ e.posiciones[i][j-1].existe $\implies$ e.posiciones[i][j-1].grupo == e.posiciones[i][j].grupo) $\land$ (i - 1 $\geq$ 0 $\yluego$ e.posiciones[i-1][j].existe $\implies$ e.posiciones[i-1][j].grupo == e.posiciones[i][j].grupo)) $\land$
-		($\forall i,j$: nat) (i $<$ long(e.posiciones) $\land$ j $<$ long(e.posiciones[i]) $\yluego$ e.posiciones[i][j].existe $\land$ (j+1 $<$ long(e.posiciones[i]) $\implies$ $\neg$e.posiciones[i][j+1].existe) $\land$ (i+1 $<$ long(e.posiciones) $\implies$ $\neg$e.posiciones[i+1][j].existe) $\land$ (j-1 $\geq$ 0 $\implies$ $\neg$e.posiciones[i][j-1].existe) $\land$ (i-1 $\geq$ 0 $\implies$ $\neg$e.posiciones[i-1][j].existe) $\implies$ ($\forall n,m$: nat)((n $<$ long(e.posiciones) $\land$ m $<$ long(e.posiciones[i]) $\implies$ e.posiciones[n][m].grupo $\neq$ e.posiciones[i][j].grupo
+		($\forall i$: nat) (i $<$ e.alto $\implies$ Longitud(e.posiciones[i]) $\leq$ e.ancho) $\land$ \\
+		($\forall i,j$: nat) (posValida?(i,j,e) $\impluego$ gruposValidos?(i,j,e))
 
-		%% TODO extender el tad con alto y ancho, luego mas rep
+		% TODO extender el tad con alto y ancho, luego mas rep
 	}
+
+	~
+
+	\tadOperacion{posValida?}{nat/i, nat/j, eMap/e}{bool}{}
+	\tadAxioma{posValida?(i, j, e)}{i $<$ e.alto $\yluego$ j $<$ long(e.posiciones[i]) $\yluego$ e.posiciones[i][j].existe}
+
+	~
+
+	\tadOperacion{gruposValidos?}{nat/i, nat/j, eMap/e}{bool}{posValida?(i,j,e)}
+	\tadAxioma{gruposValidos?(i, j, e)}
+	{mismoGrupoArriba(i,j,e) $\land$ mismoGrupoAbajo(i,j,e) \\ $\land$ mismoGrupoALaDer(i,j,e) $\land$ mismoGrupoALaIzq(i,j,e)}
+
+	\tadOperacion{mismoGrupoArriba}{nat/i, nat/j, eMap/e}{bool}{posValida?(i,j,e)}
+	\tadAxioma{mismoGrupoArriba(i, j, e)}
+	{$\neg$posValida?(i+1,j,e) $\oluego$ e.posiciones[i][j+1].grupo = e.posiciones[i][j].grupo}
+
+	~
+
+	\tadOperacion{mismoGrupoAbajo}{nat/i, nat/j, eMap/e}{bool}{posValida?(i,j,e)}
+	\tadAxioma{mismoGrupoArriba(i, j, e)}
+	{j = 0 $\oluego \neg$posValida?(i-1,j,e) $\oluego$ e.posiciones[i][j-1].grupo = e.posiciones[i][j].grupo}
+
+	~
+
+	\tadOperacion{mismoGrupoALaDer}{nat/i, nat/j, eMap/e}{bool}{posValida?(i,j,e)}
+	\tadAxioma{mismoGrupoArriba(i, j, e)}
+	{$\neg$posValida?(i,j+1,e) $\oluego$ e.posiciones[i+1][j].grupo = e.posiciones[i][j].grupo}
+
+	~
+
+	\tadOperacion{mismoGrupoAbajo}{nat/i, nat/j, eMap/e}{bool}{posValida?(i,j,e)}
+	\tadAxioma{mismoGrupoALaIzq(i, j, e)}
+	{i = 0 $\oluego \neg$posValida?(i,j-1,e) $\oluego$ e.posiciones[i][j-1].grupo = e.posiciones[i][j].grupo}
+
 
 	\TituloDis{Función de Abstracción}
 
-	\Abs[eMap]{map}[e]{m}{
-		($\forall c$: coor) (c $\in$ coordenadas(m) $\iff$ \\
-		latitud(c) $<$ e.alto $\yluego$ longitud(c) $<$ Longitud(e.posiciones[latitud(c)]) $\yluego$ e.posiciones[latitud(c)][longitud(c)].existe)
-	}
+	\Abs[eMap]{map}[e]{m}{($\forall c$: coor) (c $\in$ coordenadas(m) $\iff$ posValida?(latitud(c), longitud(c), e))}
 \end{Representacion}
 
 \begin{Algoritmos}
@@ -165,8 +199,6 @@ Usaremos $lat_{max}$ y $long_{max}$ para denotar las máximas dimensiones entre 
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{CrearDataPos}{}{dataPos}}
 		res.existe $\leftarrow$ false\OdeLinea{1}
-		%% esta inicializacion se puede omitir
-		res.grupo $\leftarrow$ 0\OdeLinea{1}
 	\end{algorithm}
 
 	\complejidad: $O(1)$

@@ -1,0 +1,11 @@
+\section{Consideraciones}
+
+\begin{itemize}
+	\item Se asume lógica de cortocircuito para todos los algoritmos.
+
+	\item Algunas complejidades y sus justificaciones son compartidas (ya que la función es prácticamente idéntica, solo llama a una o dos auxiliares o solo realiza alguna otra acción en $\Theta(1)$), así que en algunos casos se omiten y se asume que se usa la próxima complejidad y justificación disponible
+
+	\item La aridad de \texttt{EntrenadoresPosibles} se modifica ya que tomaba un conjunto de jugadores por parámetro. Se asume que el funcionamiento es igual a llamar a esa función con todos los jugadores válidos.
+
+	\item Para ser consistente con el cambio a iteradores en la funcion \texttt{Jugadores}, también se devuelve un iterador en \texttt{Expulsados}.
+\end{itemize}

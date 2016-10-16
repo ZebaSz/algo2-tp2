@@ -7,21 +7,6 @@
 \usepackage[boxruled, longend]{algorithm2e}
 \SetKwComment{Comment}{}{}
 
-\makeatletter
-\renewcommand{\algocf@caption@boxruled}{%
-  \hrule
-  \hbox to \hsize{%
-    \vrule\hskip-0.4pt
-    \vbox{   
-       \vskip\interspacetitleboxruled%
-       \unhbox\algocf@capbox\hfill
-       \vskip\interspacetitleboxruled
-       }%
-     \hskip-0.4pt\vrule%
-   }\nointerlineskip%
-}%
-\makeatother
-
 \newcommand\complejidad{\textbf{Complejidad}}
 \newcommand\justifcomp{\textbf{Justificación}}
 \newcommand\OdeLinea[1]{\Comment*[r]{$O(#1)$}}
@@ -61,5 +46,8 @@
 
 \pagebreak
 \input{modulos/modulo_dicPrior}
+
+\pagebreak
+\input{consideraciones}
 
 \end{document}

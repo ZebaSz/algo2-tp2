@@ -1,4 +1,4 @@
-\section{Módulo Diccionario de Prioridad de atrape}
+\section{Módulo DiccionarioPrioridad}
 
 Este diccionario utiliza dos criterios de ordenamiento: por la clave y por el significado. Esto permite definir, obtener y remover cualquier elemento al igual que buscar el mínimo elemento en tiempo logarítmico.
 
@@ -11,7 +11,7 @@ Usaremos $\#j$ para denotar la cantidad de entradas del diccionario.
 
 	\textbf{géneros}: \TipoVariable{prior}.
 
-	\TituloDis{Operaciones básicas de Diccionario de Prioridad de atrape}
+	\TituloDis{Operaciones básicas de DiccionarioPrioridad}
 
 	\InterfazFuncion{Vacio}{}{prior}
 	{res $\igobs$ vacío}
@@ -245,7 +245,7 @@ Usaremos $\#j$ para denotar la cantidad de entradas del diccionario.
 \end{Representacion}
 
 \begin{Algoritmos}
-	\TituloDis{Algorítmos de Diccionario de Prioridad de atrape}
+	\TituloDis{Algorítmos de DiccionarioPrioridad}
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
@@ -274,9 +274,9 @@ Usaremos $\#j$ para denotar la cantidad de entradas del diccionario.
 		\If{Definido?(p, j)}{
 			Borrar(p, j)\OdeLinea{log(\#j)}
 		}
-		\If{res.raizJugadores $\oluego$ n $<$ p.menor $\lor$ (n = p.menor $\land$ j $<$ p.menorId}{
-			p.menor $\leftarrow$ n\;
-			p.menorId $\leftarrow$ j\;
+		\If{res.raizJugadores = NULL \textbf{or} n $<$ p.menor \textbf{or} (n = p.menor $\land$ j $<$ p.menorId)}{
+			p.menor $\leftarrow$ n\OdeLinea{1}
+			p.menorId $\leftarrow$ j\OdeLinea{1}
 		}
 		p.raizJugadores $\leftarrow$ InsertarJ(j, n, p.raizJugadores)\OdeLinea{log(\#j)}
 		p.raizCantidad $\leftarrow$ InsertarN(j, n, p.raizCantidad)\OdeLinea{log(\#j)}
@@ -291,9 +291,9 @@ Usaremos $\#j$ para denotar la cantidad de entradas del diccionario.
 		p.raizCantidad $\leftarrow$ RemoverN(j, (*nodo).cantPokemons, p.raizCantidad)\OdeLinea{log(\#j)}
 		p.raizJugadores $\leftarrow$ RemoverJ(j, p.raizJugadores)\OdeLinea{log(\#j)}
 		\If{j = p.menorId $\land$ p.raizCantidad $\neq$ NULL}{
-			puntero(Nodo): minimo $\leftarrow$ BuscarMinimo(p.raizCantidad)\;
-			p.menor $\leftarrow$ (*minimo).cantPokemons\;
-			p.menorId $\leftarrow$ (*minimo).id\;	
+			puntero(Nodo): minimo $\leftarrow$ BuscarMinimo(p.raizCantidad)\OdeLinea{1}
+			p.menor $\leftarrow$ (*minimo).cantPokemons\OdeLinea{1}
+			p.menorId $\leftarrow$ (*minimo).id\OdeLinea{1}
 		}
 	\end{algorithm}
 

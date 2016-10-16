@@ -1,6 +1,21 @@
 \section{Módulo Juego}
 
-La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando los nombres como claves. Sus posiciones se guardan en un Conjunto Lineal con inserción rápida, y en el mismo mapa se guarda el pokémon que se ubica en dicha posición (este valor se invalida si la posición no está en el conjunto, como cuando se captura el pokémon). 
+
+La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando los nombres como claves. Sus posiciones se guardan en un Conjunto Lineal con inserción rápida, y en el mismo mapa se guarda el pokémon que se ubica en dicha posición (este valor se invalida si la posición no está en el conjunto, como cuando se captura el pokémon).
+
+Utilizaremos la misma notación para complejidades que en el enunciado:
+
+\begin{itemize}
+	\item $J$ es la cantidad total de jugadores que fueron agregados al juego.
+
+	\item $|P|$ es el nombre más largo para un pokémon en el juego.
+
+	\item $EC$ es la máxima cantidad de jugadores esperando para atrapar un pokémon.
+
+	\item $PS$ es la cantidad de pokémon salvajes.
+
+	\item $PC$ es la máxima cantidad de pokémon capturados por un jugador.
+\end{itemize}
 
 \begin{Interfaz}
 
@@ -8,43 +23,43 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 
 	\textbf{géneros}: \TipoVariable{juego}, \TipoVariable{itJugadores}.
 
-	\textbf{servicios usados}: \tadNombre{Vector($\alpha$)}, \tadNombre{DiccionarioString($\alpha$)}, \tadNombre{Conjunto Lineal($\alpha$)}
+	\textbf{servicios usados}: \tadNombre{Coordenada}, \tadNombre{Mapa}, \tadNombre{Vector($\alpha$)}, \tadNombre{DiccionarioString($\alpha$)}, \tadNombre{DiccionarioPrioridad}, \tadNombre{Conjunto Lineal($\alpha$)}
 
 
 	\InterfazFuncion{CrearJuego}{\In{m}{mapa}}{juego}
 	{$res \igobs$ crearJuego(m)}
-	[$O()$]
+	[$O(alto(m) \times ancho(m))$]
 	[crea un juego vacío usando el mapa provisto.]
 	[se guarda una copia de $m$.]
 
 	\InterfazFuncion{AgregarPokémon}{\Inout{j}{juego}, \In{pk}{pokemon}, \In{c}{coor}}{}
 	[$j \igobs j_0 \land$ puedoAgregarPokémon($c,j_0$)]
 	{$j \igobs$ agregarPokémon($pk, c, j_0$)}
-	[$O(|pk_{max}|)$]
+	[$O(|P|)$]
 	[agrega un pokemon al juego.]
 
 	\InterfazFuncion{AgregarJugador}{\Inout{j}{juego}}{nat}
 	[$j \igobs j_0$]
 	{$j \igobs$ agregarJugador($j$)}
-	[$O()$]
+	[$O(J)$]
 	[registra un nuevo jugador y devuelve su ID.]
 
 	\InterfazFuncion{Conectarse}{\Inout{j}{juego}, \In{e}{jugador}, \In{c}{coor}}{}
 	[$j \igobs j_0 \land e \in$ jugadores($j_0$) $\yluego \neg$conectado($e,j_0$) $\land$ posExistente(mapa($j_0$))]
 	{$j \igobs$ conectarse($e, c, j_0$)}
-	[$O(log(\#Jugadores(j)))$]
+	[$O(log(EC))$]
 	[conecta al jugador al juego.]
 
 	\InterfazFuncion{Desconectarse}{\Inout{j}{juego}, \In{e}{jugador}}{}
 	[$j \igobs j_0 \land e \in$ jugadores($j_0$) $\yluego$ conectado($e,j_0$)]
 	{$j \igobs$ desconectarse($e, j_0$)}
-	[$O()$]
+	[$O(log(EC))$]
 	[desconecta al jugador del juego.]
 
 	\InterfazFuncion{Moverse}{\Inout{j}{juego}, \In{e}{jugador}, \In{c}{coor}}{}
 	[$j \igobs j_0 \land e \in$ jugadores($j_0$) $\yluego$ conectado($e,j_0$) $\land$ posExistente(mapa($j_0$))]
 	{$j \igobs$ moverse($e, c, j_0$)}
-	[$O()$]
+	[$O((PS + PC)|P| + log(EC))$]
 	[mueve el jugador a la posición elegida. Si el movimiento es ilegal, sanciona al jugador o lo expulsa si excede el límite de sanciones. Aumenta los contadores de captura para otros jugadores donde corresponde y puede provocar la captura de pokémons.]
 
 	\InterfazFuncion{Mapa}{\In{j}{juego}}{mapa}
@@ -62,32 +77,30 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 	\InterfazFuncion{EstaConectado}{\In{j}{juego}, \In{e}{jugador}}{bool}
 	[$e \in$ jugadores($j$)]
 	{$res \igobs$ estaConectado($e, j$)}
-	[$O()$]
+	[$O(1)$]
 	[devuelve si el jugador está conectado al juego.]
 
 	\InterfazFuncion{Sanciones}{\In{j}{juego}, \In{e}{jugador}}{nat}
 	[$e \in$ jugadores($j$)]
 	{$res \igobs$ sanciones($e, j$)}
-	[$O()$]
+	[$O(1)$]
 	[devuelve la cantidad de sanciones que el jugador posee.]
 
 	\InterfazFuncion{Posicion}{\In{j}{juego}, \In{e}{jugador}}{coor}
 	[$e \in$ jugadores($j$)]
 	{$res \igobs$ posicion($e, j$)}
-	[$O()$]
+	[$O(1)$]
 	[devuelve la posición actual del jugador.]
 
 	\InterfazFuncion{Pokémons}{\In{j}{juego} \In{e}{jugador}}{itBi(tupla(pokemon, nat))}
-	% TODO fucking tuplas
-	% TODO fucking metapredicado alias e iteradores
 	{$res \igobs$ crearItBi($\secuvacia$, pokemons($j$)) $\land$ alias(esPermutacion(SecuSuby($res$), pokemons($j$)))}
-	[$O()$]
+	[$O(1)$]
 	[devuelve un iterador al conjunto de los pokémons capturados por un jugador, y la cantidad de los mismos.]
 	[el iterador se invalida si y sólo si se elimina el elemento siguiente del iterador.]
 
 	\InterfazFuncion{Expulsados}{\In{j}{juego}}{itUni(jugador)}
 	{$res \igobs$ crearItUni(expulsados($j$))}
-	[$O()$]
+	[$O(1)$]
 	[devuelve un iterador del conjunto de jugadores expulsados.]
 	[el iterador se invalida si se expulsa al siguiente jugador del iterador, o si se agrega un nuevo jugador y el iterador había llegado al final. Además, siguientes($res$) podría cambiar completamente ante cualquier operación que modifique la lista de jugadores.]
 
@@ -98,40 +111,39 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 	[$res$ no es modificable.]
 
 	\InterfazFuncion{PokémonEnPos}{\In{j}{juego}, \In{c}{coor}}{pokemon}
-	[$c \ \land$ posConPokemon($j$)]
+	[$c \in$ posConPokemon($j$)]
 	{$res \igobs$ pokémonEnPos($c,j$)}
-	[$O()$]
+	[$O(1)$]
 	[devuelve el pokémon que se encuentra en la posición.]
 
 	\InterfazFuncion{PuedoAgregarPokémon}{\In{j}{juego}, \In{c}{coor}}{bool}
 	{$res \igobs$ puedoAgregarPokémon($c,j$)}
-	[$O()$]
+	[$O(PS)$]
 	[devuelve si un nuevo pokémon puede ser agregado a esa posición (no debe haber ningún pokémon cerca).]
 
 	\InterfazFuncion{HayPokémonCercano}{\In{j}{juego}, \In{c}{coor}}{bool}
 	{$res \igobs$ hayPokémonCercano($c,j$)}
-	[$O()$]
+	[$O(PS)$]
 	[devuelve si hay algún pokémon cerca de la posición.]
 
 	\InterfazFuncion{PosPokémonCercano}{\In{j}{juego}, \In{c}{coor}}{coor}
 	[hayPokémonCercano($c,j$)]
 	{$res \igobs$ posPokémonCercano($c,j$)}
-	[$O()$]
+	[$O(PS)$]
 	[devuelve el pokémon que se encuentra cerca de la posición.]
 
-	% TODO hace falta exponer esto?
 	% cambió la aridad, anotar en consideraciones
 	\InterfazFuncion{EntrenadoresPosibles}{\In{j}{juego}, \In{c}{coor}}{conj(jugador)}
 	[hayPokémonCercano($c,j$)]
 	{$res \igobs$ entrenadoresPosibles($c,j$)}
-	[$O()$]
+	[$O(EC)$]
 	[devuelve el conjunto de jugadores esperando a capturar el pokémon que se encuentra en la posición.]
 	[$res$ no es modificable.]
 
 	\InterfazFuncion{IndiceRareza}{\In{j}{juego}, \In{pk}{pokemon}}{nat}
 	[$pk \in$ pokemons($j$)]
 	{$res \igobs$ indiceRareza($pk,j$)}
-	[$O(|pk_{max}|)$]
+	[$O(|P|)$]
 	[calcula el índice de rareza de un pokémon.]
 
 	\InterfazFuncion{CantPokémonsTotales}{\In{j}{juego}}{nat}
@@ -142,7 +154,7 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 	\InterfazFuncion{CantMismaEspecie}{\In{j}{juego}, \In{pk}{pokemon}}{nat}
 	[$pk \in$ pokemons($j$)]
 	{$res \igobs$ cantMismaEspecie($j$)}
-	[$O(|pk_{max}|)$]
+	[$O(|P|)$]
 	[devuelve la cantidad de pokémons de la especie especificada en juego.]
 
 	\TituloDis{Operaciones del iterador de jugadores}
@@ -158,19 +170,19 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 
 	\InterfazFuncion{HayMas}{\In{it}{itJugadores}}{bool}
 	{$res$ $\igobs$ hayMas?($it$)}
-	[$O(1)$]
+	[$O(J)$]
 	[devuelve \texttt{true} si y sólo si en el iterador todavía quedan elementos para avanzar.]
 
 	\InterfazFuncion{Actual}{\In{it}{itJugadores}}{jugador}
 	[HayMas?($it$)]
 	{$res$ $\igobs$ Actual($it$)}
-	[$O(|c_{max}|))$]
-	[devuelve el elemento siguiente a la posición del iterador, como tupla clave-valor.]
+	[$O(J))$]
+	[devuelve el elemento siguiente a la posición del iterador.]
 
 	\InterfazFuncion{Avanzar}{\Inout{it}{itJugadores}}{}
 	[$it = it_0$ $\land$ HayMas?($it$)]
 	{$it$ $\igobs$ Avanzar($it_0$)}
-	[$O(1)$]
+	[$O(J)$]
 	[avanza a la posición siguiente del iterador.]
 
 \end{Interfaz}
@@ -202,7 +214,7 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 			\tupItem{pokemon}{pokemon}
 			\tupItem{contadorCaptura}{nat}
 			\tupItem{jugEsperandoCaptura}{dicPrior}
-			\tupItem{jugadores}{jugs}
+			\tupItem{jugsEnPos}{conjJugs}
 		\end{Tupla}
 
 	\end{Estructura}
@@ -232,8 +244,12 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 
 
 	\Rep[pokego][e]{
-	($\forall c$: coor)(c $\in$ e.posConPokemons $\implies$ c $\in$ coordenadas(e.mapa)) $\land$ e.cantPokemons == sumaSignificadosPoke(claves(e.pokemons), e.pokemons) $\land$ ($\forall c,d$: coor)(c $\in$ e.posConPokemons $\land$ d $\in$ e.posConPokemons $\implies$ c = d $\lor$ distEuclidea(c,d) $>$ 25) $\land$ ($\forall i$:nat)(i $<$ long(e.jugadores) $\implies$ claves(e.jugadores[i]$\rightarrow$pokemonsCapturados) $\subseteq$ claves(e.pokemons)) $\land$  ($\forall i$:nat)(i $<$ long(e.jugadores) $\yluego$ e.jugadores[i]$\rightarrow$sanciones $<$ 5 $\implies$ e.jugadores[i]$\rightarrow$conectado $\implies$ e.jugadores[i]$\rightarrow$posicion $\in$ coordenadas(e.mapa))
-	}
+	($\forall c$: coor)(c $\in$ e.posConPokemons $\implies$ c $\in$ coordenadas(e.mapa)) \\
+	$\land$ e.cantPokemons == sumaSignificadosPoke(claves(e.pokemons), e.pokemons) $\land$ ($\forall c,d$: coor) \\
+	(c $\in$ e.posConPokemons $\land$ d $\in$ e.posConPokemons $\implies$ c = d $\lor$ distEuclidea(c,d) $>$ 25) $\land$ \\
+	($\forall i$:nat)(i $<$ long(e.jugadores) $\implies$ claves(e.jugadores[i]$\rightarrow$pokemonsCapturados) $\subseteq$ claves(e.pokemons)) \\
+	$\land$ ($\forall i$:nat)((i $<$ long(e.jugadores) $\yluego$ (e.jugadores[i]$\rightarrow$sanciones $<$ 5 $\land$ e.jugadores[i]$\rightarrow$conectado)) $\implies$ \\
+	e.jugadores[i]$\rightarrow$posicion $\in$ coordenadas(e.mapa))}
 	
 	~
 	
@@ -253,14 +269,19 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 	\TituloDis{Función de Abstracción}
 
 	\Abs[pokego]{juego}[e]{j}{
-		mapa(j) == e.mapa $\land$ ($\forall p:$ jugador)(p $\in$ jugadores(j) $=$ long(e.jugadores) $>$ p $\yluego$ sanciones(p, j) == e.jugadores[p]$\rightarrow$sanciones $\land$ (sanciones(p, j) $<$ 5 $\impluego$ estaConectado(p, j) == e.jugadores[p]$\rightarrow$conectado?) $\land$ (estaConectado(p, j) $\impluego$ posicion(p, j) == e.jugadores[p]$\rightarrow$posicion)) $\land$ pokemons(j) == listaPoke(claves(e.pokemons), e.pokemons) $\land$ expulsados(j) == listaExpulsados(e, long(e.jugadores)) $\land$ ($\forall c:$ coor) (c $\in$ posConPokemons(j) == c $\in$ e.posConPokemons) $\land$ TODO POKEMON EN POS, TODO MOV PARA CAPTURA
+		mapa(j) == e.mapa $\land$ long(e.jugadores) = ProxID(j) $\yluego$ ($\forall p:$ jugador) \\
+		(long(e.jugadores) $>$ p $\impluego$ (sanciones(p, j) = e.jugadores[p]$\rightarrow$sanciones $\land$ \\
+		sanciones(p, j) $<$ 5 $\impluego$ (j $\in$ jugadores(j) $\yluego$ estaConectado(p, j) = e.jugadores[p]$\rightarrow$conectado? \\
+		$\land$ (estaConectado(p, j) $\impluego$ posicion(p, j) = e.jugadores[p]$\rightarrow$posicion) $\land$ \\
+		pokemons(j) = listaPoke(claves(e.pokemons), e.pokemons)) $\land$ \\
+		sanciones(p, j) = 5 $\impluego$ j $\in$ expulsados(j))) $\land$ ($\forall c:$ coor) \\
+		(c $\in$ posConPokemons(j) = c $\in$ e.posConPokemons $\land$ TODO) %TODO POKEMON EN POS, TODO MOV PARA CAPTURA
 	}
 	
 	~
 
 	\tadOperacion{listaPoke}{conj(pokemon)/cs, dicc(String{,}Nat)/dic}{multiconj(pokemon)}{cs $\subseteq$ claves(dic)}
 	\tadOperacion{agregarPoke}{pokemon, nat}{multiconj(pokemon)}{}
-	\tadOperacion{listaExpulsados}{pokego, nat}{conj(jugador)}{}
 		 
 	~
 
@@ -279,18 +300,6 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 	ELSE
 		Ag(p, agregarPoke(p, n-1))
 	FI}
-	
-	\tadAxioma{listaExpulsados(p, n)}
-	{\IF n = 0 THEN
-		$\emptyset$
-	ELSE
-		{\IF p.jugadores[n-1]$\rightarrow$sanciones = 5 THEN
-			Ag(*p.jugadores[n-1],listaExpulsados(p,n-1))
-		ELSE
-			listaExpulsados(p,n-1)
-		FI}
-	FI}
-	
 	
 	%TODO iterador de jugadores :)
 
@@ -384,47 +393,29 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 			Definir(j.pokemons, pk, 1)\OdeLinea{|pk|}
 		}
 
-%<<<<<<< HEAD
-		j.grillaPos[Latitud(c)][Longitud(c)].pokemon $\leftarrow$ pk\;
-		j.grillaPos[Latitud(c)][Longitud(c)].contadorCaptura $\leftarrow$ 0\;
+		j.grillaPos[Latitud(c)][Longitud(c)].pokemon $\leftarrow$ pk\OdeLinea{1}
+		j.grillaPos[Latitud(c)][Longitud(c)].contadorCaptura $\leftarrow$ 0\OdeLinea{1}
 		%TODO BORRAR LA COLA DE PRIORIDAD
-		j.grillaPos[Latitud(c)][Longitud(c)].jugEsperandoCaptura $\leftarrow$ Vacio\;
-		nat : i $\leftarrow$ 0\;
-		\While{i $<$ 5}{
-			nat : j $\leftarrow$ 0\;
-			coor: coorConPk $\leftarrow$ CrearCoor(Latitud(c) + i, Longitud(c) + j)\;
-			\While{DistEuclidea(c, coorConPk) $\leq$ 4}{
-				\If{PosExistente(j.mapa, coorConPk $\land$ j.grillaPos[Latitud(c)+ i][Longitud(c) + j].hayPokemon?)}{ %Si la pos existe y hay pokemon
-					it $\leftarrow$ CrearIterador(j.grillaPos[Latitud(c)+ i][Longitud(c) + j].jugadores) %TODO: Los mas y los menos
-					\While{HayMas(it)}{
-						jugador: jug $\leftarrow$ Actual(it)\;
-						Definir(j.grillaPos[Latitud(c)][Longitud(c)].jugEsperandoCaptura, jug (*j.jugadores[jug]).cantPokemons)\;
+		j.grillaPos[Latitud(c)][Longitud(c)].jugEsperandoCaptura $\leftarrow$ Vacio()\OdeLinea{1}
+		nat : i $\leftarrow$ 0\OdeLinea{1}
+		\For(\OdeBloque{EC \times log(EC)}){$i \leftarrow 0$ \KwTo $2$}{
+			\For{$j \leftarrow 0$ \KwTo $2 - i$}{
+				coor: d $\leftarrow$ CrearCoor(Latitud(c) + i, Longitud(c) + j)\OdeLinea{1} %TODO: Los mas y los menos
+				\If{PosExistente(j.mapa, d)}{
+					itUni(Jugador) : it $\leftarrow$ CrearIterador(j.grillaPos[Latitud(d)][Longitud(d)].jugsEnPos)\OdeLinea{1}
+					\While(\OdeBloque{EC \times log(EC)}){HayMas(it)}{
+						jugador: jug $\leftarrow$ Actual(it)\OdeLinea{1}
+						Definir(j.grillaPos[Latitud(c)][Longitud(c)].jugEsperandoCaptura, jug, (*j.jugadores[jug]).cantPokemons)\OdeLinea{log(EC)}
+						Avanzar(it)\OdeLinea{1}
 					}
 				}
-				j $\leftarrow$ j + 1\;
 			}
-			Avanzar(it)\OdeLinea{\#j}
 		}
 	\end{algorithm}
 
-	\complejidad: $O(|pk| + EC \times log(EC))$
+	\complejidad: $O(|P| + EC \times log(EC))$
 
-	\justifcomp: todos los jugadores que se encuentran en el area deben agregarse a la lista de espera, que los ordena por prioridad. Al mismo tiempo debe definirse este nuevo pokémon en el diccionario correspondiente.
-
-% =======
-% 		j.grillaPos[Latitud(c)][Longitud(c)].pokemon $\leftarrow$ pk\OdeLinea{1}
-% 		j.grillaPos[Latitud(c)][Longitud(c)].contadorCaptura $\leftarrow$ 0\OdeLinea{1}
-
-% 		nat : i $\leftarrow$ 0\OdeLinea{1}
-% 		itJug: it $\leftarrow$ Jugadores(j)\OdeLinea{1}
-%  		%% SE PASA DE COMPLEJIDAD, ARREGLAR
-%  		%% ESTE WHILE DEBE SER (EC \times log(EC))
-%  		%% SE ITERAN LOS EC Y SE AGREGAN AL DICPRIOR EN log(EC)
-% 		\While(\OdeBloque{\#j}){HayMas(it)}{
-% 			jugador: jug $\leftarrow$ Actual(it)\OdeLinea{\#j}
-% 			\If{DistEuclidea(c, (*j.jugadores[jug]).posicion) $\leq$ 4}{
-% 				AgregarAColas(j, jug)\; %% NO AGREGO LA COMP PORQUE ESTO NO ESTA BIEN DEFINIDO TODAVIA
-% >>>>>>> 9e1a13ef3724e8e3d8220af40c9cc23e35cf39ef
+	\justifcomp: todos los jugadores que se encuentran en el area (EC) deben agregarse a la lista de espera, que los ordena por prioridad (inserción en log(EC)). Al mismo tiempo debe definirse este nuevo pokémon en el diccionario global ($|P|$).
 
 	~
 
@@ -464,7 +455,7 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 		(*j.jugadores[e]).conectado? $\leftarrow$ true\OdeLinea{1}
 		(*j.jugadores[e]).posicion $\leftarrow$ c\OdeLinea{1}
 		Agregar(j.grillaPos[Latitud(c)][Longitud(c)].jugadores, e)\; %log MISMOS CHABON ENUNA MISMA POSICION
-		AgregarAColas(j, e)\; %% NO AGREGO LA COMP PORQUE ESTO NO ESTA BIEN DEFINIDO TODAVIA
+		AgregarAColas(j, e)\; % NO AGREGO LA COMP PORQUE ESTO NO ESTA BIEN DEFINIDO TODAVIA
 		ResetearContadores(j, e)\; % O(1) Te Borre lo tuyo seba
 	\end{algorithm}
 
@@ -479,7 +470,7 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 		\caption{\algoritmo{iDesconectarse}{\Inout{j}{pokego}, \In{e}{jugador}}{}}
 		(*j.jugadores[e]).conectado? $\leftarrow$ false\OdeLinea{1}
 		Borrar(j.grillaPos[Latitud(c)][Longitud(c)].jugadores, e)\;
-		RemoverDeColas(j, e)\; %% NO AGREGO LA COMP PORQUE ESTO NO ESTA BIEN DEFINIDO TODAVIA
+		RemoverDeColas(j, e)\; % NO AGREGO LA COMP PORQUE ESTO NO ESTA BIEN DEFINIDO TODAVIA
 	\end{algorithm}
 
 	\complejidad: $O(log(EC))$
@@ -503,7 +494,7 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 		}
 	\end{algorithm}
 
-	%% ESTA FUNCION NO SIRVE EN SU ESTADO ACTUAL
+	% ESTA FUNCION NO SIRVE EN SU ESTADO ACTUAL
 	\complejidad: $O()$
 
 	\justifcomp:
@@ -513,11 +504,11 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{ResetearContadores}{\Inout{j}{pokego}, \In{e}{jugador}}{}}
-			coor: c $\leftarrow$ (*j.jugadores[e]).posicion\;
-			nat : i $\leftarrow$ 0\;
-			\While{i $<$ 3}{
-				nat : j $\leftarrow$ 0\;
-				\While{j $<$ 3}{
+		coor: c $\leftarrow$ (*j.jugadores[e]).posicion\;
+		nat : i $\leftarrow$ 0\;
+		\While{i $<$ 3}{
+			nat : j $\leftarrow$ 0\;
+			\While{j $<$ 3}{
 				\If{DistEuclidea(c, CrearCoor(Latitud(c) + i, Longitud(c) + j)) $\leq$ 4}{
 					\If{Pertenece(j.posConPokemons, CrearCoor(Latitud(c) + i, Longitud(c) + j)}{
 						j.grillaPos[Latitud(c) + i][Longitud(c) + j].contadorCaptura $\leftarrow$ 0\; 
@@ -545,6 +536,7 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 	\end{algorithm}
 
 	~
+
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{AgregarAColas}{\Inout{j}{pokego}, \In{e}{jugador}}{}}
@@ -559,7 +551,7 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 		}
 	\end{algorithm}
 
-	%% SI BIEN LA LIMPIE, ESTA FUNCION NO SIRVE EN SU ESTADO ACTUAL
+	% SI BIEN LA LIMPIE, ESTA FUNCION NO SIRVE EN SU ESTADO ACTUAL
 	\complejidad: $O()$
 
 	\justifcomp:
@@ -570,7 +562,7 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{iMoverse}{\Inout{j}{pokego}, \In{e}{jugador}, \In{c}{coor}}{}}
 		Borrar(j.grillaPos[Latitud(c)][Longitud(c)].jugadores, e)\; %log EC
-		RemoverDeColas(j, e)\; %% NO AGREGO LA COMP PORQUE ESTO NO ESTA BIEN DEFINIDO TODAVIA
+		RemoverDeColas(j, e)\; % NO AGREGO LA COMP PORQUE ESTO NO ESTA BIEN DEFINIDO TODAVIA
 		\If(\OdeBloque{1}){\textbf{not} HayCamino(j.mapa, Posicion(j,e), c) \textbf{or} DistEuclidea(Posicion(j,e), c) $>$ 100}{
 			(*j.jugadores[e]).sanciones $\leftarrow$ (*j.jugadores[e]).sanciones + 1\OdeLinea{1}
 		}
@@ -585,7 +577,7 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 			}
 		}{
 			(*j.jugadores[e]).posicion $\leftarrow$ c\OdeLinea{1}
-			AgregarAColas(j, e, c)\; %% NO AGREGO LA COMP PORQUE ESTO NO ESTA BIEN DEFINIDO TODAVIA
+			AgregarAColas(j, e, c)\; % NO AGREGO LA COMP PORQUE ESTO NO ESTA BIEN DEFINIDO TODAVIA
 			Agregar(j.grillaPos[Latitud(c)][Longitud(c)].jugadores, e)\; %log MISMOS CHABON ENUNA MISMA POSICION
 		}
 
@@ -609,12 +601,12 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 						Definir((*j.jugadores[captor]).pokemonsCapturados, pk, 1)\OdeLinea{log(|P|)}
 					}
 					EliminarSiguiente(it)\OdeLinea{1}
-					AgregarAColas(captor, e)\; %% NO AGREGO LA COMP PORQUE ESTO NO ESTA BIEN DEFINIDO TODAVIA
+					AgregarAColas(captor, e)\; % NO AGREGO LA COMP PORQUE ESTO NO ESTA BIEN DEFINIDO TODAVIA
 				}{
 					Avanzar(it)\OdeLinea{1}
 				}
 			}{
-				%% REINICIAR CONTADOR QUE CORRESPONDA
+				% REINICIAR CONTADOR QUE CORRESPONDA
 				Avanzar(it)\OdeLinea{1}
 			}
 		}
