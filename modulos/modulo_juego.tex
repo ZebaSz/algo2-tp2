@@ -57,7 +57,7 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 	[desconecta al jugador del juego.]
 
 	\InterfazFuncion{Moverse}{\Inout{j}{juego}, \In{e}{jugador}, \In{c}{coor}}{}
-	[$j \igobs j_0 \land e \in$ jugadores($j_0$) $\yluego$ conectado($e,j_0$) $\land$ posExistente(mapa($j_0$))]
+	[$j \igobs j_0 \land e \in$ jugadores($j_0$) $\yluego$ conectado($e,j_0$) $\land$ posExistente(c, mapa($j_0$))] %%TODO REVISAR ESE posEXISTENTE
 	{$j \igobs$ moverse($e, c, j_0$)}
 	[$O((PS + PC)|P| + log(EC))$]
 	[mueve el jugador a la posición elegida. Si el movimiento es ilegal, sanciona al jugador o lo expulsa si excede el límite de sanciones. Aumenta los contadores de captura para otros jugadores donde corresponde y puede provocar la captura de pokémons.]
@@ -391,6 +391,10 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 		res.jugsEnPos $\leftarrow$ Vacio()\OdeLinea{1}
 	\end{algorithm}
 
+	\complejidad: $O(1)$
+
+	\justifcomp: solo se inicializan las variables
+	
 	~
 
 	\begin{algorithm}[H]
@@ -444,6 +448,7 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 	\complejidad: $O(|P| + EC \times log(EC))$
 
 	\justifcomp: todos los jugadores que se encuentran en el area (EC) deben agregarse a la lista de espera, que los ordena por prioridad (inserción en log(EC)). Al mismo tiempo debe definirse este nuevo pokémon en el diccionario global ($|P|$).
+	%% en la primera parte del algoritmo, definimos en el diccionario(Trie) la nueva cantidad de ese pokemons que hay, esta estructura tiene obtencion y definicion en O(|P|) entonces nuestro peor caso seria agregar el pokemon con el nombre mas largo. En la segunda parte iteramos sobre las coordenadas aledañas, que siempre son menores a una constante, y en cada coordenada iteramos los jugadores que se encuentran en ella, agregandolos a la estructura de DiccionarioPrioridad que tiene insercion en O(la cantidad de elementos). Cada una de esas coordenas iteradas, tiene una cantidadd menor o igual a EC, ya que EC es la suma de todos los jugadores que se encuentran en esas coordenadas. Entonces añadimos EC veces a la estructura quedando una complejidad de O(EC * log(EC)), y en total para el algoritmo $O(|P| + EC \times log(EC))$
 
 	~
 
@@ -465,8 +470,8 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 		\caption{\algoritmo{iConectarse}{\Inout{j}{pokego}, \In{e}{jugador}, \In{c}{coor}}{}}
 		(*j.jugadores[e]).conectado? $\leftarrow$ true\OdeLinea{1}
 		(*j.jugadores[e]).posicion $\leftarrow$ c\OdeLinea{1}
-		Agregar(j.grillaPos[Latitud(c)][Longitud(c)].jugadores, e)\; %log MISMOS CHABON ENUNA MISMA POSICION
-		AgregarAColas(j, e)\OdeLinea{log(EC)}
+		Agregar(j.grillaPos[Latitud(c)][Longitud(c)].jugadores, e)\OdeLinea{log(EC)}
+		AgregarACola(j, e)\OdeLinea{log(EC)}
 		ResetearContadores(j, e)\OdeLinea{1}
 	\end{algorithm}
 
@@ -480,8 +485,8 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{iDesconectarse}{\Inout{j}{pokego}, \In{e}{jugador}}{}}
 		(*j.jugadores[e]).conectado? $\leftarrow$ false\OdeLinea{1}
-		Borrar(j.grillaPos[Latitud(c)][Longitud(c)].jugadores, e)\; %log
-		RemoverDeColas(j, e)\OdeLinea{log(EC)}
+		Borrar(j.grillaPos[Latitud(c)][Longitud(c)].jugadores, e)\OdeLinea{log(EC)}
+		RemoverDeCola(j, e)\OdeLinea{log(EC)}
 	\end{algorithm}
 
 	\complejidad: $O(log(EC))$
@@ -492,7 +497,7 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
-		\caption{\algoritmo{AgregarAColas}{\Inout{j}{pokego}, \In{e}{jugador}}{}}
+		\caption{\algoritmo{AgregarACola}{\Inout{j}{pokego}, \In{e}{jugador}}{}}
 		coor: c $\leftarrow$ (*j.jugadores[e]).posicion\OdeLinea{1}
 		conj(coor) : coorEnRango $\leftarrow$ PosicionesEnRango(j, c, 2)\OdeLinea{1}
 		itBi(coor) : itCoor $\leftarrow$ CrearIt(coorEnRango)\OdeLinea{1}
@@ -505,11 +510,19 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 		}
 	\end{algorithm}
 
+	\complejidad: $O(log(EC))$
+
+	\justifcomp: el algoritmo recorre una cantidad menor a una constante de coordenadas alrededor del jugador, de encontrar un Pokemon, agrega al jugador al diccionarioDePrioridad que tiene insercion en $O(log(EC))$, ademas por la especificacion sabemos que un jugador puede estar capturando un solo pokemon, por lo que definir el jugador se hace una vez.
+
+	\pre: $e \in$ jugadores($j$) $\yluego$ conectado?(e, j)
+
+	\post: Agrega al jugador al dicPrior de una posicion con pokemon cercana si existe%TODO
+
 	~
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
-		\caption{\algoritmo{RemoverDeColas}{\Inout{j}{pokego}, \In{e}{jugador}}{}}
+		\caption{\algoritmo{RemoverDeCola}{\Inout{j}{pokego}, \In{e}{jugador}}{}}
 		coor: c $\leftarrow$ (*j.jugadores[e]).posicion\OdeLinea{1}
 		conj(coor) : coorEnRango $\leftarrow$ PosicionesEnRango(j, c, 2)\OdeLinea{1}
 		itBi(coor) : itCoor $\leftarrow$ CrearIt(coorEnRango)\OdeLinea{1}
@@ -524,7 +537,11 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 
 	\complejidad: $O(log(EC))$
 
-	\justifcomp: debe iterar todas las posiciones de un cuadrado de lado predeterminado y agregar al jugador a la cola de espera de captura más cercana. Si la misma existe, .
+	\justifcomp: debe iterar todas las posiciones de un cuadrado de lado predeterminado y agregar al jugador a la cola de espera de captura más cercana. Si la misma existe.
+
+	\pre: $e \in$ jugadores($j$) $\yluego$ conectado?(e, j)
+	
+	\post: Remueve al jugador al dicPrior de una posicion con pokemon cercana si existe%TODO
 
 	~
 
@@ -546,6 +563,10 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 	\complejidad: $O(1)$
 
 	\justifcomp: debe iterar todas las posiciones de un cuadrado de lado predeterminado.
+
+	\pre: $e \in$ jugadores($j$) $\yluego$ conectado?(e, j)
+	
+	\post: Los contadores de las posiciones aledañas al jugador vuelven a 0%TODO
 
 	~
 
@@ -581,6 +602,14 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 		}
 	\end{algorithm}
 
+	\complejidad: $O(n^2)$
+
+	\justifcomp: de 0 a n recorre n veces haciendo una cantidad constante de comparaciones y operaciones $O(1)$.
+
+	\pre: true
+	
+	\post: res es igual al conjunto de posiciones en rango n cerca de c%TODO
+
 	~
 
 	\begin{algorithm}[H]
@@ -602,6 +631,10 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 
 	\justifcomp: debe iterar por todas las posiciones en un cuadrado de lado $n$ para saber si son válidas/hay un pokémon allí.
 
+	\pre: true
+	
+	\post: res es true si el conjunto de posiciones en rango n cerca de c hay un pokemon%TODO
+	
 	~
 
 	\begin{algorithm}[H]
@@ -614,13 +647,17 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 
 	\justifcomp: solo se accede al arreglo.
 
+	\pre: posExistente(c, mapa($j$))
+	
+	\post: res $\igobs$ c $\in$ posConPokémons(j)
+
 	~
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{iMoverse}{\Inout{j}{pokego}, \In{e}{jugador}, \In{c}{coor}}{}}
 		Borrar(j.grillaPos[Latitud(c)][Longitud(c)].jugadores, e)\; %log EC
-		RemoverDeColas(j, e)\OdeLinea{1}
+		RemoverDeCola(j, e)\OdeLinea{1}
 		\If(\OdeBloque{1}){\textbf{not} HayCamino(j.mapa, Posicion(j,e), c) \textbf{or} DistEuclidea(Posicion(j,e), c) $>$ 100}{
 			(*j.jugadores[e]).sanciones $\leftarrow$ (*j.jugadores[e]).sanciones + 1\OdeLinea{1}
 		}
@@ -635,7 +672,7 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 			}
 		}{
 			(*j.jugadores[e]).posicion $\leftarrow$ c\OdeLinea{1}
-			AgregarAColas(j, e, c)\OdeLinea{1}
+			AgregarACola(j, e, c)\OdeLinea{1}
 			Agregar(j.grillaPos[Latitud(c)][Longitud(c)].jugadores, e)\; %log MISMOS CHABON ENUNA MISMA POSICION
 		}
 
@@ -659,7 +696,7 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 						Definir((*j.jugadores[captor]).pokemonsCapturados, pk, 1)\OdeLinea{log(|P|)}
 					}
 					EliminarSiguiente(it)\OdeLinea{1}
-					AgregarAColas(captor, e)\OdeLinea{1}
+					AgregarACola(captor, e)\OdeLinea{1}
 				}{
 					Avanzar(it)\OdeLinea{1}
 				}
