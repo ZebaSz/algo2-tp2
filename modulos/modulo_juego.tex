@@ -286,6 +286,22 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 		($\forall i$: nat) ((i $\leq$ long(e.jugadores) $\land$ e.jugadores[i]$\rightarrow$conectado?)$\implies$(i $\in$ e.grillaPos[longitud(e.jugadores[i]$\rightarrow$posicion)][latitud(e.jugadores[i]$\rightarrow$posicion)].jugsEnPos))
 	}
 
+	\tadAxioma{jugaresEnPosEstanConectados(e)}{
+		($\forall c$: coor) posExistente(c, e.mapa) $\implies$ e.grillaPos[longitud(c)][latitud(c)].jugsEnPos $\subseteq$ jugadoresConectadosAux(e.jugadores)
+	}
+
+	\tadAxioma{jugadoresConectadosAux(js)}{
+		\IF vacia?(js) THEN
+			\secuvacia
+		ELSE
+			{\IF prim(js).conectado? THEN
+				Ag(prim(js), jugadoresConectadosAux(fin(js))) %%ESTO DEBERIA SER UN JUGADOR PERO CHUPENLA
+			ELSE
+				jugadoresConectadosAux(fin(js))
+			FI}
+		FI
+	}
+
 
 
 
