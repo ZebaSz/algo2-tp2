@@ -266,6 +266,10 @@ Usaremos $\#j$ para denotar la cantidad de entradas del diccionario.
 		res $\leftarrow$ BuscarJ(p.raizJugadores) $\neq$ NULL\OdeLinea{log(\#j)}
 	\end{algorithm}
 
+	\complejidad: $O(log(\#j))$
+
+	\justifcomp: la complejidad de BuscarJ es de orden de la altura del nodo que le pasamos y por invariante sabemos que la raizJugadores tienen altura es $O(log(\#j))$
+
 	~
 
 	\begin{algorithm}[H]
@@ -282,6 +286,10 @@ Usaremos $\#j$ para denotar la cantidad de entradas del diccionario.
 		p.raizCantidad $\leftarrow$ InsertarN(j, n, p.raizCantidad)\OdeLinea{log(\#j)}
 	\end{algorithm}
 
+	\complejidad: $O(log(\#j))$
+
+	\justifcomp: por lo mismo que iDefinido? Borrar, InsertarJ, InsertarN son $O(log(\#j))$
+
 	~
 
 	\begin{algorithm}[H]
@@ -291,11 +299,15 @@ Usaremos $\#j$ para denotar la cantidad de entradas del diccionario.
 		p.raizCantidad $\leftarrow$ RemoverN(j, (*nodo).cantPokemons, p.raizCantidad)\OdeLinea{log(\#j)}
 		p.raizJugadores $\leftarrow$ RemoverJ(j, p.raizJugadores)\OdeLinea{log(\#j)}
 		\If{j = p.menorId $\land$ p.raizCantidad $\neq$ NULL}{
-			puntero(Nodo): minimo $\leftarrow$ BuscarMinimo(p.raizCantidad)\OdeLinea{1}
+			puntero(Nodo): minimo $\leftarrow$ BuscarMinimo(p.raizCantidad)\OdeLinea{log(\#j)}
 			p.menor $\leftarrow$ (*minimo).cantPokemons\OdeLinea{1}
 			p.menorId $\leftarrow$ (*minimo).id\OdeLinea{1}
 		}
 	\end{algorithm}
+
+	\complejidad: $O(log(\#j))$
+
+	\justifcomp: por lo mismo que iDefinido? BuscarJ, RemoverN, RemoverJ y BuscarMinimo son $O(log(\#j))$ 
 
 	~
 
@@ -304,6 +316,10 @@ Usaremos $\#j$ para denotar la cantidad de entradas del diccionario.
 		\caption{\algoritmo{iMenor}{\In{p}{dicPri}}{jugador}}
 		res $\leftarrow$ p.menorId\OdeLinea{1}
 	\end{algorithm}
+
+	\complejidad: $O(1)$
+
+	\justifcomp: porque tenemos que acceder nada mas a la variable que nos guardamos
 
 	~
 
@@ -314,12 +330,20 @@ Usaremos $\#j$ para denotar la cantidad de entradas del diccionario.
 			res $\leftarrow$ nodo\OdeLinea{1}
 		}
 		\uElseIf{j $<$ (*nodo).id}{
-			res $\leftarrow$ BuscarJ(j, (*nodo).hijoIzq)\OdeLinea{log(\#j)}
+			res $\leftarrow$ BuscarJ(j, (*nodo).hijoIzq)\OdeLinea{h - 1}
 		}
 		\Else{
-			res $\leftarrow$ BuscarJ(j, (*nodo).hijoDer)\OdeLinea{log(\#j)}
+			res $\leftarrow$ BuscarJ(j, (*nodo).hijoDer)\OdeLinea{h - 1}
 		}
 	\end{algorithm}
+
+	\complejidad: $O(h)$ (donde h es la altura del nodo que vienen en los parametros)
+
+	\justifcomp: como sabemos la altura de un nodo es la mayor altura entre sus hijos + 1, como en cada iteración estamos haciendo una llamada recursiva a uno de sus hijos hasta que ese hijo sea nulo, en el peor de los casos llamamos recursivamente al hijo con mayor altura y en cada llamada estamos disminuyendo en 1 la altura.
+
+	\pre: true
+
+	\post: res es igual al nodo hijo o el que viene por parametro que tenga el id del jugador a menos que no este en cuyo caso en NULL
 
 	~
 
@@ -330,13 +354,21 @@ Usaremos $\#j$ para denotar la cantidad de entradas del diccionario.
 			res $\leftarrow$ CrearNodo(j, n)\OdeLinea{1}
 		}{	
 			\eIf{j $<$ n.id}{
-				(*nodo).hijoIzq $\leftarrow$ InsertarJ(j, n, (*nodo).hijoIzq)\OdeLinea{log(\#j)}
+				(*nodo).hijoIzq $\leftarrow$ InsertarJ(j, n, (*nodo).hijoIzq)\OdeLinea{h - 1}
 			}{
-				(*nodo).hijoDer $\leftarrow$ InsertarJ(j, n, (*nodo).hijoDer)\OdeLinea{log(\#j)}
+				(*nodo).hijoDer $\leftarrow$ InsertarJ(j, n, (*nodo).hijoDer)\OdeLinea{h - 1}
 			}
 			res $\leftarrow$ Balancear(nodo)\OdeLinea{1}
 		}
 	\end{algorithm}
+
+	\complejidad: $O(h)$ 
+
+	\justifcomp: como sabemos la altura de un nodo es la mayor altura entre sus hijos + 1, como en cada iteración estamos haciendo una llamada recursiva a uno de sus hijos hasta que ese hijo sea nulo, en el peor de los casos llamamos recursivamente al hijo con mayor altura y en cada llamada estamos disminuyendo en 1 la altura.
+
+	\pre: true
+
+	\post: res es igual al nodo hijo o el que viene por parametro que tenga el id del jugador a menos que no este en cuyo caso en NULL
 
 	~
 
