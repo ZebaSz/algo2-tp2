@@ -53,6 +53,42 @@ Usaremos $lat_{max}$ y $long_{max}$ para denotar las máximas dimensiones entre 
 	[$O(1)$]
 	[devuelve el ancho del mapa.]
 
+	\TituloDis{Especificación de las operaciones auxiliares utilizadas en la interfaz}
+
+	\begin{tad}{Mapa Extendido}
+	\parskip=0pt
+	\tadExtiende{\tadNombre{Mapa}}
+
+	\tadTitulo{otras operaciones (exportadas)}
+	\tadOperacion{alto}{mapa/m, conj(coor)/c}{nat}{c $\subseteq$ coordenadas(m)}
+	\tadOperacion{ancho}{mapa/m, conj(coor)/c}{nat}{c $\subseteq$ coordenadas(m)}
+
+	\tadAxiomas
+	\tadAxioma{alto(m, c)}{
+		\IF vacio?(c) THEN
+			0
+		ELSE
+			{\IF alto(m, sinUno(c)) $<$ Latitud(dameUno(c)) THEN
+				Latitud(dameUno(c))
+			ELSE
+				alto(m, sinUno(c))
+			FI}
+		FI
+	}
+
+	\tadAxioma{ancho(m, c)}{
+		\IF vacio?(c) THEN
+			0
+		ELSE
+			{\IF ancho(m, sinUno(c)) $<$ Longitud(dameUno(c)) THEN
+				Longitud(dameUno(c))
+			ELSE
+				ancho(m, sinUno(c))
+			FI}
+		FI
+	}
+	\end{tad}
+
 \end{Interfaz}
 
 
@@ -93,9 +129,9 @@ Usaremos $lat_{max}$ y $long_{max}$ para denotar las máximas dimensiones entre 
 		e.alto = Longitud(e.posiciones) $\yluego$ \\
 		($\exists i$: nat) (i $<$ e.alto $\implies$ Longitud(e.posiciones[i]) = e.ancho) $\land$ \\
 		($\forall i$: nat) (i $<$ e.alto $\implies$ Longitud(e.posiciones[i]) $\leq$ e.ancho) $\land$ \\
+		($\exists i,j$: nat) (i $=$ e.alto - 1 $\land$ posValida?(i,j,e)) $\land$ \\
+		($\exists i,j$: nat) (j $=$ e.ancho - 1 $\land$ posValida?(i,j,e)) $\land$ \\
 		($\forall i,j$: nat) (posValida?(i,j,e) $\impluego$ gruposValidos?(i,j,e))
-
-		% TODO extender el tad con alto y ancho, luego mas rep
 	}
 
 	~
@@ -184,7 +220,7 @@ Usaremos $lat_{max}$ y $long_{max}$ para denotar las máximas dimensiones entre 
 			Unir(c, CoordenadaALaIzquierda(c), m)\OdeLinea{\compmatriz}
 		}
 		\tcp{si no se une con nada, se aumenta el próximo grupo}
-		\If{m.posiciones[Latitud(c)][Longitud(c)].grupo $==$ m.proxGrupo}{
+		\If{m.posiciones[Latitud(c)][Longitud(c)].grupo $=$ m.proxGrupo}{
 			m.proxGrupo $\leftarrow$  m.proxGrupo + 1\OdeLinea{1}
 		}
 	\end{algorithm}
@@ -192,40 +228,6 @@ Usaremos $lat_{max}$ y $long_{max}$ para denotar las máximas dimensiones entre 
 	\complejidad: $O(\compmatriz)$
 
 	\justifcomp: más allá de si la nueva posición tiene la mayor longitud o latitud, se debe iterar el conjunto entero para unir las posiciones que correspondan. Los costos redimensionar los vectores son menores (si se considera el costo de copiar coordenadas $\Theta(1)$) ya que luego se deben iterar todos los vectores del mapa.
-
-	~
-
-	\begin{algorithm}[H]
-		\NoCaptionOfAlgo
-		\caption{\algoritmo{CrearDataPos}{}{dataPos}}
-		res.existe $\leftarrow$ false\OdeLinea{1}
-	\end{algorithm}
-
-	\complejidad: $O(1)$
-
-	\justifcomp: solo se crea una posición no existente.
-
-	~
-
-	\begin{algorithm}[H]
-		\NoCaptionOfAlgo
-		\caption{\algoritmo{Unir}{\In{c1}{coor}, \In{c2}{coor}, \In{m}{map}}{bool}}
-		\If(\OdeBloque{\compmatriz}){PosExistente(c1) \textbf{and} PosExistente(c2) \textbf{and not} HayCamino(c1, c2, m)}{
-			nat : grupoViejo $\leftarrow$ m.posiciones[Latitud(c1)][Longitud(c1)].grupo\OdeLinea{1}
-			nat : grupoUnido $\leftarrow$ m.posiciones[Latitud(c2)][Longitud(c2)].grupo\OdeLinea{1}
-			itConj(coor) : it $\leftarrow$ CrearIt(Coordenadas(m))\OdeLinea{\compmatriz}
-			\While(\OdeBloque{\compmatriz}){HaySiguiente(it)}{
-				coor : pos $\leftarrow$ Siguiente(it)\OdeLinea{1}
-				\If{m.posiciones[Latitud(pos)][Longitud(pos)].grupo $==$ grupoViejo}{
-					m.posiciones[Latitud(pos)][Longitud(pos)].grupo $\leftarrow$ grupoUnido\OdeLinea{1}
-				}
-			}
-		}
-	\end{algorithm}
-
-	\complejidad: $O(\compmatriz)$
-
-	\justifcomp: para poder unir se debe crear un iterador del conjunto de las coordenadas existentes. La máxima cantidad de iteraciones a realizar con ese iterador es la misma cantidad de coordenadas existentes. En el mejor caso no se deben unir las posiciones, y no se realiza ninguna operación ($\Theta(1)$).
 
 	~
 
@@ -270,5 +272,68 @@ Usaremos $lat_{max}$ y $long_{max}$ para denotar las máximas dimensiones entre 
 	\complejidad: $O(1)$
 
 	\justifcomp: solo se accede a posiciones de los vectores. Las uniones se calculan al agregar las posiciones.
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iAncho}{\In{m}{map}}{nat}}
+		res $\leftarrow$ m.ancho\OdeLinea{1}
+	\end{algorithm}
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iAlto}{\In{m}{map}}{nat}}
+		res $\leftarrow$ m.alto\OdeLinea{1}
+	\end{algorithm}
+
+	\complejidad: $O(1)$
+
+	\justifcomp: solo se accede a variables del mapa.
+
+
+	\TituloDis{Algoritmos auxiliares}
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		% TODO
+		\Pre{\texttt{true}} 
+		\Post{TODO} % se podrá poner true y ya?
+		\BlankLine
+		\caption{\algoritmo{CrearDataPos}{}{dataPos}}
+		res.existe $\leftarrow$ false\OdeLinea{1}
+	\end{algorithm}
+
+	\complejidad: $O(1)$
+
+	\justifcomp: solo se crea una posición no existente.
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{Unir}{\In{c1}{coor}, \In{c2}{coor}, \In{m}{map}}{bool}}
+		% TODO
+		\Pre{\texttt{true}} 
+		\Post{($c1 \in$ coordenadas(m) $\land \ c2 \in$ coordenadas(m)) $\impluego$ m.posiciones[latitud(c1)][longitud(c1)].grupo = m.posiciones[latitud(c2)][longitud(c2)].grupo}
+		\BlankLine
+		\If(\OdeBloque{\compmatriz}){PosExistente(c1) \textbf{and} PosExistente(c2) \textbf{and not} HayCamino(c1, c2, m)}{
+			nat : grupoViejo $\leftarrow$ m.posiciones[Latitud(c1)][Longitud(c1)].grupo\OdeLinea{1}
+			nat : grupoUnido $\leftarrow$ m.posiciones[Latitud(c2)][Longitud(c2)].grupo\OdeLinea{1}
+			itConj(coor) : it $\leftarrow$ CrearIt(Coordenadas(m))\OdeLinea{\compmatriz}
+			\While(\OdeBloque{\compmatriz}){HaySiguiente(it)}{
+				coor : pos $\leftarrow$ Siguiente(it)\OdeLinea{1}
+				\If{m.posiciones[Latitud(pos)][Longitud(pos)].grupo $=$ grupoViejo}{
+					m.posiciones[Latitud(pos)][Longitud(pos)].grupo $\leftarrow$ grupoUnido\OdeLinea{1}
+				}
+			}
+		}
+	\end{algorithm}
+
+	\complejidad: $O(\compmatriz)$
+
+	\justifcomp: para poder unir se debe crear un iterador del conjunto de las coordenadas existentes. La máxima cantidad de iteraciones a realizar con ese iterador es la misma cantidad de coordenadas existentes. En el mejor caso no se deben unir las posiciones, y no se realiza ninguna operación ($\Theta(1)$).
 
 \end{Algoritmos}

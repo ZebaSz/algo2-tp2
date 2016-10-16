@@ -267,7 +267,7 @@ Usaremos $copy(s)$ para denotar el costo de copiar el elemento $s \in \alpha$. L
 		\caption{\algoritmo{iDefinir}{\Inout{dic}{dicStr}, \In{c}{String}, \In{s}{$\alpha$}}{}}
 		puntero(Nodo): entrada $\leftarrow$ dic.raiz\OdeLinea{1}
 		\For(\OdeBloque{|c_{max}|}){$i \leftarrow 0$ \KwTo Longitud(c)}{
-			\If(\OdeBloque{1}){(*entrada).hijos[ord(c[i])] == NULL} {
+			\If(\OdeBloque{1}){(*entrada).hijos[ord(c[i])] = NULL} {
 				(*entrada).hijos[ord(c[i])] $\leftarrow$ CrearNodo()\OdeLinea{1}
 			}
 			entrada $\leftarrow$ (*entrada).hijos[ord(c[i])]\OdeLinea{1}
@@ -292,10 +292,10 @@ Usaremos $copy(s)$ para denotar el costo de copiar el elemento $s \in \alpha$. L
 		\caption{\algoritmo{iDefinido?}{\Inout{dic}{dicStr}, \In{c}{String}}{bool}}
 		puntero(Nodo): entrada $\leftarrow$ dic.raiz\OdeLinea{1}
 		\For(\OdeBloque{|c_{max}|}){$i \leftarrow 0$ \KwTo Longitud(c)}{
-			\lIf(\OdeBloque{1}){entrada == NULL} {break}
+			\lIf(\OdeBloque{1}){entrada = NULL} {break}
 			entrada $\leftarrow$ (*entrada).hijos[ord(c[i])]\OdeLinea{1}
 		}
-		res $\leftarrow$ not entrada == NULL \textbf{and} (*entrada).contieneValor\OdeLinea{1}
+		res $\leftarrow$ not entrada = NULL \textbf{and} (*entrada).contieneValor\OdeLinea{1}
 	\end{algorithm}
 
 	\complejidad: $O(|c_{max}|)$
