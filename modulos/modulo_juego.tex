@@ -413,7 +413,6 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 	\complejidad: $O(|P| + EC \times log(EC))$
 
 	\justifcomp: todos los jugadores que se encuentran en el area (EC) deben agregarse a la lista de espera, que los ordena por prioridad (inserción en log(EC)). Al mismo tiempo debe definirse este nuevo pokémon en el diccionario global ($|P|$).
-	% en la primera parte del algoritmo, definimos en el diccionario(Trie) la nueva cantidad de ese pokemons que hay, esta estructura tiene obtencion y definicion en O(|P|) entonces nuestro peor caso seria agregar el pokemon con el nombre mas largo. En la segunda parte iteramos sobre las coordenadas aledañas, que siempre son menores a una constante, y en cada coordenada iteramos los jugadores que se encuentran en ella, agregandolos a la estructura de DiccionarioPrioridad que tiene insercion en O(la cantidad de elementos). Cada una de esas coordenas iteradas, tiene una cantidadd menor o igual a EC, ya que EC es la suma de todos los jugadores que se encuentran en esas coordenadas. Entonces añadimos EC veces a la estructura quedando una complejidad de O(EC * log(EC)), y en total para el algoritmo $O(|P| + EC \times log(EC))$
 
 	~
 
@@ -435,7 +434,7 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 		\caption{\algoritmo{iConectarse}{\Inout{j}{pokego}, \In{e}{jugador}, \In{c}{coor}}{}}
 		(*j.jugadores[e]).conectado? $\leftarrow$ true\OdeLinea{1}
 		(*j.jugadores[e]).posicion $\leftarrow$ c\OdeLinea{1}
-		Agregar(j.grillaPos[Latitud(c)][Longitud(c)].jugadores, e)\OdeLinea{log(EC)}
+		Agregar(j.grillaPos[Latitud(c)][Longitud(c)].jugsEnPos, e)\OdeLinea{log(EC)}
 		AgregarACola(j, e)\OdeLinea{log(EC)}
 		ResetearContadores(j, e)\OdeLinea{1}
 	\end{algorithm}
@@ -450,7 +449,7 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{iDesconectarse}{\Inout{j}{pokego}, \In{e}{jugador}}{}}
 		(*j.jugadores[e]).conectado? $\leftarrow$ false\OdeLinea{1}
-		Borrar(j.grillaPos[Latitud(c)][Longitud(c)].jugadores, e)\OdeLinea{log(EC)}
+		Borrar(j.grillaPos[Latitud(c)][Longitud(c)].jugsEnPos, e)\OdeLinea{log(EC)}
 		RemoverDeCola(j, e)\OdeLinea{log(EC)}
 	\end{algorithm}
 
@@ -465,7 +464,7 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 		\caption{\algoritmo{iMoverse}{\Inout{j}{pokego}, \In{e}{jugador}, \In{c}{coor}}{}}
 		coor : posAnterior $\leftarrow$ Posicion(j,e)\OdeLinea{1}
 		\tcc{Removemos al jugador del conjunto de su posición anterior y de 	la cola de espera}
-		Borrar(j.grillaPos[Latitud(c)][Longitud(c)].jugadores, e)\OdeLinea{log(EC)}
+		Borrar(j.grillaPos[Latitud(c)][Longitud(c)].jugsEnPos, e)\OdeLinea{log(EC)}
 		RemoverDeCola(j, e)\OdeLinea{log(EC)}
 		\If{\textbf{not} HayCamino(j.mapa, posAnterior, c) \textbf{or} DistEuclidea(posAnterior, c) $>$ 100}{
 			(*j.jugadores[e]).sanciones $\leftarrow$ (*j.jugadores[e]).sanciones + 1\OdeLinea{1}
@@ -484,7 +483,7 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 			\tcc{Si el jugador sigue siendo válido, lo agregamos al conjunto de su nueva posición y a la cola de espera}
 			(*j.jugadores[e]).posicion $\leftarrow$ c\OdeLinea{1}
 			AgregarACola(j, e, c)\OdeLinea{log(EC)}
-			Agregar(j.grillaPos[Latitud(c)][Longitud(c)].jugadores, e)\OdeLinea{log(EC)}
+			Agregar(j.grillaPos[Latitud(c)][Longitud(c)].jugsEnPos, e)\OdeLinea{log(EC)}
 		}
 
 		it $\leftarrow$ CrearIt(j.posConPokemons)\OdeLinea{1}

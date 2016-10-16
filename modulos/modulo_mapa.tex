@@ -122,7 +122,7 @@ Usaremos $lat_{max}$ y $long_{max}$ para denotar las máximas dimensiones entre 
 
 		\item Las posiciones existentes adyacentes entre sí deben tener el mismo grupo.
 		
-		\item Si dos posiciones no tienen un camino de posiciones adyacentes de mismo grupo que las una, deben tener grupos distintos.\footnote{No pudimos expresar esto en rep, lo dejamos en castellano} % TODO esto es medio fruta
+		\item Si dos posiciones no tienen un camino de posiciones adyacentes de mismo grupo que las una, deben tener grupos distintos.\footnote{No pudimos expresar esto en rep, lo dejamos en castellano}
  		
 	\end{enumerate}
 	\Rep[eMap][e]{
@@ -314,7 +314,6 @@ Usaremos $lat_{max}$ y $long_{max}$ para denotar las máximas dimensiones entre 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{Unir}{\In{c1}{coor}, \In{c2}{coor}, \In{m}{map}}{bool}}
-		% TODO
 		\Pre{\texttt{true}} 
 		\Post{($c1 \in$ coordenadas(m) $\land \ c2 \in$ coordenadas(m)) $\impluego$ m.posiciones[latitud(c1)][longitud(c1)].grupo = m.posiciones[latitud(c2)][longitud(c2)].grupo}
 		\BlankLine

@@ -532,8 +532,8 @@ Usaremos $\#j$ para denotar la cantidad de entradas del diccionario.
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{AgregarClaves}{\In{nodo}{Nodo}, \Inout{c}{conj(Jugador)}}{}}
-		\Pre{TODO} 
-		\Post{TODO}
+		\Pre{c es un subconjunto de las claves del arbol y nodo es un nodo del arbol}
+		\Post{c es igual a todas las claves del arbol}
 		\BlankLine
 		\If{nodo $\neq$ NULL}{
 			AgregarRapido(c, (*nodo).id)\OdeLinea{1}
@@ -551,9 +551,8 @@ Usaremos $\#j$ para denotar la cantidad de entradas del diccionario.
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{CrearNodo}{\In{j}{jugador}, \In{n}{nat}}{puntero(Nodo)}}
-		% TODO
-		\Pre{TODO} 
-		\Post{TODO}
+		\Pre{\texttt{true}}
+		\Post{$res$ apunta a un nodo de alto 1 con id $j$ y cantPokemons $n$}
 		\BlankLine
 		Nodo: nuevo\OdeLinea{1}
 		nuevo.hijoIzq $\leftarrow$ NULL\OdeLinea{1}
@@ -566,16 +565,15 @@ Usaremos $\#j$ para denotar la cantidad de entradas del diccionario.
 	
 	\complejidad: $O(1)$
 
-	\justifcomp: solo se crea e inicializa un (*nodo). Como inicialmente se agrega como hoja del arbol, su altura es 1.
+	\justifcomp: solo se crea e inicializa un nodo.
 
 	~
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{ArreglarAlto}{\Inout{nodo}{puntero(Nodo)}}{}}
-		% TODO
-		\Pre{TODO} 
-		\Post{TODO}
+		\Pre{la altura de los hijos de $nodo$ es correcta}
+		\Post{la altura de $nodo$ es igual a la altura máxima de sus hijos + 1}
 		\BlankLine
 		nat: alturaIzq $\leftarrow$ Altura((*nodo).hijoIzq)\OdeLinea{1}
 		nat: alturaDer $\leftarrow$ Altura((*nodo).hijoDer)\OdeLinea{1}
@@ -595,9 +593,8 @@ Usaremos $\#j$ para denotar la cantidad de entradas del diccionario.
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{Altura}{\In{nodo}{puntero(Nodo)}}{nat}}
-		% TODO
-		\Pre{TODO} 
-		\Post{TODO}
+		\Pre{\texttt{true}}
+		\Post{$res$ es 0 si $nodo$ es nulo, o igual a la altura del nodo al que apunta en caso contrario}
 		\BlankLine
 		\eIf{nodo = NULL}{
 			res $\leftarrow$ 0\OdeLinea{1}
@@ -615,9 +612,8 @@ Usaremos $\#j$ para denotar la cantidad de entradas del diccionario.
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{Balancear}{\Inout{nodo}{puntero(Nodo)}}{puntero(Nodo)}}
-		% TODO
-		\Pre{TODO} 
-		\Post{TODO}
+		\Pre{$nodo \neq$ NULL}
+		\Post{el módulo del factor de balanceo de $res$ es menor a 2}
 		\BlankLine
 		ArreglarAlto(nodo)\OdeLinea{1}
 		nat: alturaIzq $\leftarrow$ Altura((*nodo).hijoIzq)\OdeLinea{1}
@@ -644,13 +640,12 @@ Usaremos $\#j$ para denotar la cantidad de entradas del diccionario.
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{rotarDer}{\In{nodo}{puntero(Nodo)}}{puntero(Nodo)}}
-		% TODO
-		\Pre{TODO} 
-		\Post{TODO}
+		\Pre{$nodo$ tiene un hijo izquierdo}
+		\Post{$res$ es el hijo izquierdo de nodo, y arbol se rota a la derecha}
 		\BlankLine
 		puntero(nodo) : aux $\leftarrow$ (*nodo).hijoIzq\OdeLinea{1}
-		(*nodo).hijoIzq $\leftarrow$ aux.hijoDer\OdeLinea{1}
-		aux.hijoDer $\leftarrow$ nodo\OdeLinea{1}
+		(*nodo).hijoIzq $\leftarrow$ (*aux).hijoDer\OdeLinea{1}
+		(*aux).hijoDer $\leftarrow$ nodo\OdeLinea{1}
 		ArreglarAlto(nodo)\OdeLinea{1}
 		ArreglarAlto(aux)\OdeLinea{1}
 		res $\leftarrow$ aux\OdeLinea{1}
@@ -661,9 +656,8 @@ Usaremos $\#j$ para denotar la cantidad de entradas del diccionario.
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{rotarIzq}{\In{nodo}{puntero(Nodo)}}{puntero(Nodo)}}
-		% TODO
-		\Pre{TODO} 
-		\Post{TODO}
+		\Pre{$nodo$ tiene un hijo derecho}
+		\Post{$res$ es el hijo derecho de nodo, y arbol se rota a la izquierda}
 		\BlankLine
 		puntero(nodo) : aux $\leftarrow$ (*nodo).hijoDer\OdeLinea{1}
 		(*nodo).hijoDer $\leftarrow$ aux.hijoIzq\OdeLinea{1}
