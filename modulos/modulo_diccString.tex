@@ -248,6 +248,8 @@ Usaremos $copy(s)$ para denotar el costo de copiar el elemento $s \in \alpha$. L
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{CrearNodo}{}{puntero(Nodo)}}
+		\Pre{\texttt{true}}
+		\Post{Se crea un puntero a nodo vacio}
 		Nodo: nuevo\OdeLinea{1}
 		nuevo.contieneValor $\leftarrow$ false\OdeLinea{1}
 		\For(\OdeBloque{1}){$i \leftarrow 0$ \KwTo $255$}{ 
