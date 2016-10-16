@@ -580,7 +580,7 @@ Usaremos $\#j$ para denotar la cantidad de entradas del diccionario.
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
-		\caption{\algoritmo{HayMas}{\In{it}{itJugadores}}{bool}}
+		\caption{\algoritmo{HayMas}{\In{it}{itJugs}}{bool}}
 		res $\leftarrow$ EsVacía?(it.pila)\OdeLinea{1}
 	\end{algorithm}
 
@@ -588,7 +588,7 @@ Usaremos $\#j$ para denotar la cantidad de entradas del diccionario.
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
-		\caption{\algoritmo{Actual}{\In{it}{itJugadores}}{jugador}}
+		\caption{\algoritmo{Actual}{\In{it}{itJugs}}{jugador}}
 		res $\leftarrow$ (*Tope(it.pila)).id\OdeLinea{1}
 	\end{algorithm}
 
@@ -600,7 +600,7 @@ Usaremos $\#j$ para denotar la cantidad de entradas del diccionario.
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
-		\caption{\algoritmo{Avanzar}{\Inout{it}{itJugadores}}{}}
+		\caption{\algoritmo{Avanzar}{\Inout{it}{itJugs}}{}}
 		\While(\OdeBloque{1}){\textbf{not} EsVacía(it.pila)} {
 			puntero(Nodo) : tope $\leftarrow$ Tope(it.pila)\OdeLinea{1}
 			\eIf{not (*tope).hijoIzq = NULL}{
