@@ -226,11 +226,11 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 
 		\item En los jugadores que se encutuentran en la grilla solo estan los que realmente se encuentran ahi %DONE
 
-		\item Solo las posiciones con pokemon tienen pokemons en la grilla
+		\item Solo las posiciones con pokemon tienen pokemons en la grilla%Done
 
-		\item Los significados del diccionario de pokemons es igual a la cantidad de pokemons que hay capturados mas los salvajes
+		\item Los significados del diccionario de pokemons es igual a la cantidad de pokemons que hay capturados mas los salvajes 
 
-		\item CantPokemons es igual a la suma de todas los significados del diccionario
+		\item CantPokemons es igual a la suma de todas los significados del diccionario %Done
 
 		\item Los jugadores tienen menos de 5 sanciones
 
@@ -261,8 +261,11 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 
 		long(e.grillaPos) = alto(e.mapa) $\yluego$\\
 		(($\forall n$: nat) n $\leq$ alto(e.mapa) $\implies$ long(e.grillaPos[n]) = ancho(e.mapa)) $\yluego$\\
+		jugadoresConectadosEnPosValidas $\yluego$\\
 		jugadoresConectadosEstanEnLaPos(e) $\land$\\
-
+		jugadoresEnPosEstanConectados(e) $\land$\\
+		pokemonsEnGrillaSonSalvajes(e) $\land$\\
+		pokemonesCapturados(e.jugadores) + $\#$(e.posConPokemons) = e.cantPokemons $\land$\\
 
 
 
@@ -286,7 +289,7 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 		($\forall i$: nat) ((i $\leq$ long(e.jugadores) $\land$ e.jugadores[i]$\rightarrow$conectado?)$\implies$(i $\in$ e.grillaPos[longitud(e.jugadores[i]$\rightarrow$posicion)][latitud(e.jugadores[i]$\rightarrow$posicion)].jugsEnPos))
 	}
 
-	\tadAxioma{jugaresEnPosEstanConectados(e)}{
+	\tadAxioma{jugadoresEnPosEstanConectados(e)}{
 		($\forall c$: coor) posExistente(c, e.mapa) $\implies$ e.grillaPos[longitud(c)][latitud(c)].jugsEnPos $\subseteq$ jugadoresConectadosAux(e.jugadores)
 	}
 
@@ -302,8 +305,16 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 		FI
 	}
 
-	\tadAxioma{juntarPokemonesGrilla(e)}{
+	\tadAxioma{pokemonsEnGrillaSonSalvajes(e)}{
 		($\forall c$: coor) posExistente(c, e.mapa) $\implies$ (c $\in$ e.posConPokemons $\iff$ e.grillaPos[longitud(c)][latitud(c)].hayPokemon?)
+	}
+
+	\tadAxioma{pokemonesCapturados(js)}{
+		\IF vacia?(js) THEN
+			0
+		ELSE
+			prim(js).cantPokemons + pokemonesCapturados(fin(js))
+		FI
 	}
 
 
