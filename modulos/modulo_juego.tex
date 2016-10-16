@@ -653,7 +653,7 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 
 	~
 
-	\begin{algorithm}[H]
+	\begin{algorithm}[H] 
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{iMoverse}{\Inout{j}{pokego}, \In{e}{jugador}, \In{c}{coor}}{}}
 		Borrar(j.grillaPos[Latitud(c)][Longitud(c)].jugadores, e)\; %log EC
@@ -735,6 +735,10 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 		res $\leftarrow$ (*j.jugadores[e]).conectado?\OdeLinea{1}
 	\end{algorithm}
 
+	\complejidad: $O(1)$
+
+	\justifcomp: solo accede al vector de jugadores
+
 	~
 
 	\begin{algorithm}[H]
@@ -767,6 +771,10 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 		res $\leftarrow$ CrearIterador((*j.jugadores[e]).pokemonsCapturados)\OdeLinea{1}
 	\end{algorithm}
 
+	\complejidad: $O(1)$
+
+	\justifcomp: accede al vector($0(1)$) y crea el iterador($0(1)$)
+
 	~
 
 	\begin{algorithm}[H]
@@ -774,6 +782,10 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 		\caption{\algoritmo{iJugadores}{\In{j}{pokego}}{itJugadores}}
 		res $\leftarrow$ CrearIt(j, false)\OdeLinea{1}
 	\end{algorithm}
+
+	\complejidad: $O(1)$
+
+	\justifcomp: solo se inicializa el iterador.($0(1)$)
 
 	~
 
@@ -819,6 +831,9 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 		res $\leftarrow$ PosExistente(j.mapa, c) \textbf{and} HayPokémonEnDistancia(j, c, 5)\OdeLinea{1}
 	\end{algorithm}
 
+	\complejidad: $O(1)$
+
+	\justifcomp: solo hace 2 operaciones $O(1)$
 	~
 
 	\begin{algorithm}[H]
@@ -826,6 +841,10 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 		\caption{\algoritmo{iHayPokémonCercano}{\In{j}{pokego}, \In{c}{coor}}{bool}}
 		res $\leftarrow$ HayPokémonEnDistancia(j, c, 2)\OdeLinea{1}
 	\end{algorithm}
+
+	\complejidad: $O(1)$
+
+	\justifcomp: solo aplica una operacion $O(1)$
 
 	~
 
@@ -889,10 +908,10 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{iCantMismaEspecie}{\In{j}{pokego}, \In{pk}{pokemon}}{nat}}
-		res $\leftarrow$ Obtener(j.pokemones, pk)\; 
+		res $\leftarrow$ Obtener(j.pokemones, pk)\OdeLinea{|P|}
 	\end{algorithm}
 
-	\complejidad: $O()$
+	\complejidad: $O(|P|)$
 
 	\justifcomp: se debe acceder al diccionario para averiguar cuántos pokemons de esa especie.
 
