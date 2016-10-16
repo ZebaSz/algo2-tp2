@@ -198,9 +198,11 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 		\end{Tupla}
 
 		\begin{Tupla}[infoPos]
+			\tupItem{hayPokemon?}{bool}
 			\tupItem{pokemon}{pokemon}
 			\tupItem{contadorCaptura}{nat}
 			\tupItem{jugEsperandoCaptura}{dicPrior}
+			\tupItem{jugadores}{jugs}
 		\end{Tupla}
 
 	\end{Estructura}
@@ -389,12 +391,17 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 		}
 
 		j.grilla[Latitud(c)][Longitud(c)].pokemon $\leftarrow$ pk\;
+		j.grilla[Latitud(c)][Longitud(c)].contadorCaptura $\leftarrow$ 0\;
+		%ARMAR LA COLA DE PRIORIDAD
 
 		nat : i $\leftarrow$ 0\;
 		\While{i $<$ 5}{
 			nat : j $\leftarrow$ 0\;
 			\While{DistEuclidea(c, CrearCoor(Latitud(c) + i, Longitud(c) + j)) $\leq$ 4}{
 				\If{PosExistente(j.mapa, CrearCoor(Latitud(c) + i, Longitud(c) + j))}{
+					CrearIterador()
+
+
 					j.grilla[i][j].contadorCaptura $\leftarrow$ 0\;
 				}
 				j $\leftarrow$ j + 1\;
@@ -427,7 +434,6 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 		\caption{\algoritmo{CrearInfoJugador}{}{infoJugador}}
 		res.sanciones $\leftarrow$ 0\;
 		res.conectado? $\leftarrow$ false\;
-		% res.posicion $\leftarrow$ CREO QUE NADA, PREGUNTAR SI SE PUEDE DEJAR SIN INIT
 		res.cantPokemons $\leftarrow$ 0\;
 		res.pokemonsCapturados $\leftarrow$ CrearDiccionario()\;
 	\end{algorithm}
@@ -443,8 +449,9 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 		\caption{\algoritmo{iConectarse}{\Inout{j}{pokego}, \In{e}{jugador}, \In{c}{coor}}{}}
 		(*j.jugadores[e]).conectado? $\leftarrow$ true\;
 		(*j.jugadores[e]).posicion $\leftarrow$ c\;
-		AgregarAColas(j, e)\;
-		%% RESETEAR LOS CONTADORES
+		Agregar(j.grillaPos[Latitud(c)][Longitud(c)].jugadores, e)\; %log MISMOS CHABON ENUNA MISMA POSICION
+		AgregarAColas(j, e)\; % log EC
+		ResetearContadores(j, e)\; % O(1)
 	\end{algorithm}
 
 	\complejidad: $O()$
@@ -457,7 +464,8 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{iDesconectarse}{\Inout{j}{pokego}, \In{e}{jugador}}{}}
 		(*j.jugadores[e]).conectado? $\leftarrow$ false\;
-		RemoverDeColas(j, e)\;
+		Borrar(j.grillaPos[Latitud(c)][Longitud(c)].jugadores, e)\;
+		RemoverDeColas(j, e)\; %log EC
 	\end{algorithm}
 
 	\complejidad: $O()$
@@ -508,6 +516,41 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
+		\caption{\algoritmo{ResetearContadores}{\Inout{j}{pokego}, \In{e}{jugador}}{}}
+			coor: c $\leftarrow$ (*j.jugadores[e]).posicion\;
+			nat : i $\leftarrow$ 0\;
+			\While{i $<$ 3}{
+				nat : j $\leftarrow$ 0\;
+				\While{j $<$ 3}{
+				\If{DistEuclidea(c, CrearCoor(Latitud(c) + i, Longitud(c) + j)) $\leq$ 4}{
+					\If{Pertenece(j.posConPokemons, CrearCoor(Latitud(c) + i, Longitud(c) + j)}{
+						j.grillaPos[Latitud(c) + i][Longitud(c) + j].contadorCaptura $\leftarrow$ 0\; 
+					}
+				} 
+				\If {DistEuclidea(c, CrearCoor(Latitud(c) + i, Longitud(c) - j)) $\leq$ 4}{
+					\If{Pertenece(j.posConPokemons, CrearCoor(Latitud(c) + i, Longitud(c) - j)}{
+						j.grillaPos[Latitud(c) + i][Longitud(c) - j].contadorCaptura $\leftarrow$ 0\; 
+					}
+				} 
+				\If {DistEuclidea(c, CrearCoor(Latitud(c) - i, Longitud(c) + j)) $\leq$ 4}{
+					\If{Pertenece(j.posConPokemons, CrearCoor(Latitud(c) - i, Longitud(c) + j)}{
+						j.grillaPos[Latitud(c) - i][Longitud(c) + j].contadorCaptura $\leftarrow$ 0\; 
+					}
+				} 
+				\If {DistEuclidea(c, CrearCoor(Latitud(c) - i, Longitud(c) - j)) $\leq$ 4}{
+					\If{Pertenece(j.posConPokemons, CrearCoor(Latitud(c) - i, Longitud(c) - j)}{
+						j.grillaPos[Latitud(c) - i][Longitud(c) - j].contadorCaptura $\leftarrow$ 0\; 
+					}
+				}
+			j $\leftarrow$ j+1\;	
+			}							
+		i $\leftarrow$ i+1\;
+		}	
+	\end{algorithm}
+
+	~
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
 		\caption{\algoritmo{AgregarAColas}{\Inout{j}{pokego}, \In{e}{jugador}}{}}
 			coor: c $\leftarrow$ (*j.jugadores[e]).posicion\;
 			nat : i $\leftarrow$ 0\;
@@ -549,6 +592,7 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{iMoverse}{\Inout{j}{pokego}, \In{e}{jugador}, \In{c}{coor}}{}}
+		Borrar(j.grillaPos[Latitud(c)][Longitud(c)].jugadores, e)\; %log EC
 		RemoverDeColas(j, e)\; %log EC
 		\If{\textbf{not} HayCamino(j.mapa, Posicion(j,e), c) \textbf{or} DistEuclidea(Posicion(j,e), c) $>$ 100}{
 			(*j.jugadores[e]).sanciones $\leftarrow$ (*j.jugadores[e]).sanciones + 1\;
@@ -565,6 +609,8 @@ La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando 
 		}{
 			(*j.jugadores[e]).posicion $\leftarrow$ c\;
 			AgregarAColas(j, e, c)\; %log EC
+			Agregar(j.grillaPos[Latitud(c)][Longitud(c)].jugadores, e)\; %log MISMOS CHABON ENUNA MISMA POSICION
+
 		}
 
 		%% COMP AUTO DE CAPTURA, ETC
