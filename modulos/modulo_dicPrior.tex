@@ -364,11 +364,9 @@ Usaremos $\#j$ para denotar la cantidad de entradas del diccionario.
 
 	\complejidad: $O(h)$ 
 
-	\justifcomp: como sabemos la altura de un nodo es la mayor altura entre sus hijos + 1, como en cada iteración estamos haciendo una llamada recursiva a uno de sus hijos hasta que ese hijo sea nulo, en el peor de los casos llamamos recursivamente al hijo con mayor altura y en cada llamada estamos disminuyendo en 1 la altura.
+	\pre: entre los nodo que desprenden del nodo del parametro no se encuentra el id j.
 
-	\pre: true
-
-	\post: res es igual al nodo hijo o el que viene por parametro que tenga el id del jugador a menos que no este en cuyo caso en NULL
+	\post: res es el mismo nodo pero ahora con el hijo insertado en esa rama y balanceado
 
 	~
 
@@ -379,11 +377,11 @@ Usaremos $\#j$ para denotar la cantidad de entradas del diccionario.
 			res $\leftarrow$ nodo\OdeLinea{1}
 		}
 		\uElseIf{j $<$ (*nodo).id}{
-			(*nodo).hijoIzq $\leftarrow$ RemoverJ(j, (*nodo).hijoIzq)\OdeLinea{log(\#j)}
+			(*nodo).hijoIzq $\leftarrow$ RemoverJ(j, (*nodo).hijoIzq)\OdeLinea{h - 1}
 			res $\leftarrow$ Balancear(nodo)\OdeLinea{1}
 		}
 		\uElseIf{j $>$ (*nodo).id}{
-			(*nodo).hijoDer $\leftarrow$ RemoverJ(j, (*nodo).hijoDer)\OdeLinea{log(\#j)}
+			(*nodo).hijoDer $\leftarrow$ RemoverJ(j, (*nodo).hijoDer)\OdeLinea{h - 1}
 			res $\leftarrow$ Balancear(nodo)\OdeLinea{1}
 		}
 		\Else{
@@ -392,13 +390,19 @@ Usaremos $\#j$ para denotar la cantidad de entradas del diccionario.
 			\eIf{d = NULL}{
 				res $\leftarrow$ i\OdeLinea{1}
 			}{
-				puntero(Nodo): minimo $\leftarrow$ BuscarMinimo(d)\OdeLinea{log(\#j)}
+				puntero(Nodo): minimo $\leftarrow$ BuscarMinimo(d)\OdeLinea{h - 1}
 				minimo.hijoDer $\leftarrow$ RemoverMinimo(d)\OdeLinea{log(\#j)}
 				minimo.hijoIzq $\leftarrow$ i\OdeLinea{1}
 				res $\leftarrow$ Balancear(minimo)\OdeLinea{1}
 			}
 		}
 	\end{algorithm}
+
+	\complejidad: $O(h)$ 
+
+	\pre: entre los nodo que desprenden del nodo del parametro se encuentra el id j.
+
+	\post: res es el mismo nodo pero ahora con el hijo removido en esa rama excepto que sea el nodo que hay que remover el cual se convierte en null
 
 	~
 
