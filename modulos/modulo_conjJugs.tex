@@ -207,11 +207,8 @@
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
-		\caption{\algoritmo{iAgregar}{\Inout{c}{eJugs}, \In{j}{jugador}, \In{n}{nat}}{}}
-		\If{Pertenece?(p, j)}{
-			Borrar(p, j)\OdeLinea{log(\#j)}
-		}
-		p.raiz $\leftarrow$ Insertar(j, n, p.raiz)\OdeLinea{log(\#j)}
+		\caption{\algoritmo{iAgregar}{\Inout{c}{eJugs}, \In{j}{jugador}}{}}
+		p.raiz $\leftarrow$ Insertar(j, p.raiz)\OdeLinea{log(\#j)}
 	\end{algorithm}
 
 	~
@@ -219,13 +216,12 @@
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{iBorrar}{\Inout{c}{eJugs}, \In{j}{jugador}}{}}
-		puntero(Nodo): nodo $\leftarrow$ Buscar(j, p.raiz)\OdeLinea{log(\#j)}
 		p.raiz $\leftarrow$ Remover(j, p.raiz)\OdeLinea{log(\#j)}
 	\end{algorithm}
 
 	\complejidad: $O(log(\#j))$
 
-	\justifcomp: la complejidad de buscar o eliminar un elemento es de orden de la altura del arbol, que por invariante de AVL sabemos que es $log(\#j)$
+	\justifcomp: la complejidad de buscar, agregar o eliminar un elemento es de orden de la altura del arbol, que por invariante de AVL sabemos que es $log(\#j)$
 
 
 	\TituloDis{Algoritmos auxiliares}
@@ -254,19 +250,24 @@
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
-		\caption{\algoritmo{Insertar}{\In{j}{jugador}, \In{n}{nat}, \Inout{nodo}{puntero(Nodo)}}{puntero(Nodo)}}
+		\caption{\algoritmo{Insertar}{\In{j}{jugador}, \Inout{nodo}{puntero(Nodo)}}{puntero(Nodo)}}
 		\Pre{\texttt{true}}
-		\Post{res es igual al mismo nodo que viene por parametro pero con el nuevo nodo(id:j y n) y balanceado}
+		\Post{res es igual al mismo nodo que viene por parametro pero con el nuevo nodo(id:j si ya estaba no es nuevo) y balanceado}
 		\BlankLine
 		\eIf{nodo = NULL}{
-			res $\leftarrow$ CrearNodo(j, n)\OdeLinea{1}
+			res $\leftarrow$ CrearNodo(j)\OdeLinea{1}
 		}{	
-			\eIf{j $<$ n.id}{
-				(*nodo).hijoIzq $\leftarrow$ Insertar(j, n, (*nodo).hijoIzq)\OdeLinea{h}
-			}{
-				(*nodo).hijoDer $\leftarrow$ Insertar(j, n, (*nodo).hijoDer)\OdeLinea{h}
+			\eIf{j = nodo.id}{
+				res $\leftarrow$ nodo\OdeLinea{1}
+			}{	
+				\eIf{j $<$ nodo.id}{
+					(*nodo).hijoIzq $\leftarrow$ Insertar(j, (*nodo).hijoIzq)\OdeLinea{h}
+				}{
+					(*nodo).hijoDer $\leftarrow$ Insertar(j, (*nodo).hijoDer)\OdeLinea{h}
+				}
+				res $\leftarrow$ Balancear(nodo)\OdeLinea{1}
 			}
-			res $\leftarrow$ Balancear(nodo)\OdeLinea{1}
+
 		}
 	\end{algorithm}
 
@@ -347,26 +348,7 @@
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
-		\caption{\algoritmo{AgregarClaves}{\In{nodo}{Nodo}, \Inout{c}{conj(Jugador)}}{}}
-		\Pre{TODO} 
-		\Post{TODO}
-		\BlankLine
-		\If{nodo $\neq$ NULL}{
-			AgregarRapido(c, (*nodo).id)\OdeLinea{1}
-			AgregarClaves((*nodo).hijoIzq, c)\OdeLinea{\#j}
-			AgregarClaves((*nodo).hijoDer, c)\OdeLinea{\#j}
-		}
-	\end{algorithm}
-	
-	\complejidad: $O(\#j)$
-
-	\justifcomp: el arbol no almacena las claves en una estructura separada, así que las mismas deben obtenerse manualmente recorriendo todo el arbol.
-
-	~
-
-	\begin{algorithm}[H]
-		\NoCaptionOfAlgo
-		\caption{\algoritmo{CrearNodo}{\In{j}{jugador}, \In{n}{nat}}{puntero(Nodo)}}
+		\caption{\algoritmo{CrearNodo}{\In{j}{jugador}}{puntero(Nodo)}}
 		% TODO
 		\Pre{TODO} 
 		\Post{TODO}
@@ -376,7 +358,6 @@
 		nuevo.hijoDer $\leftarrow$ NULL\OdeLinea{1}
 		nuevo.alto $\leftarrow$ 1\OdeLinea{1}
 		nuevo.id $\leftarrow$ j\OdeLinea{1}
-		nuevo.cantPokemons $\leftarrow$ n\OdeLinea{1}
 		res $\leftarrow$ \&nuevo\OdeLinea{1}
 	\end{algorithm}
 	
