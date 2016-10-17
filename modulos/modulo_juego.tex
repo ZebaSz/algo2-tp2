@@ -220,21 +220,21 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 
 	\begin{enumerate}
 
-		\item La grilla tiene el alto y ancho del mapa %DONE
+		\item La grilla tiene el alto y ancho del mapa 
 
-		\item Los jugadores conectados estan en la grilla en la posicion en la que se encuentra %DONE
+		\item Los jugadores conectados estan en la grilla en la posicion en la que se encuentra 
 
-		\item En los jugadores que se encutuentran en la grilla solo estan los que realmente se encuentran ahi %DONE
+		\item En los jugadores que se encutuentran en la grilla solo estan los que realmente se encuentran ahi 
 
-		\item Solo las posiciones con pokemon tienen pokemons en la grilla%Done
+		\item Solo las posiciones con pokemon tienen pokemons en la grilla
 
-		\item CantPokemons es igual a la suma de todas los significados del diccionario %Done
+		\item CantPokemons es igual a la suma de todas los significados del diccionario 
 
-		\item Los significados del diccionario de pokemons es igual a la cantidad de pokemons que hay capturados mas los salvajes %Done
+		\item Los significados del diccionario de pokemons es igual a la cantidad de pokemons que hay capturados mas los salvajes 
 
-		\item Los jugadores tienen menos de 5 sanciones
+		\item Los jugadores tienen menos de 5 sanciones 
 
-		\item No hay dos coordenadas pertenecientes a posConPokemons a menos de 5 de distancia
+		\item No hay dos coordenadas pertenecientes a posConPokemons a menos de 5 de distancia 
 
 	\end{enumerate}
 
@@ -250,16 +250,7 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 		pokemonesCapturados(e.jugadores) + $\#$(e.posConPokemons) = e.cantPokemons $\land$\\
 		diccionarioCorrecto(e) $\land$\\
 		jugadores5sanciones(e.jugadores) $\land$\\
-
-
-
-
-		($\forall c$: coor)(c $\in$ e.posConPokemons $\implies$ (c $\in$ coordenadas(e.mapa) $\yluego$ pokeEnGrilla(e, c))) \\
-		$\land$ e.cantPokemons = sumaSignificadosPoke(claves(e.pokemons), e.pokemons) $\land$ ($\forall c,d$: coor) \\
-		(c $\in$ e.posConPokemons $\land$ d $\in$ e.posConPokemons $\implies$ c = d $\lor$ distEuclidea(c,d) $>$ 25) $\land$ \\
-		($\forall i$:nat)(i $<$ long(e.jugadores) $\implies$ claves(e.jugadores[i]$\rightarrow$pokemonsCapturados) $\subseteq$ claves(e.pokemons)) \\
-		$\land$ ($\forall i$:nat)((i $<$ long(e.jugadores) $\yluego$ (e.jugadores[i]$\rightarrow$sanciones $<$ 5 $\land$ e.jugadores[i]$\rightarrow$conectado)) $\implies$ \\
-		e.jugadores[i]$\rightarrow$posicion $\in$ coordenadas(e.mapa))
+		pksAlejados(e.posConPokemons)
 	}
 	
 
@@ -339,33 +330,13 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 		($\neg$ vacia?(js)) $\impluego$ (prim(js).sanciones $\leq$ 5 $\land$ jugadores5sanciones(fin(js)))
 	}
 
-%OLD
+	\tadAxioma{pksAlejados(coors)}{
+		($\neg$ vacio?(dameUno(coors))) $\impluego$ compararCoors(dameUno(coors), sinUno(coors))
+	}
 
-
-
-
-
-
-
-
-
-	~
-	
-	\tadOperacion{pokeEnGrilla}{pokego/e, coor/c}{bool}{c $\in$ coordenadas(e.mapa)}
-	\tadAxioma{pokeEnGrilla(j, c)}{e.grilla[latitud(c)][longitud(c)].hayPokemon}
-
-
-	~
-	
-	\tadOperacion{sumaSignificadosPoke}{conj(pokemon)/cs, dicc(String{,}Nat)/dic}{nat}{cs $\subseteq$ claves(dic)}
-	\tadAxioma{sumaSignificadosPoke(cs, dic)}
-	{\IF vacia?(cs) THEN
-		0
-	ELSE
-		obtener(dic, dameUno(cs)) + sumaSignificadosPoke(sinUno(cs), dic)
-	FI}
-		
-	~
+	\tadAxioma{compararCoors(c, coors)}{
+		($\neg$ vacio?(coors)) $\impluego$ (distEuclidea(c,dameUno(coors)) $\leq$ 25 $\land$ compararCoors(c, sinUno(coors)))
+	}
 	
 	\TituloDis{Función de Abstracción}
 
