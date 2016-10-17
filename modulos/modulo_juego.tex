@@ -255,7 +255,7 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 		pokemonesCapturados(e.jugadores) + $\#$(e.posConPokemons) = e.cantPokemons $\land$\\
 		diccionarioCorrecto(e) $\land$\\
 		jugadores5sanciones(e.jugadores) $\land$\\
-		pksAlejados(e.posConPokemons) $\land$\\
+		pksAlejados(e.posConPokemons) $\land$\\ ($\forall i,j$: nat)(j $<$ alto(e.mapa) $\land$ i $<$ ancho(e.mapa) $\yluego$ e.grillaPos[i][j].hayPokemon $\implies$ ($\forall p$: jugador)(p $\in$ claves(e.grillaPos[i][j].jugEsperandoCaptura) $=$ long(e.jugadores) $>$ p $\yluego$ e.jugadores[p].sanciones $<$ 5 $\yluego$ distEuclidea(e.jugadores[p].posicion, crearCoor(i,j)) $\leq$ 4 \\
 
 	}
 	
