@@ -224,7 +224,7 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 
 		\item Los jugadores conectados estan en la grilla en la posicion en la que se encuentra 
 
-		\item En los jugadores que se encutuentran en la grilla solo estan los que realmente se encuentran ahi 
+		\item En los jugadores que se encuentran en la grilla solo estan los que realmente se encuentran ahi 
 
 		\item Solo las posiciones con pokemon tienen pokemons en la grilla
 
@@ -234,7 +234,12 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 
 		\item Los jugadores tienen menos de 5 sanciones 
 
-		\item No hay dos coordenadas pertenecientes a posConPokemons a menos de 5 de distancia 
+		\item No hay dos coordenadas pertenecientes a posConPokemons a menos de 5 de distancia
+
+		\item Para cada una de las claves de jugsEsperandoCaptura, el jugador es un jugador válido y se encuentra en posición de captura del pokemon correspondiente %TODO
+
+		\item Para cada una de las claves de jugsEsperandoCaptura, su significado es la cantidad de pokemons %TODO
+
 
 	\end{enumerate}
 
@@ -250,7 +255,8 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 		pokemonesCapturados(e.jugadores) + $\#$(e.posConPokemons) = e.cantPokemons $\land$\\
 		diccionarioCorrecto(e) $\land$\\
 		jugadores5sanciones(e.jugadores) $\land$\\
-		pksAlejados(e.posConPokemons)
+		pksAlejados(e.posConPokemons) $\land$\\
+
 	}
 	
 	\tadOperacion{jugadoresConectadosEnPosValidas}{pokego}{bool}{}
@@ -288,7 +294,7 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 	~
 
 	\tadAxioma{jugadoresConectadosEstanEnLaPos(e)}{
-		($\forall i$: nat) ((i $\leq$ long(e.jugadores) $\land$ e.jugadores[i]$\rightarrow$conectado?)$\implies$(i $\in$ e.grillaPos[longitud(e.jugadores[i]$\rightarrow$posicion)][latitud(e.jugadores[i]$\rightarrow$posicion)].jugsEnPos))
+		($\forall i$: nat) ((i $\leq$ long(e.jugadores) $\land$ e.jugadores[i]$\rightarrow$conectado?)$\implies$(i $\in$ \\ e.grillaPos[longitud(e.jugadores[i]$\rightarrow$posicion)][latitud(e.jugadores[i]$\rightarrow$posicion)].jugsEnPos))
 	}
 	
 	~
