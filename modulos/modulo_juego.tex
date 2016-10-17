@@ -243,7 +243,7 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 
 		long(e.grillaPos) = alto(e.mapa) $\yluego$\\
 		(($\forall n$: nat) n $\leq$ alto(e.mapa) $\implies$ long(e.grillaPos[n]) = ancho(e.mapa)) $\yluego$\\
-		jugadoresConectadosEnPosValidas $\yluego$\\
+		jugadoresConectadosEnPosValidas(e) $\yluego$\\
 		jugadoresConectadosEstanEnLaPos(e) $\land$\\
 		jugadoresEnPosEstanConectados(e) $\land$\\
 		pokemonsEnGrillaSonSalvajes(e) $\land$\\
@@ -253,6 +253,33 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 		pksAlejados(e.posConPokemons)
 	}
 	
+
+	\tadOperacion{jugadoresConectadosEnPosValidas}{pokego}{bool}{}
+
+	\tadOperacion{jugadoresConectadosEstanEnLaPos}{pokego}{bool}{}
+
+	\tadOperacion{jugadoresEnPosEstanConectados}{pokego}{bool}{}
+
+	\tadOperacion{jugadoresConectadosAux}{secu(infoJugador)}{conj(jugador)}{}
+
+	\tadOperacion{pokemonsEnGrillaSonSalvajes}{pokego}{nat}{}
+
+	\tadOperacion{pokemonesCapturados}{secu(infoJugador)}{nat}{}
+
+	\tadOperacion{diccionarioCorrecto}{pokego}{bool}{}
+
+	\tadOperacion{cantPkAfuera}{pokemon, pokego}{nat}{}
+
+	\tadOperacion{juntarPkEnGrilla}{pokemon, conj(coor), pokego}{nat}{}
+	
+	\tadOperacion{juntarPkCapturados}{pokemon, secu(infoJugador)}{nat}{}
+
+	\tadOperacion{jugadores5sanciones}{secu(infoJugador)}{bool}{}
+
+	\tadOperacion{pksAlejados}{conj(coor)}{bool}{}
+
+	\tadOperacion{compararCoors}{coor, conj(coor)}{bool}{}
+
 
 
 	\tadAxioma{jugadoresConectadosEnPosValidas(e)}{
