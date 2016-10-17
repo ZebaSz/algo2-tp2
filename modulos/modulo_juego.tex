@@ -234,26 +234,8 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 
 		\item Los jugadores tienen menos de 5 sanciones
 
-
-		%THE OLD ONE
-		\item Todas las coordenadas pertenecientes a posConPokemons pertenecen a las coordenadas válidas del mapa
-
-		\item La suma de todos los significados del diccionario pokemons es igual a cantPokemons
-		
 		\item No hay dos coordenadas pertenecientes a posConPokemons a menos de 5 de distancia
-		
-		\item Para cada miembro de jugadores, las claves de pokemonsCapturados pertenecen a las claves de pokemons
 
-		\item Para cada clave de pokemons, su significado es la suma de:
-		\begin{itemize}
-			\item todos los significados de esa misma clave en los pokemonsCapturados de cada miembro de jugadores donde la clave existe y el jugador no fue eliminado
-			\item la cantidad de coordenadas de posConPokemons donde se encuentra un pokemon igual a esa clave
-		\end{itemize}
-
-		\item Para cada coordenada de posConPokemons, la coordenada corespondiente en la grilla almacena el pokémon que se encuentra ahí
-		
-		\item Para cada miembro de jugadores, si el jugador esta conectado su posición tiene que pertenecer a las coordenadas válidas del mapa
-		
 	\end{enumerate}
 
 
@@ -267,6 +249,7 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 		pokemonsEnGrillaSonSalvajes(e) $\land$\\
 		pokemonesCapturados(e.jugadores) + $\#$(e.posConPokemons) = e.cantPokemons $\land$\\
 		diccionarioCorrecto(e) $\land$\\
+		jugadores5sanciones(e.jugadores) $\land$\\
 
 
 
@@ -339,7 +322,6 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 		FI
 	}
 
-	~
 	
 	\tadAxioma{juntarPkCapturados(pk, js)}{
 		\IF vacia?(js) THEN
@@ -349,14 +331,29 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 				obtener(pk, prim(js).pokemonsCapturados)
 			ELSE
 				0
-			FI}+ pokemonesCapturados(fin(js))
+			FI} + pokemonesCapturados(fin(js))
 		FI
 	}
+
+	\tadAxioma{jugadores5sanciones(js)}{
+		($\neg$ vacia?(js)) $\impluego$ (prim(js).sanciones $\leq$ 5 $\land$ jugadores5sanciones(fin(js)))
+	}
+
+%OLD
+
+
+
+
+
+
+
+
 
 	~
 	
 	\tadOperacion{pokeEnGrilla}{pokego/e, coor/c}{bool}{c $\in$ coordenadas(e.mapa)}
 	\tadAxioma{pokeEnGrilla(j, c)}{e.grilla[latitud(c)][longitud(c)].hayPokemon}
+
 
 	~
 	
