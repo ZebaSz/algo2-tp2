@@ -228,9 +228,9 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 
 		\item Solo las posiciones con pokemon tienen pokemons en la grilla%Done
 
-		\item Los significados del diccionario de pokemons es igual a la cantidad de pokemons que hay capturados mas los salvajes 
-
 		\item CantPokemons es igual a la suma de todas los significados del diccionario %Done
+
+		\item Los significados del diccionario de pokemons es igual a la cantidad de pokemons que hay capturados mas los salvajes %Done
 
 		\item Los jugadores tienen menos de 5 sanciones
 
@@ -266,7 +266,7 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 		jugadoresEnPosEstanConectados(e) $\land$\\
 		pokemonsEnGrillaSonSalvajes(e) $\land$\\
 		pokemonesCapturados(e.jugadores) + $\#$(e.posConPokemons) = e.cantPokemons $\land$\\
-
+		diccionarioCorrecto(e) $\land$\\
 
 
 
@@ -317,7 +317,41 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 		FI
 	}
 
+	\tadAxioma{diccionarioCorrecto(e)}{
+		($\forall pk$: pokemon)\\ 
+		(($\neg$def?(pk, e.pokemons) $\land$ cantPkAfuera(pk, e) = 0 ) $\oluego$\\
+		obtener(pk, e.pokemons) = cantPkAfuera(pk, e))
+	}
 
+	\tadAxioma{cantPkAfuera(pk, e)}{
+		juntarPkEnGrilla(pk, coordenadas(e.mapa), e) + juntarPkCapturados(pk, e.jugadores)
+	}
+
+	\tadAxioma{juntarPkEnGrilla(pk, coors, e)}{
+		\IF vacio?(coors) THEN
+			0
+		ELSE
+			{\IF e.grillaPos[longitud(dameUno(coors))][latitud(dameUno(coors))].hayPokemon? $\yluego$ e.grillaPos[longitud(dameUno(coors))][latitud(dameUno(coors))].pokemon = pk THEN
+				1
+			ELSE
+				0
+			FI} + juntarPkEnGrilla(pk, coors, e)
+		FI
+	}
+
+	~
+	
+	\tadAxioma{juntarPkCapturados(pk, js)}{
+		\IF vacia?(js) THEN
+			0
+		ELSE
+			{\IF def?(pk, prim(js).pokemonsCapturados) THEN
+				obtener(pk, prim(js).pokemonsCapturados)
+			ELSE
+				0
+			FI}+ pokemonesCapturados(fin(js))
+		FI
+	}
 
 	~
 	
