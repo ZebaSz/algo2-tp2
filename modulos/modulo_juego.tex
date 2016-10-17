@@ -236,9 +236,9 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 
 		\item No hay dos coordenadas pertenecientes a posConPokemons a menos de 5 de distancia
 
-		\item Para cada una de las claves de jugsEsperandoCaptura, el jugador es un jugador válido y se encuentra en posición de captura del pokemon correspondiente %TODO
+		\item Para cada una de las claves de jugsEsperandoCaptura, el jugador es un jugador válido y se encuentra en posición de captura del pokemon correspondiente
 
-		\item Para cada una de las claves de jugsEsperandoCaptura, su significado es la cantidad de pokemons %TODO
+		\item Para cada una de las claves de jugsEsperandoCaptura, su significado es la cantidad de pokemons
 
 
 	\end{enumerate}
@@ -255,9 +255,11 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 		pokemonesCapturados(e.jugadores) + $\#$(e.posConPokemons) = e.cantPokemons $\land$\\
 		diccionarioCorrecto(e) $\land$\\
 		jugadores5sanciones(e.jugadores) $\land$\\
-		pksAlejados(e.posConPokemons) $\land$\\ ($\forall i,j$: nat)(j $<$ alto(e.mapa) $\land$ i $<$ ancho(e.mapa) $\yluego$ e.grillaPos[i][j].hayPokemon $\implies$ ($\forall p$: jugador)(p $\in$ claves(e.grillaPos[i][j].jugEsperandoCaptura) $=$ long(e.jugadores) $>$ p $\yluego$ e.jugadores[p].sanciones $<$ 5 $\yluego$ distEuclidea(e.jugadores[p].posicion, crearCoor(i,j)) $\leq$ 4 \\
-
+		pksAlejados(e.posConPokemons) $\land$\\
+		jugadoresEsperandoCaptura(e, e.posConPokemon)
 	}
+
+	~
 	
 	\tadOperacion{jugadoresConectadosEnPosValidas}{pokego}{bool}{}
 
@@ -284,6 +286,14 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 	\tadOperacion{pksAlejados}{conj(coor)}{bool}{}
 
 	\tadOperacion{compararCoors}{coor, conj(coor)}{bool}{}
+
+	\tadOperacion{jugadoresEsperandoCaptura}{pokego, conj(coor)}{bool}{}
+
+	\tadOperacion{jugsEsperandoEnPosValido}{pokego, dicc(jugador, nat)}{bool}{}
+
+	\tadOperacion{jugsEsperandoClavesValidas}{pokego, conj(jugador)}{bool}{}
+
+	\tadOperacion{jugsEsperandoDefsValidas}{pokego, dicc(jugador, nat), conj(coor)}{bool}{}
 
 	~
 
@@ -392,6 +402,31 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 
 	\tadAxioma{compararCoors(c, coors)}{
 		($\neg$ vacio?(coors)) $\impluego$ (distEuclidea(c,dameUno(coors)) $\leq$ 25 $\land$ compararCoors(c, sinUno(coors)))
+	}
+
+	~
+
+	\tadAxioma{jugadoresEsperandoCaptura(e, ps)}{
+		vacio?(ps) $\oluego$ (jugsEsperandoEnPosValido(e, e.grilla[latitud(dameUno(ps))][longitud(dameUno(ps))].jugEsperandoCaptura) \\
+		$\land$ jugadoresEsperandoCaptura(sinUno(ps)))
+	}
+	
+	~
+
+	\tadAxioma{jugsEsperandoEnPosValido(e, dic)}{
+		jugsEsperandoClavesValidas(e, claves(dic)) $\land$ jugsEsperandoDefsValidas(e, dic, claves(dic))
+	}
+	
+	~
+
+	\tadAxioma{jugsEsperandoClavesValidas(e, js)}{
+		vacio?(js) $\oluego$ jugsEsperandoClavesValidas(e, sinUno(js)) $\land$ dameUno(js) $<$ long(e.jugadores) $\yluego$ (e.jugadores[dameUno(js)].sanciones $<$ 5 $\yluego$ distEuclidea(e.jugadores[dameUno(js)].posicion, crearCoor(i,j)) $\leq$ 4)
+	}
+	
+	~
+
+	\tadAxioma{jugsEsperandoDefsValidas(e, dic, js)}{
+		vacio?(js) $\oluego$ (jugsEsperandoDefsValidas(e, dic, sinUno(js)) $\land$ obtener(dic, dameUno(js)) = (*e.jugadores[dameUno(js)]).cantPokemons)
 	}
 	
 	\TituloDis{Función de Abstracción}
