@@ -22,7 +22,7 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 
 	\textbf{géneros}: \TipoVariable{juego}, \TipoVariable{itJugadores}.
 
-	\textbf{servicios usados}: \tadNombre{Coordenada}, \tadNombre{Mapa}, \tadNombre{Vector($\alpha$)}, \tadNombre{DiccionarioString($\alpha$)}, \tadNombre{DiccionarioPrioridad}, \tadNombre{Conjunto Lineal($\alpha$)}
+	\textbf{servicios usados}: \tadNombre{Coordenada}, \tadNombre{Mapa}, \tadNombre{Vector($\alpha$)}, \tadNombre{DiccionarioString($\alpha$)}, \tadNombre{DiccionarioPrioridad}, \tadNombre{Conjunto Lineal($\alpha$)}, \tadNombre{ConjuntoJugadores}
 
 
 	\InterfazFuncion{CrearJuego}{\In{m}{mapa}}{juego}
@@ -253,7 +253,6 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 		pksAlejados(e.posConPokemons)
 	}
 	
-
 	\tadOperacion{jugadoresConectadosEnPosValidas}{pokego}{bool}{}
 
 	\tadOperacion{jugadoresConectadosEstanEnLaPos}{pokego}{bool}{}
@@ -280,35 +279,45 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 
 	\tadOperacion{compararCoors}{coor, conj(coor)}{bool}{}
 
-
+	~
 
 	\tadAxioma{jugadoresConectadosEnPosValidas(e)}{
 		($\forall i$: nat) ((i $\leq$ long(e.jugadores) $\land$ e.jugadores[i]$\rightarrow$conectado?)$\implies$(posExistente(e.jugadores[i]$\rightarrow$posicion, e.mapa)))
 	}
+	
+	~
 
 	\tadAxioma{jugadoresConectadosEstanEnLaPos(e)}{
 		($\forall i$: nat) ((i $\leq$ long(e.jugadores) $\land$ e.jugadores[i]$\rightarrow$conectado?)$\implies$(i $\in$ e.grillaPos[longitud(e.jugadores[i]$\rightarrow$posicion)][latitud(e.jugadores[i]$\rightarrow$posicion)].jugsEnPos))
 	}
+	
+	~
 
 	\tadAxioma{jugadoresEnPosEstanConectados(e)}{
 		($\forall c$: coor) posExistente(c, e.mapa) $\implies$ e.grillaPos[longitud(c)][latitud(c)].jugsEnPos $\subseteq$ jugadoresConectadosAux(e.jugadores)
 	}
+	
+	~
 
 	\tadAxioma{jugadoresConectadosAux(js)}{
 		\IF vacia?(js) THEN
-			\secuvacia
+			$\emptyset$
 		ELSE
-			{\IF prim(js).conectado? THEN
-				Ag(prim(js), jugadoresConectadosAux(fin(js))) %%ESTO DEBERIA SER UN JUGADOR PERO CHUPENLA
+			{\IF ult(js).sanciones $<$ 5 $\yluego$ ult(js).conectado? THEN
+				Ag((long(js) - 1), jugadoresConectadosAux(com(js)))
 			ELSE
-				jugadoresConectadosAux(fin(js))
+				jugadoresConectadosAux(com(js))
 			FI}
 		FI
 	}
+	
+	~
 
 	\tadAxioma{pokemonsEnGrillaSonSalvajes(e)}{
 		($\forall c$: coor) posExistente(c, e.mapa) $\implies$ (c $\in$ e.posConPokemons $\iff$ e.grillaPos[longitud(c)][latitud(c)].hayPokemon?)
 	}
+	
+	~
 
 	\tadAxioma{pokemonesCapturados(js)}{
 		\IF vacia?(js) THEN
@@ -317,16 +326,22 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 			prim(js).cantPokemons + pokemonesCapturados(fin(js))
 		FI
 	}
+	
+	~
 
 	\tadAxioma{diccionarioCorrecto(e)}{
 		($\forall pk$: pokemon)\\ 
 		(($\neg$def?(pk, e.pokemons) $\land$ cantPkAfuera(pk, e) = 0 ) $\oluego$\\
 		obtener(pk, e.pokemons) = cantPkAfuera(pk, e))
 	}
+	
+	~
 
 	\tadAxioma{cantPkAfuera(pk, e)}{
 		juntarPkEnGrilla(pk, coordenadas(e.mapa), e) + juntarPkCapturados(pk, e.jugadores)
 	}
+	
+	~
 
 	\tadAxioma{juntarPkEnGrilla(pk, coors, e)}{
 		\IF vacio?(coors) THEN
@@ -339,6 +354,8 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 			FI} + juntarPkEnGrilla(pk, coors, e)
 		FI
 	}
+	
+	~
 
 	
 	\tadAxioma{juntarPkCapturados(pk, js)}{
@@ -352,14 +369,20 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 			FI} + pokemonesCapturados(fin(js))
 		FI
 	}
+	
+	~
 
 	\tadAxioma{jugadores5sanciones(js)}{
 		($\neg$ vacia?(js)) $\impluego$ (prim(js).sanciones $\leq$ 5 $\land$ jugadores5sanciones(fin(js)))
 	}
+	
+	~
 
 	\tadAxioma{pksAlejados(coors)}{
 		($\neg$ vacio?(dameUno(coors))) $\impluego$ compararCoors(dameUno(coors), sinUno(coors))
 	}
+	
+	~
 
 	\tadAxioma{compararCoors(c, coors)}{
 		($\neg$ vacio?(coors)) $\impluego$ (distEuclidea(c,dameUno(coors)) $\leq$ 25 $\land$ compararCoors(c, sinUno(coors)))
