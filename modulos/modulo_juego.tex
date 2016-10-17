@@ -590,7 +590,7 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{iMoverse}{\Inout{j}{pokego}, \In{e}{jugador}, \In{c}{coor}}{}}
 		coor : posAnterior $\leftarrow$ Posicion(j,e)\OdeLinea{1}
-		\tcc{Removemos al jugador del conjunto de su posición anterior y de 	la cola de espera}
+		\tcc{Removemos al jugador del conjunto de su posición anterior y de la cola de espera}
 		Borrar(j.grillaPos[Latitud(c)][Longitud(c)].jugsEnPos, e)\OdeLinea{log(EC)}
 		RemoverDeCola(j, e)\OdeLinea{log(EC)}
 		\If{\textbf{not} HayCamino(j.mapa, posAnterior, c) \textbf{or} DistEuclidea(posAnterior, c) $>$ 100}{
@@ -614,7 +614,6 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 		}
 
 		it $\leftarrow$ CrearIt(j.posConPokemons)\OdeLinea{1}
-		\tcc{Iteramos las posiciones con pokémons}
 		\tcc{Iteramos las posiciones con pokémons}
 		\While(\OdeBloque{PS \times |P|}){HaySiguiente?(it)}{
 			coor: coorConPk $\leftarrow$ Siguiente(it)\OdeLinea{1}
