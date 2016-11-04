@@ -104,16 +104,17 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 	[el iterador se invalida si se expulsa al siguiente jugador del iterador, o si se agrega un nuevo jugador y el iterador había llegado al final. Además, siguientes($res$) podría cambiar completamente ante cualquier operación que modifique la lista de jugadores.]
 
 	\InterfazFuncion{PosConPokémons}{\In{j}{juego}}{conj(coor)}
-	{alias($res$ = posConPokémons(j))}
+	{alias($res \igobs$ posConPokémons(j))}
 	[$O(1)$]
 	[devuelve el conjunto de posiciones que contienen un pokémon.]
 	[$res$ no es modificable.]
 
 	\InterfazFuncion{PokémonEnPos}{\In{j}{juego}, \In{c}{coor}}{pokemon}
 	[$c \in$ posConPokemon($j$)]
-	{$res \igobs$ pokémonEnPos($c,j$)}
+	{alias($res \igobs$ pokémonEnPos($c,j$))}
 	[$O(1)$]
 	[devuelve el pokémon que se encuentra en la posición.]
+	[$res$ no es modificable.]
 
 	\InterfazFuncion{PuedoAgregarPokémon}{\In{j}{juego}, \In{c}{coor}}{bool}
 	{$res \igobs$ puedoAgregarPokémon($c,j$)}
@@ -133,7 +134,7 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 
 	\InterfazFuncion{EntrenadoresPosibles}{\In{j}{juego}, \In{c}{coor}}{conj(jugador)}
 	[hayPokémonCercano($c,j$)]
-	{$res \igobs$ entrenadoresPosibles($c,j$)}
+	{$res \igobs$ entrenadoresPosibles($c, jugadores(j), j$)}
 	[$O(EC)$]
 	[devuelve el conjunto de jugadores esperando a capturar el pokémon que se encuentra en la posición.]
 	[$res$ no es modificable.]
@@ -194,6 +195,7 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 			\tupItem{pokemons}{diccString(nat)}
 			\tupItem{posConPokemons}{conj(coor)}
 			\tupItem{\\jugadores}{vector(puntero(infoJugador))}
+			%TODO pachi no quiere punteros
 			\tupItem{\\grillaPos}{arreglo\_dimensionable de (arreglo\_dimensionable de infoPos)}
 			\tupItem{\\cantPokemons}{nat}
 		\end{Tupla}
@@ -211,6 +213,7 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 			\tupItem{pokemon}{pokemon}
 			\tupItem{contadorCaptura}{nat}
 			\tupItem{jugEsperandoCaptura}{dicPrior}
+			%TODO dicPrior debería ser una cola
 			\tupItem{jugsEnPos}{conjJugs}
 		\end{Tupla}
 
@@ -230,9 +233,9 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 
 		\item CantPokemons es igual a la suma de todas los significados del diccionario 
 
-		\item Los significados del diccionario de pokemons es igual a la cantidad de pokemons que hay capturados mas los salvajes 
+		\item Los significados del diccionario de pokemons es igual a la suma de la cantidad de pokemons que hay capturados mas los salvajes 
 
-		\item Los jugadores tienen menos de 5 sanciones 
+		\item Los miembros del vector jugadores tienen como máximo 5 sanciones 
 
 		\item No hay dos coordenadas pertenecientes a posConPokemons a menos de 5 de distancia
 
@@ -552,7 +555,7 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 		}
 
 		j.grillaPos[Latitud(c)][Longitud(c)].hayPokemon $\leftarrow$ true\OdeLinea{1}
-		j.grillaPos[Latitud(c)][Longitud(c)].pokemon $\leftarrow$ pk\OdeLinea{1}
+		j.grillaPos[Latitud(c)][Longitud(c)].pokemon $\leftarrow$ pk\OdeLinea{|pk|}
 		j.grillaPos[Latitud(c)][Longitud(c)].contadorCaptura $\leftarrow$ 0\OdeLinea{1}
 		\tcc{Se desestima la complejidad de borrar el diccionario de prioridad anterior}
 		j.grillaPos[Latitud(c)][Longitud(c)].jugEsperandoCaptura $\leftarrow$ Vacio()\OdeLinea{1}
@@ -574,7 +577,7 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 
 	\complejidad: $O(|P| + EC \times log(EC))$
 
-	\justifcomp: todos los jugadores que se encuentran en el area (EC) deben agregarse a la lista de espera, que los ordena por prioridad (inserción en log(EC)). Al mismo tiempo debe definirse este nuevo pokémon en el diccionario global ($|P|$).
+	\justifcomp: todos los jugadores que se encuentran en el area (EC) deben agregarse a la lista de espera, que los ordena por prioridad (inserción en log(EC)). Al mismo tiempo debe definirse este nuevo pokémon en el diccionario global a un costo de ($|pk|$), que a su vez está acotado por ($|P|$).
 
 	~
 
@@ -621,7 +624,8 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 
 	~
 
-	\begin{algorithm}[H] 
+	\begin{algorithm}[H]
+	%TODO corregir
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{iMoverse}{\Inout{j}{pokego}, \In{e}{jugador}, \In{c}{coor}}{}}
 		coor : posAnterior $\leftarrow$ Posicion(j,e)\OdeLinea{1}
@@ -710,6 +714,10 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 		res $\leftarrow$ j.grillaPos[Latitud(c)][Longitud(c)].pokemon\OdeLinea{1}
 	\end{algorithm}
 
+	\complejidad: $O(1)$
+
+	\justifcomp: se devuelve el pokémon por referencia.
+
 	~
 
 	\begin{algorithm}[H]
@@ -728,7 +736,7 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 
 	\complejidad: $O(1)$
 
-	\justifcomp: solo se accede a un vector y se desreferncia un puntero y/o se accede a un miembro.
+	\justifcomp: solo se accede a un vector y se desreferencia un puntero y/o se accede a un miembro.
 
 	~
 
@@ -805,9 +813,9 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 		\caption{\algoritmo{iPosPokémonCercano}{\In{j}{pokego}, \In{c}{coor}}{coor}}
 		conj(coor) : coorEnRango $\leftarrow$ PosicionesEnRango(j, c, 2)\OdeLinea{1}
 		itBi(coor) : itCoor $\leftarrow$ CrearIt(coorEnRango)\OdeLinea{1}
-		\While(\OdeBloque{n^2}){HaySiguiente(itCoor)}{
+		\While(\OdeBloque{1}){HaySiguiente(itCoor)}{
 			coor : siguiente $\leftarrow$ Siguiente(itCoor)\OdeLinea{1}
-			\If{HayPokémonEnPos(j, siguiente) $\leq$ n}{
+			\If{HayPokémonEnPos(j, siguiente)}{
 				res $\leftarrow$ siguiente\OdeLinea{1}
 			}
 			Avanzar(itCoor)\OdeLinea{1}
@@ -829,6 +837,7 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 	\complejidad: $O(EC)$
 
 	\justifcomp: el diccionario debe recuperar las claves iterando.
+	%TODO explicar que se hace por referencia y no por copia, para justificar la complejidad
 
 	~
 
