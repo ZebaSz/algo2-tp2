@@ -1,43 +1,53 @@
-\Section{Modulo ColaPrioridad}
+\section{Modulo ColaPrioridad}
 
 \begin{Interfaz}
 
-	\textbf{parámetros formales}\hangindent=2\parindent\\
-	\parbox{1.7cm}{\textbf{géneros}} \TipoVariable{$\alpha$}\\
-	\parbox[t]{1.7cm}{\textbf{función}}\parbox[t]{\textwidth-2\parindent-1.7cm}{
-		\InterfazFuncion{Copiar}{\In{s}{$\alpha$}}{$\alpha$}
-		{$res \igobs s$}
-		[$\Theta(copy(s))$]
-		[función de copia de $\alpha$'s.]
-	}
+	\textbf{se explica con}: \tadNombre{Cola de Prioridad($\alpha$)}, \tadNombre{Iterador Unidireccional($\alpha$)}.
 
-	\textbf{géneros}: \TipoVariable{\colaPrior, \itColaPrior}.
+	\textbf{géneros}: \TipoVariable{colaPrior}, \TipoVariable{itColaPrior($\alpha$)}.
 
-	\TituloDis{Operaciones básicas de ColaPrioridad(\texorpdfstring{$\alpha$}{α})}
+	\TituloDis{Operaciones básicas de ColaPrior($\alpha$)}
+
+
+
+
+
+	%\textbf{parámetros formales}\hangindent=2\parindent\\
+	%\parbox{1.7cm}{\textbf{géneros}} \TipoVariable{$\alpha$}\\
+	%\parbox[t]{1.7cm}{\textbf{función}}\parbox[t]{\textwidth-2\parindent-1.7cm}{
+	%	\InterfazFuncion{Copiar}{\In{s}{$\alpha$}}{$\alpha$}
+	%	{$res \igobs s$}
+	%	[$\Theta(copy(s))$]
+	%	[función de copia de $\alpha$'s.]
+	%}
+
+	\textbf{géneros}: \TipoVariable{colaPrior, itColaPrior}.
+
+	\TituloDis{Operaciones básicas de ColaPrioridad($\alpha$}
 
 	\InterfazFuncion{Vacía}{}{colaPrior}
 	{$res$ $\igobs$ vacía}
 	[$O(1)$]
 	[creación de una cola de prioridad vacía.]
 
-	\InterfazFuncion{Encolar}{\Inout{c}{\colaPrior}, \In{e}{$\alpha$}}{nat}
+	\InterfazFuncion{Encolar}{\Inout{c}{colaPrior}, \In{e}{$\alpha$}}{nat}
 	[$c \igobs c_0$]
 	{$res \igobs$ encolar($e, c_0$)}
 	[$O(copy(e) + )$]
 	[encola una copia de e]
 
-	\InterfazFuncion{Vacía?}{\In{c}{\colaPrior}}{bool}
+	\InterfazFuncion{Vacía?}{\In{c}{colaPrior}}{bool}
 	{$res \igobs$ vacía?($c$)}
 	[$O(1)$]
 	[devuelve true si, y solo si, la cola no contiene elementos.]
 
-	\InterfazFuncion{Próximo}{\In{c}{\colaPrior}}{$\alpha$}
-	[$\not vacía(c)$]
+	\InterfazFuncion{Próximo}{\In{c}{colaPrior}}{$\alpha$}
+	[$\not$ vacía(c)]
 	{$res \igobs$ próximo?($c$)}
 	[$O(copy(res))$]
 	[devuelve el elemento mas chico]
 
-	\InterfazFuncion{Desencolar}{\Inout{c}{\colaPrior}{}
+	\InterfazFuncion{Desencolar}{\Inout{c}{colaPrior}}{}
 	[$c \igobs c_0$]
 	{$res \igobs$ desencolar($c_0$)}
 	[$O()$]
@@ -45,3 +55,31 @@
 
 
 \end{Interfaz}
+
+\begin{Representacion}
+	\TituloDis{Representación de colaPrior}
+
+	\begin{Estructura}{colaPrior}[ePrior]
+		\begin{Tupla}[ePrior]
+			\tupItem{a}{}
+		\end{Tupla}
+	\end{Estructura}
+
+	\TituloDis{Invariante de Representación de ColaPrioridad}
+
+	\begin{enumerate}
+		
+		\item 
+
+	\end{enumerate}
+\end{Representacion}
+
+\begin{Algoritmos}
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iPertenece?}{\In{c}{eConj}, \In{a}{$\alpha$}}{bool}}
+		res $\leftarrow$ Definido?(c.raiz, a) \OdeLinea{log(\#c)}
+	\end{algorithm}
+
+\end{Algoritmos}	
