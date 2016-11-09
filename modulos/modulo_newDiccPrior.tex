@@ -1,0 +1,598 @@
+\section{Módulo DiccionarioPrioridad}
+
+Este diccionario está diseñado sobre un AVL, lo cual permite permite definir, obtener y remover cualquier elemento al igual que buscar el mínimo elemento en tiempo logarítmico. Este está ordenado en base al conjunto de claves, por lo cual se requiere que las mismas sean comparables entre sí.
+
+%También se almacenan los valores del mínimo elemento para retornarlos en tiempo constante.
+
+Usaremos $\#KEY$ para denotar la cantidad de entradas del diccionario.
+
+\begin{Interfaz}
+	\textbf{se explica con}: \tadNombre{{Diccionario($\alpha$,$\sigma$)}}. 
+
+	\textbf{géneros}: \TipoVariable{prior}.
+
+	\TituloDis{Operaciones básicas de DiccionarioPrioridad}
+
+	\InterfazFuncion{Vacio}{}{prior}
+	{res $\igobs$ vacío}
+	[$O(1)$]
+	[Crea el diccionario vacío]
+
+	\InterfazFuncion{Definir}{\Inout{p}{prior}, \In{a}{$\alpha$}, \In{s}{$\sigma$}}{}
+	[$p \igobs p_0$]
+	{$p \igobs$ definir($a, s, p_0$)}
+	[$O(log(\#KEY))$]
+	[define una clave y su significado en el diccionario, de manera que este continue ordenado.]
+	[se almacenan copias de $a$ y $s$.]
+
+	\InterfazFuncion{Definido?}{\In{p}{prior}, \In{a}{$\alpha$}}{bool}
+	{$res \igobs$ def?($a, p$)]}
+	[$O(log(\#KEY))$]
+	[devuelve \texttt{true} si el jugador esta definido en el diccionario.]
+
+	\InterfazFuncion{EsVacio?}{\In{p}{prior}}{bool}
+	{$res \igobs$ esVacio?($p$)]}
+	[$O(1)$]
+	[devuelve \texttt{true} si el diccionario está vacio]
+
+	\InterfazFuncion{Borrar}{\Inout{p}{prior}, \In{a}{$\alpha$}}{}
+	[$p \igobs p_0 \land$ def?($j, d_0$)]
+	{$p \igobs$ borrar($a, p_0$)}
+	[$O(log(\#KEY))$]
+	[borra una clave del diccionario junto a su significado.]
+
+	\InterfazFuncion{Claves}{\In{p}{prior}}{conj($\alpha$)}
+	{alias($res =$ claves($p$))}
+	[$O(\#KEY)$]
+	[devuelve el conjunto de las claves del diccionario.]
+	[$res$ no es modificable.]
+
+	%\InterfazFuncion{Menor}{\Inout{p}{prior}}{jugador}
+	%[$\neg\emptyset$?(claves($p$))]
+	%{$res \igobs$ menor($p$, claves($p$))}
+	%[$O(log(\#j))$]
+	%[devuelve el jugador con menos pokemons en el diccionario]
+
+	%TODO pasarla a conjPrior
+
+  %\TituloDis{Especificación de las operaciones auxiliares utilizadas en la interfaz}
+
+  %\begin{tad}{Diccionario(Jugador, Nat) Extendido}
+    %\parskip=0pt
+    %\tadExtiende{\tadNombre{{Diccionario($\alpha$,$\sigma$)}}}
+    
+    %\tadTitulo{otras operaciones (exportadas)}
+    %\tadOperacion{menor}{dicc(nat, nat)/d, conj(nat)/c}{nat}{$\neg\emptyset$?(c) $\land$ c $\subseteq$ claves(d)}
+    %\tadOperacion{esVacio?}{dicc(nat, nat)}{bool}{}
+    %\tadAxiomas
+    %\tadAxioma{menor(d,c)}{\IF $\emptyset$?(dameUno(c)) THEN 
+    %	sinUno(c) 
+    %ELSE 
+    %	{\IF obtener(dameUno(c), d) $<$ menor(d, sinUno(c)) THEN
+    %		dameUno(c)
+    %	ELSE
+    %		menor(d, sinUno(c))
+    %	FI}
+    %FI}
+
+   % ~
+
+  %  \tadAxioma{esVacio?(d)}{$\emptyset$?(claves(d))}
+ % \end{tad}
+
+\end{Interfaz}
+
+
+\begin{Representacion}
+	\TituloDis{Representación de prior}
+
+	\begin{Estructura}{prior}[dicPri]
+		\begin{Tupla}[dicPri]
+			\tupItem{raizDicc}{puntero(Nodo)}
+			\tupItem{menor}{nat} %TODO deje esto por si quieren reagregar menor, no se si es util
+		\end{Tupla}
+
+		~ 
+
+		\begin{Tupla}[Nodo]
+			\tupItem{hijoIzq}{puntero(Nodo)}
+			\tupItem{hijoDer}{puntero(Nodo)}				
+			\tupItem{clave}{$\alpha$}
+			\tupItem{significado}{$\sigma$}
+			\tupItem{alto}{nat}
+		\end{Tupla}
+	\end{Estructura}
+
+	\TituloDis{Invariante de Representación}
+
+	\begin{enumerate}
+
+		\item Existe un criterio de ordenamiento para $\alpha$ %TODO HELP @naxio @catOfTheCannals @sebamerquero
+		
+		\item No hay claves repetidas
+
+		\item Para cualquier nodo del arbol, la clave de su hijo izquierdo es menor y la de su hijo derecho es mayor a la suya
+
+		\item La altura de un Nodo es la altura del hijo con mayor altura mas 1
+
+		\item El factor de balanceo es $\leq$ 1 (donde el factor de balanceo es el modulo de la diferencia de las alturas de los hijos)
+
+		%\item El menor es realmente el menor
+
+	\end{enumerate}
+	
+	\Rep[dicPri][e]{
+		sinRepetidos(e.raizDicc, $\emptyset$) $\land$\\
+		ABB?(e.raizDicc) $\land$ altoValido?(e.raizDicc) 
+		%$\land$\\ ($\forall$ a: $\alpha$) definido?(a, e.raizDicc) $\impluego$ obtener(j, e.raizDicc) = obtener(j, e.raizCantidad)) $\land$\\
+		%(e.raizCantidad $\neq$ NULL) $\impluego$ (e.menorID = menor(e.raizCantidad).id $\land$ e.menor = menor(e.raizCantidad).cantPokemons)
+	}
+
+	\TituloDis{Función de Abstracción}
+
+	\Abs[dicPri]{prior}[e]{d}
+	{($\forall j$: jugador)
+	(def?(j, d) = definido?(j, e.raizDicc) $\yluego$ \\
+	(def?(j, d) $\impluego$ obtener(j, d) = obtener(j, e.raizDicc)))
+	}
+
+	\TituloDis{Operaciones auxiliares}
+
+	\tadOperacion{sinRepetidos}{puntero(nodo), conj($\alpha$)}{bool}{}
+	\tadOperacion{ABB?}{puntero(Nodo)/nodo}{bool}{}
+	\tadOperacion{menor?}{puntero(Nodo)/padre, puntero(Nodo)/hijo}{bool}{padre $\neq$ NULL}
+	\tadOperacion{altoValido?}{puntero(nodo)}{bool}{}
+	\tadOperacion{mayorAltura}{nat, nat}{nat}{}
+	\tadOperacion{factorDeBalanceo}{nat, nat}{nat}{}
+	\tadOperacion{cantidadHijos}{puntero(Nodo)}{nat}{}
+	\tadOperacion{definido?}{$\alpha$, puntero(nodo)}{bool}{}
+	\tadOperacion{obtener}{$\alpha$/a, puntero(nodo)/p}{$\sigma$}{definido?(a,p)}
+	\tadOperacion{menor}{puntero(nodo)/p}{puntero(nodo)}{{p $\neq$ NULL}}
+
+
+ 	~
+
+	\tadAxioma{sinRepetidos(padre, claves)}{
+		padre $=$ NULL $\oluego$(padre.clave $\not\in$ claves $\land$ \\
+		sinRepetidos(padre.hijoIzq, Ag(padre.clave, claves)) $\land$ \\
+		sinRepetidos(padre.hijoDer, Ag(padre.clave, claves)))
+	}
+
+	~
+
+	\tadAxioma{ABB?(nodo)}{
+		(nodo = NULL) $\oluego$ \\ 
+		(menor?(nodo, (*nodo).hijoDer) $\land$ $\neg$menor?(nodo, (*nodo).hijoIzq) $\land$ \\
+		ABB?((*nodo).hijoIzq) $\land$ ABB?((*nodo).hijoDer))
+	}
+
+	~
+
+	\tadAxioma{menor?(padre, hijo)}{
+		(hijo = NULL) $\oluego$ 
+		padre.clave $<$ hijo.clave)
+	}
+
+	~
+
+	\tadAxioma{altoValido?(nodo)}{
+		nodo = NULL $\oluego$ \\
+		((*nodo).alto = mayorAltura((*nodo).hijoIzq, (*nodo).hijoDer) + 1 $\land$ \\
+		factorDeBalanceo(cantidadHijos((*nodo).hijoIzq), cantidadHijos((*nodo).hijoDer)) $\leq$ 1 
+	}
+
+	~
+
+	\tadAxioma{mayorAltura(izq, der)}{
+		{\IF cantidadHijos(izq) $<$ cantidadHijos(der) THEN
+			cantidadHijos(izq)
+		ELSE
+			cantidadHijos(der)
+		FI}
+	}
+
+	~
+
+	\tadAxioma{cantidadHijos(nodo)}{
+		{\IF nodo = NULL THEN
+			0
+		ELSE
+			$\beta$((*nodo).hijoIzq $\neq$ NULL) + cantidadHijos((*nodo).hijoIzq) + \\
+			$\beta$((*nodo).hijoDer $\neq$ NULL) + cantidadHijos((*nodo).hijoDer)		
+		FI}
+	}
+
+	~
+
+	\tadAxioma{factorDeBalanceo(izq, der)}{
+		{\IF izq $<$ der THEN
+			der - izq 
+		ELSE
+			izq - der
+		FI}
+	}
+
+	~
+
+	\tadAxioma{definido?(a , p)}{
+		p $\neq$ NULL $\yluego$ (p.clave = a $\lor$ definido?(a, p.hijoIzq) $\lor$ definido?(a, p.hijoDer))
+	}
+
+	~
+
+	\tadAxioma{obtener(a , p)}{
+		{\IF p.clave = a THEN
+			p.significado
+		ELSE
+			{\IF definido?(a, p.hijoIzq) THEN
+				obtener(a, p.hijoIzq)
+			ELSE
+				obtener(a, p.hijoDer)
+			FI}
+		FI}
+	}
+
+	~
+
+	\tadAxioma{menor(p)}{
+		{\IF p.hijoIzq = NULL THEN
+			p
+		ELSE
+			menor(p.hijoIzq)
+		FI}
+	}
+
+\end{Representacion}
+
+\begin{Algoritmos}
+	\TituloDis{Algoritmos de DiccionarioPrioridad}
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iVacio}{}{dicPri}}
+		res.raizDicc $\leftarrow$ NULL\OdeLinea{1}
+	\end{algorithm}
+
+	\complejidad: $O(1)$
+
+	\justifcomp: solo se inicializa el puntero como nulo.
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iDefinido?}{\In{p}{dicPri}, \In{a}{$\alpha$}}{bool}}
+		res $\leftarrow$ BuscarClave(p.raizDicc) $\neq$ NULL\OdeLinea{log(\#KEY)}
+	\end{algorithm}
+
+	\complejidad: $O(log(\#KEY))$
+
+	\justifcomp: buscar el elemento nos cuesta la altura del arbol, y por ser un AVL es $log(\#KEY)$
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iEsVacio?}{\In{p}{dicPri}}{bool}}
+		res $\leftarrow$ p.raizDicc $=$ NULL\OdeLinea{1}
+	\end{algorithm}
+
+	\complejidad: $O(1)$
+
+	\justifcomp: solo se ingresa a la raiz del arbol
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iDefinir}{\Inout{p}{dicPri}, \In{a}{$\alpha$}, \In{s}{$\sigma$}}{}}
+		\If{Definido?(p, a)}{
+			Borrar(p, a)\OdeLinea{log(\#KEY)}
+		}
+		%\If{res.raizDicc = NULL \textbf{or} n $<$ p.menor \textbf{or} (n = p.menor $\land$ j $<$ p.menorId)}{
+		%	p.menor $\leftarrow$ n\OdeLinea{1}
+		%	p.menorId $\leftarrow$ j\OdeLinea{1}
+		%}
+		p.raizDicc $\leftarrow$ InsertarClave(a, s, p.raizDicc)\OdeLinea{log(\#KEY)}
+	\end{algorithm}
+
+	\complejidad: $O(log(\#KEY))$
+
+	\justifcomp: la complejidad de definir un elemento es, como máximo, recorrer todo el arbol, que por invariante de AVL sabemos que es $log(\#KEY)$
+
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iBorrar}{\Inout{p}{dicPri}, \In{a}{$\alpha$}}{}}
+		p.raizJugadores $\leftarrow$ RemoverClave(a, p.raizDicc)\OdeLinea{log(\#KEY)}
+		%\If{j = p.menorId $\land$ p.raizCantidad $\neq$ NULL}{
+		%	puntero(Nodo): minimo $\leftarrow$ BuscarMinimo(p.raizCantidad)\OdeLinea{log(\#KEY)}
+		%	p.menor $\leftarrow$ (*minimo).cantPokemons\OdeLinea{1}
+		%	p.menorId $\leftarrow$ (*minimo).id\OdeLinea{1}
+		%}
+	\end{algorithm}
+
+	\complejidad: $O(log(\#KEY))$
+
+	\justifcomp: la complejidad de buscar o eliminar un elemento es de orden de la altura del arbol, que por invariante de AVL sabemos que es $log(\#KEY)$
+
+	~
+
+	%\begin{algorithm}[H]
+	%	\NoCaptionOfAlgo
+	%	\caption{\algoritmo{iMenor}{\In{p}{dicPri}}{jugador}}
+	%	res $\leftarrow$ p.menorId\OdeLinea{1}
+	%\end{algorithm}
+
+%	\complejidad: $O(1)$
+%
+%	\justifcomp: solo tenemos que acceder a la variable correspondiente
+
+%	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iClaves}{\In{p}{dicPri}}{conj($\alpha$)}}
+		res $\leftarrow$ Vacio()\OdeLinea{1}
+		AgregarClaves(p.raizDicc, res)\OdeLinea{\#KEY}
+	\end{algorithm}
+
+	\complejidad: $O(\#KEY)$
+
+	\justifcomp: el arbol no almacena las claves en una estructura separada, así que las mismas deben obtenerse manualmente recorriendo todo el arbol.
+
+	\TituloDis{Algoritmos auxiliares}
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{BuscarClave}{\In{a}{$\alpha$}, \In{nodo}{puntero(Nodo)}}{puntero(Nodo)}}
+		\Pre{\texttt{true}}
+		\Post{res es igual a un nodo hijo o al que viene por parametro, donde a es la clave del Nodo o bien la clave no está, en cuyo caso es NULL}
+		\BlankLine
+		\uIf{nodo = NULL \textbf{or} (*nodo).clave = a}{
+			res $\leftarrow$ nodo\OdeLinea{1}
+		}
+		\uElseIf{j $<$ (*nodo).clave}{
+			res $\leftarrow$ BuscarClave(a, (*nodo).hijoIzq)\OdeLinea{h}
+		}
+		\Else{
+			res $\leftarrow$ BuscarClave(a, (*nodo).hijoDer)\OdeLinea{h}
+		}
+	\end{algorithm}
+
+	\complejidad: $O(h)$ 
+
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{InsertarClave}{\In{a}{$\alpha$}, \In{s}{$\sigma$}, \Inout{nodo}{puntero(Nodo)}}{puntero(Nodo)}}
+		\Pre{\texttt{true}}
+		\Post{res es igual al mismo nodo que viene por parametro pero con el nuevo nodo(clave:a, significado:s) y balanceado}
+		\BlankLine
+		\eIf{nodo = NULL}{
+			res $\leftarrow$ CrearNodo(a, s)\OdeLinea{1}
+		}{	
+			\eIf{a $<$ n.clave}{
+				(*nodo).hijoIzq $\leftarrow$ InsertarClave(a, s, (*nodo).hijoIzq)\OdeLinea{h}
+			}{
+				(*nodo).hijoDer $\leftarrow$ InsertarClave(a, s, (*nodo).hijoDer)\OdeLinea{h}
+			}
+			res $\leftarrow$ Balancear(nodo)\OdeLinea{1}
+		}
+	\end{algorithm}
+
+	\complejidad: $O(h)$ 
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{RemoverClave}{\In{a}{$\alpha$}, \In{nodo}{puntero(Nodo)}}{puntero(Nodo)}}
+		\Pre{entre los nodo que desprenden del nodo del parametro se encuentra la clave a} 
+		\Post{res es el mismo nodo pero ahora con el hijo removido en esa rama, excepto que sea el nodo que hay que remover, en cuyo caso se convierte en NULL}
+		\BlankLine
+		\uIf{nodo = NULL}{
+			res $\leftarrow$ nodo\OdeLinea{1}
+		}
+		\uElseIf{a $<$ (*nodo).clave}{
+			(*nodo).hijoIzq $\leftarrow$ RemoverClave(a, (*nodo).hijoIzq)\OdeLinea{h}
+			res $\leftarrow$ Balancear(nodo)\OdeLinea{1}
+		}
+		\uElseIf{a $>$ (*nodo).clave}{
+			(*nodo).hijoDer $\leftarrow$ RemoverClave(a, (*nodo).hijoDer)\OdeLinea{h}
+			res $\leftarrow$ Balancear(nodo)\OdeLinea{1}
+		}
+		\Else{
+			puntero(Nodo): i $\leftarrow$ (*nodo).hijoIzq\OdeLinea{1}
+			puntero(Nodo): d $\leftarrow$ (*nodo).hijoDer\OdeLinea{1}
+			\eIf{d = NULL}{
+				res $\leftarrow$ i\OdeLinea{1}
+			}{
+				puntero(Nodo): minimo $\leftarrow$ BuscarMinimo(d)\OdeLinea{h}
+				minimo.hijoDer $\leftarrow$ RemoverMinimo(d)\OdeLinea{h}
+				minimo.hijoIzq $\leftarrow$ i\OdeLinea{1}
+				res $\leftarrow$ Balancear(minimo)\OdeLinea{1}
+			}
+		}
+	\end{algorithm}
+
+	\complejidad: $O(h)$ 
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{BuscarMinimo}{\In{nodo}{puntero(Nodo)}}{puntero(Nodo)}}
+		\Pre{true} 
+		\Post{res es el puntero al minimo hijo del nodo(o el si es el menor)}
+		\BlankLine
+		\eIf{(*nodo).hijoIzq = NULL}{
+			res $\leftarrow$ nodo\OdeLinea{1}
+		}{
+			res $\leftarrow$ BuscarMinimo((*nodo).hijoIzq)\OdeLinea{h}
+		}
+	\end{algorithm}
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{RemoverMinimo}{\In{nodo}{puntero(Nodo)}}{puntero(Nodo)}}
+		\Pre{true} 
+		\Post{res es el el mismo nodo pero con el nodo de mas a la izquierda eliminado(al padre del menor, se le pasan los hijos mayores si es que tiene)}
+		\BlankLine
+		\eIf{(*nodo).hijoIzq = NULL}{
+			res $\leftarrow$ (*nodo).hijoDer\OdeLinea{1}
+		}{
+			(*nodo).hijoIzq = RemoverMinimo((*nodo).hijoIzq)\OdeLinea{h}
+			res $\leftarrow$ Balancear(nodo)\OdeLinea{1}
+		}
+	\end{algorithm}
+
+	
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{AgregarClaves}{\In{nodo}{Nodo}, \Inout{c}{conj(Jugador)}}{}}
+		\Pre{c es un subconjunto de las claves del arbol y nodo es un nodo del arbol}
+		\Post{c es igual a todas las claves del arbol}
+		\BlankLine
+		\If{nodo $\neq$ NULL}{
+			AgregarRapido(c, (*nodo).clave)\OdeLinea{1}
+			AgregarClaves((*nodo).hijoIzq, c)\OdeLinea{\#KEY}
+			AgregarClaves((*nodo).hijoDer, c)\OdeLinea{\#KEY}
+		}
+	\end{algorithm}
+	
+	\complejidad: $O(\#KEY)$
+
+	\justifcomp: el arbol no almacena las claves en una estructura separada, así que las mismas deben obtenerse manualmente recorriendo todo el arbol.
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{CrearNodo}{\In{a}{$\alpha$}, \In{s}{$\sigma$}}{puntero(Nodo)}}
+		\Pre{\texttt{true}}
+		\Post{$res$ apunta a un nodo de alto 1 con clave $a$ y significado $s$}
+		\BlankLine
+		Nodo: nuevo\OdeLinea{1}
+		nuevo.hijoIzq $\leftarrow$ NULL\OdeLinea{1}
+		nuevo.hijoDer $\leftarrow$ NULL\OdeLinea{1}
+		nuevo.alto $\leftarrow$ 1\OdeLinea{1}
+		nuevo.clave $\leftarrow$ j\OdeLinea{1}
+		nuevo.significado $\leftarrow$ n\OdeLinea{1}
+		res $\leftarrow$ \&nuevo\OdeLinea{1}
+	\end{algorithm}
+	
+	\complejidad: $O(1)$
+
+	\justifcomp: solo se crea e inicializa un nodo.
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{ArreglarAlto}{\Inout{nodo}{puntero(Nodo)}}{}}
+		\Pre{la altura de los hijos de $nodo$ es correcta}
+		\Post{la altura de $nodo$ es igual a la altura máxima de sus hijos + 1}
+		\BlankLine
+		nat: alturaIzq $\leftarrow$ Altura((*nodo).hijoIzq)\OdeLinea{1}
+		nat: alturaDer $\leftarrow$ Altura((*nodo).hijoDer)\OdeLinea{1}
+		\eIf{alturaIzq $<$ alturaDer}{
+			(*nodo).alto $\leftarrow$ alturaDer + 1\OdeLinea{1}
+		}{
+			(*nodo).alto $\leftarrow$ alturaIzq + 1\OdeLinea{1}
+		}
+	\end{algorithm}
+	
+	\complejidad: $O(1)$
+
+	\justifcomp: solo se realizan comparaciones para las alturas de los hijos
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{Altura}{\In{nodo}{puntero(Nodo)}}{nat}}
+		\Pre{\texttt{true}}
+		\Post{$res$ es 0 si $nodo$ es nulo, o igual a la altura del nodo al que apunta en caso contrario}
+		\BlankLine
+		\eIf{nodo = NULL}{
+			res $\leftarrow$ 0\OdeLinea{1}
+		}{
+			res $\leftarrow$ (*nodo).alto\OdeLinea{1}
+		}
+	\end{algorithm}
+	
+	\complejidad: $O(1)$
+
+	\justifcomp: solo se verifica si es nulo o se lee un componente.
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{Balancear}{\Inout{nodo}{puntero(Nodo)}}{puntero(Nodo)}}
+		\Pre{$nodo \neq$ NULL}
+		\Post{el módulo del factor de balanceo de $res$ es menor a 2}
+		\BlankLine
+		ArreglarAlto(nodo)\OdeLinea{1}
+		nat: alturaIzq $\leftarrow$ Altura((*nodo).hijoIzq)\OdeLinea{1}
+		nat: alturaDer $\leftarrow$ Altura((*nodo).hijoDer)\OdeLinea{1}
+		\uIf{alturaDer $>$ alturaIzq \textbf{and} alturaDer - alturaIzq = 2}{
+			\If{Altura((*nodo).hijoDer.hijoIzq) $>$ Altura((*nodo).hijoDer.hijoDer)}{
+				(*nodo).hijoDer $\leftarrow$ rotarDer((*nodo).hijoDer\OdeLinea{1}
+			}
+			res $\leftarrow$ rotarIzq(nodo)\OdeLinea{1}
+		}
+		\uElseIf{alturaIzq $>$ alturaDer \textbf{and} alturaIzq - alturaDer = 2}{
+			\If{Altura((*nodo).hijoIzq.hijoDer) $>$ Altura((*nodo).hijoIzq.hijoIzq)}{
+				(*nodo).hijoIzq $\leftarrow$ rotarIzq((*nodo).hijoIzq)\OdeLinea{1}
+			}
+			res $\leftarrow$ rotarDer(nodo)\OdeLinea{1}
+		}
+		\Else{
+			res $\leftarrow$ nodo\OdeLinea{1}
+		}
+	\end{algorithm}
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{rotarDer}{\In{nodo}{puntero(Nodo)}}{puntero(Nodo)}}
+		\Pre{$nodo$ tiene un hijo izquierdo}
+		\Post{$res$ es el hijo izquierdo de nodo, y arbol se rota a la derecha}
+		\BlankLine
+		puntero(nodo) : aux $\leftarrow$ (*nodo).hijoIzq\OdeLinea{1}
+		(*nodo).hijoIzq $\leftarrow$ (*aux).hijoDer\OdeLinea{1}
+		(*aux).hijoDer $\leftarrow$ nodo\OdeLinea{1}
+		ArreglarAlto(nodo)\OdeLinea{1}
+		ArreglarAlto(aux)\OdeLinea{1}
+		res $\leftarrow$ aux\OdeLinea{1}
+	\end{algorithm}
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{rotarIzq}{\In{nodo}{puntero(Nodo)}}{puntero(Nodo)}}
+		\Pre{$nodo$ tiene un hijo derecho}
+		\Post{$res$ es el hijo derecho de nodo, y arbol se rota a la izquierda}
+		\BlankLine
+		puntero(nodo) : aux $\leftarrow$ (*nodo).hijoDer\OdeLinea{1}
+		(*nodo).hijoDer $\leftarrow$ aux.hijoIzq\OdeLinea{1}
+		aux.hijoIzq $\leftarrow$ nodo\OdeLinea{1}
+		ArreglarAlto(nodo)\OdeLinea{1}
+		ArreglarAlto(aux)\OdeLinea{1}
+		res $\leftarrow$ aux\OdeLinea{1}
+	\end{algorithm}
+	
+	\complejidad: $O(1)$
+
+	\justifcomp: las rotaciones son una serie de comparaciones y asignaciones de punteros ($\Theta(1)$). El invariante de orden del arbol de búsqueda (ABB) se preserva luego de cada rotación. El invariante de balanceo de AVL se restaura para cada subarbol al final de \texttt{Balancear}, pero no luego de cada rotación individual (puede ser necesario rotar un subarbol de manera temporalmente imbalanceada para restaurar el balance de un arbol).
+
+\end{Algoritmos}

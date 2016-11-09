@@ -1,0 +1,200 @@
+\section{Módulo ConjuntoOrd($\alpha$)}
+
+Este conjunto aprovecha el orden absoluto de los jugadores (nats) para almacenar los datos en un arbol de búsqueda autobalanceado (AVL). Esto permite agregar, buscar y remover cualquier elemento en tiempo logarítmico.
+
+Usaremos $\#c$ para denotar la cantidad de entradas del diccionario.
+
+\begin{Interfaz}
+	\textbf{se explica con}: \tadNombre{Conjunto($\alpha$)}, \tadNombre{Iterador Unidireccional(Jugador)}.
+
+	\textbf{géneros}: \TipoVariable{conjOrd}, \TipoVariable{itConjOrd}.
+
+	\TituloDis{Operaciones básicas de ConjuntoOrd($\alpha$)}
+
+	\InterfazFuncion{Vacio}{}{conjOrd}
+	{res $\igobs \emptyset$ }
+	[$O(1)$]
+	[Crea el conjunto vacío]
+
+	\InterfazFuncion{Agregar}{\Inout{c}{conjOrd}, \In{a}{$\alpha$}}{}
+	[$c \igobs c_0$]
+	{$c \igobs$ Ag($a, c_0$)}
+	[$O(log(\#c))$]
+	[Agrega al conjunto a]
+	[se almacenan copias de $a$.]
+
+	\InterfazFuncion{Pertenece?}{\In{c}{conjOrd}, \In{a}{$\alpha$}}{bool}
+	{$res \igobs$ $a \in c$)]}
+	[$O(log(\#c))$]
+	[devuelve \texttt{true} si a esta en el conjunto.]
+
+	\InterfazFuncion{Borrar}{\Inout{c}{conjOrd}, \In{a}{$\alpha$}}{}
+	[$c \igobs c_0$)]
+	{$c \igobs$ borrar($a, c_0$)}
+	[$O(log(\#c))$]
+	[borra a del conjunto.]
+
+
+	\TituloDis{Operaciones básicas del iterador}
+
+	El iterador que presentamos no permite modificar el conjunto recorrido.
+
+
+	\InterfazFuncion{CrearIt}{\In{c}{conjOrd}}{itConjOrd}
+	{true}
+	[$O(1)$]
+	[crea un iterador unidireccional de los jugadores validos o expulsados.]
+	[el iterador se invalida si y solo si se elimina el siguiente elemento del iterador. Además, siguientes($res$) podría cambiar completamente ante cualquier operación que modifique el conjunto.]
+
+	\InterfazFuncion{HayMas}{\In{it}{itConjOrd}}{bool}
+	{$res$ $\igobs$ hayMas?($it$)}
+	[$O(1)$]
+	[devuelve \texttt{true} si y sólo si en el iterador todavía quedan elementos para avanzar.]
+
+	\InterfazFuncion{Actual}{\In{it}{itConjOrd}}{jugador}
+	[HayMas?($it$)]
+	{$res$ $\igobs$ Actual($it$)}
+	[$O(1))$]
+	[devuelve el elemento siguiente a la posición del iterador.]
+
+	\InterfazFuncion{Avanzar}{\Inout{it}{itConjOrd}}{}
+	[$it = it_0$ $\land$ HayMas?($it$)]
+	{$it$ $\igobs$ Avanzar($it_0$)}
+	[$O(log(\#c))$]
+	[avanza a la posición siguiente del iterador.]
+
+\end{Interfaz}
+
+
+\begin{Representacion}
+	\TituloDis{Representación de conjOrd}
+
+	\begin{Estructura}{conjOrd}[eConj]
+		\begin{Tupla}[eConj]
+			\tupItem{TODO}{TODO ACA VA EL DICCIONARIO}
+		\end{Tupla}
+	\end{Estructura}
+
+	\TituloDis{Invariante de Representación de ConjuntoOrd($\alpha$)}
+	
+	\Rep[eConj][e]{}
+	%%TODO FiJARSE SI ESTA EL TRUE SI NO PONERLO
+
+	\TituloDis{Función de Abstracción}
+
+	\Abs[eConj]{conjOrd}[e]{d}
+	{($\forall a$: $\alpha$) a $\in$ d = definido?(a, e.raiz)}
+	%%TODO cambiar e.raiz
+
+	\TituloDis{Representación del iterador}
+
+	\begin{Estructura}{itConjOrd}[itJugs]
+		\begin{Tupla}[itJugs]
+			\tupItem{conjunto}{puntero(conjOrd)}
+			\tupItem{pila}{pila(puntero(Nodo))}
+		\end{Tupla}
+	\end{Estructura}
+
+	\TituloDis{Invariante de Representación del iterador}
+
+	\begin{enumerate}
+
+		\item El conjunto no es nulo
+
+		\item Ningún elemento de la pila es nulo
+
+		\item Todo elemento de la pila es menor al anterior
+
+	\end{enumerate}
+
+	\Rep[itJugs][it]{it.conjunto $\neq$ NULL $\land$ PilaValida?(it.pila)}
+
+
+	\TituloDis{Función de Abstracción del iterador}
+
+	\Abs[itJugs]{itUni(nat)}[it]{b}{Siguientes(b) $=$ Sigs(it.pila)}
+
+	\tadOperacion{PilaValida?}{pila(puntero(Nodo))}{bool}{}
+	\tadOperacion{Sigs}{pila(puntero(Nodo))}{secu(jugador)}{}
+	\tadOperacion{Hijos}{puntero(Nodo)/n}{secu(jugador)}{n $\neq$ NULL}
+	\tadOperacion{HijosDer}{pila(puntero(Nodo))/p}{secu(jugador)}{}
+
+	~
+	\tadAxioma{PilaValida?(p)}{
+	vacia?(p) $\oluego$ (PilaValida?(desapilar(p)) $\land$ tope(p) $\neq$ NULL $\yluego$ \\
+	(vacia?(desapilar(p)) $\oluego$ (*tope(p)).id $<$ (*tope(desapilar(p))).id))}
+
+	~
+
+	\tadAxioma{Sigs(p)}{
+	\IF vacia?(p) THEN
+		\secuvacia
+	ELSE
+		Hijos(tope(p)) \& HijosDer(desapilar(p))
+	FI}
+
+
+	\tadAxioma{Hijos(n)}{
+	\IF n = NULL THEN
+		\secuvacia
+	ELSE
+		(*n).id \puntito (Hijos((*n).hijoIzq) \& Hijos((*n).hijoDer))
+	FI}
+
+	~
+
+	\tadAxioma{HijosDer(n)}{
+	\IF vacia?(p) THEN
+		\secuvacia
+	ELSE
+		Hijos((*tope(p)).hijoDer) \& HijosDer(desapilar(p))
+	FI}
+
+
+\end{Representacion}
+
+\begin{Algoritmos}
+	\TituloDis{Algoritmos de ConjuntoOrd($\alpha$)}
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iVacio}{}{eConj}}
+		res.raiz $\leftarrow$ NULL\OdeLinea{1}
+	\end{algorithm}
+
+	\complejidad: $O(1)$
+
+	\justifcomp: solo se inicializan los punteros como nulos.
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iPertenece?}{\In{c}{eConj}, \In{a}{$\alpha$}}{bool}}
+		res $\leftarrow$ Definido?(c.raiz, a) \OdeLinea{log(\#c)}
+	\end{algorithm}
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iAgregar}{\Inout{c}{eConj}, \In{a}{$\alpha$}}{}}
+		p.raiz $\leftarrow$ Definir(c.raiz, a, true)\OdeLinea{log(\#c)}
+	\end{algorithm}
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iBorrar}{\Inout{c}{eConj}, \In{a}{$\alpha$}}{}}
+		p.raiz $\leftarrow$ Borrar(c.raiz, a)\OdeLinea{log(\#c)}
+	\end{algorithm}
+
+	\complejidad: $O(log(\#c))$
+
+	\justifcomp: la complejidad de buscar, agregar o eliminar un elemento es de orden de la altura del arbol, que por invariante de AVL sabemos que es $log(\#c)$
+
+
+
+
+\end{Algoritmos}
