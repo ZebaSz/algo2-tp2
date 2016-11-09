@@ -18,21 +18,21 @@ Usaremos $\#c$ para denotar la cantidad de entradas del diccionario.
 
 	\InterfazFuncion{Agregar}{\Inout{c}{conjOrd}, \In{a}{$\alpha$}}{}
 	[$c \igobs c_0$]
-	{$c \igobs$ Ag($j, c_0$)}
+	{$c \igobs$ Ag($a, c_0$)}
 	[$O(log(\#c))$]
-	[Agrega al conjunto j]
-	[se almacenan copias de $j$.]
+	[Agrega al conjunto a]
+	[se almacenan copias de $a$.]
 
 	\InterfazFuncion{Pertenece?}{\In{c}{conjOrd}, \In{a}{$\alpha$}}{bool}
-	{$res \igobs$ $j \in c$)]}
+	{$res \igobs$ $a \in c$)]}
 	[$O(log(\#c))$]
-	[devuelve \texttt{true} si el jugador esta en el conjunto.]
+	[devuelve \texttt{true} si a esta en el conjunto.]
 
 	\InterfazFuncion{Borrar}{\Inout{c}{conjOrd}, \In{a}{$\alpha$}}{}
 	[$c \igobs c_0$)]
-	{$c \igobs$ borrar($j, c_0$)}
+	{$c \igobs$ borrar($a, c_0$)}
 	[$O(log(\#c))$]
-	[borra un jugador del conjunto.]
+	[borra a del conjunto.]
 
 
 	\TituloDis{Operaciones básicas del iterador}
@@ -76,12 +76,6 @@ Usaremos $\#c$ para denotar la cantidad de entradas del diccionario.
 	\end{Estructura}
 
 	\TituloDis{Invariante de Representación de ConjuntoOrd($\alpha$)}
-
-	\begin{enumerate}
-
-	\item
-
-	\end{enumerate}
 	
 	\Rep[eConj][e]{}
 	%%TODO FiJARSE SI ESTA EL TRUE SI NO PONERLO
