@@ -38,10 +38,34 @@
 	[devuelve el elemento mas chico]
 
 	\InterfazFuncion{Desencolar}{\Inout{c}{\colaPrior}{}
-	[$c \igobs c_0$]
+	[$\not vacía(c)$ $\land$ $c \igobs c_0$]
 	{$res \igobs$ desencolar($c_0$)}
 	[$O()$]
 	[elimina el elemento mas chico de la cola]
 
+	\InterfazFuncion{Borrar}{\Inout{c, \In{e}{$\alpha$}}{\colaPrior}{}
+	[$c \igobs c_0$]
+	{$res \igobs$ borrar($c_0$, e)}
+	[$O()$]
+	[elimina el elemento e de la cola]
 
+  \TituloDis{Especificación de las operaciones auxiliares utilizadas en la interfaz}
+
+  \begin{tad}{Diccionario(Jugador, Nat) Extendido}
+    \parskip=0pt
+    \tadExtiende{\tadNombre{Diccionario(Jugador, Nat)}}
+    
+    \tadTitulo{otras operaciones (exportadas)}
+    \tadOperacion{borrar}{colaPrior($\alpha$)/c $\alpha$/a}{nat}{}
+    \tadAxiomas
+    \tadAxioma{borrar(c,a)}{\IF vacia?(c) $\oluego$ THEN 
+    	c
+    ELSE 
+    	{\IF proximo(c) = a THEN
+    		desencolar(c)
+    	ELSE
+    		encolar(proximo(c), borrar(desencolar(c),a))
+    	FI}
+    FI}
+  \end{tad}
 \end{Interfaz}
