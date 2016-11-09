@@ -1,10 +1,8 @@
 \section{Módulo DiccionarioPrioridad}
 
-Este diccionario utiliza como cutiliza dos criterios de ordenamiento: por la clave y por el significado. Esto permite definir, obtener y remover cualquier elemento al igual que buscar el mínimo elemento en tiempo logarítmico.
+Este diccionario está diseñado sobre un AVL, lo cual permite permite definir, obtener y remover cualquier elemento al igual que buscar el mínimo elemento en tiempo logarítmico. Este está ordenado en base al conjunto de claves, por lo cual se requiere que las mismas sean comparables entre sí.
 
-En el ordenamiento por significado, para los casos en los que hay dos significados iguales, se utiliza nuevamente la clave.
-
-También se almacenan los valores del mínimo elemento para retornarlos en tiempo constante.
+%También se almacenan los valores del mínimo elemento para retornarlos en tiempo constante.
 
 Usaremos $\#KEY$ para denotar la cantidad de entradas del diccionario.
 
