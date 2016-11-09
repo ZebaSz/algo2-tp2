@@ -134,7 +134,7 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 
 	\InterfazFuncion{EntrenadoresPosibles}{\In{j}{juego}, \In{c}{coor}}{conj(jugador)}
 	[hayPokémonCercano($c,j$)]
-	{$res \igobs$ entrenadoresPosibles($c, jugadores(j), j$)}
+	{$res \igobs$ entrenadoresPosibles($c, jugadores(j), j$)} %TODO aca roni toco la aridad pero no nos pusimos de acuerdo sobre como hacerlo
 	[$O(EC)$]
 	[devuelve el conjunto de jugadores esperando a capturar el pokémon que se encuentra en la posición.]
 	[$res$ no es modificable.]
@@ -557,8 +557,8 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 		j.grillaPos[Latitud(c)][Longitud(c)].hayPokemon $\leftarrow$ true\OdeLinea{1}
 		j.grillaPos[Latitud(c)][Longitud(c)].pokemon $\leftarrow$ pk\OdeLinea{|pk|}
 		j.grillaPos[Latitud(c)][Longitud(c)].contadorCaptura $\leftarrow$ 0\OdeLinea{1}
-		\tcc{Se desestima la complejidad de borrar el diccionario de prioridad anterior}
-		j.grillaPos[Latitud(c)][Longitud(c)].jugEsperandoCaptura $\leftarrow$ Vacio()\OdeLinea{1}
+		\tcc{Se desestima la complejidad de borrar la cola de prioridad anterior}
+		j.grillaPos[Latitud(c)][Longitud(c)].jugEsperandoCaptura $\leftarrow$ Vacia()\OdeLinea{1}
 
 		conj(coor) : coorEnRango $\leftarrow$ PosicionesEnRango(j, c, 2)\OdeLinea{1}
 		itBi(coor) : itCoor $\leftarrow$ CrearIt(coorEnRango)\OdeLinea{1}
@@ -568,7 +568,7 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 			itConjJugs : it $\leftarrow$ CrearIterador(j.grillaPos[Latitud(d)][Longitud(d)].jugsEnPos)\OdeLinea{1}
 			\While(\OdeBloque{EC \times log(EC)}){HayMas(it)}{
 				jugador: jug $\leftarrow$ Actual(it)\OdeLinea{1}
-				Definir(j.grillaPos[Latitud(c)][Longitud(c)].jugEsperandoCaptura, jug, (*j.jugadores[jug]).cantPokemons)\OdeLinea{log(EC)}
+				Encolar(TUPLA A DEFINIR, j.grillaPos[Latitud(c)][Longitud(c)].jugEsperandoCaptura)\OdeLinea{log(EC)}
 				Avanzar(it)\OdeLinea{1}
 			}
 			Avanzar(itCoor)\OdeLinea{1}
@@ -639,7 +639,7 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 			\tcc{Si el jugador debe ser eliminado, borramos sus pokémons}
 			itDiccString(nat) : pokesABorrar $\leftarrow$ CrearIt((*j.jugadores[e]).pokemonsCapturados)\OdeLinea{1}
 			\While(\OdeBloque{PC \times |P|}){HaySiguiente(pokesABorrar)}{
-				tupla(calve: String, significado: Nat) : sig $\leftarrow$ Siguiente(pokesABorrar)\OdeLinea{|P|}
+				tupla(clave: String, significado: Nat) : sig $\leftarrow$ Siguiente(pokesABorrar)\OdeLinea{|P|}
 
 				nat: nuevaCant $\leftarrow$ Obtener(j.pokemons, sig.clave) - sig.significado\OdeLinea{|P|}
 				Definir(j.pokemons, pk, nuevaCant)\OdeLinea{|P|}
@@ -883,7 +883,7 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 		\BlankLine
 		res.hayPokemon? $\leftarrow$ false\OdeLinea{1}
 		res.contadorCaptura $\leftarrow$ 0\OdeLinea{1}
-		res.jugEsperandoCaptura $\leftarrow$ Vacio()\OdeLinea{1}
+		res.jugEsperandoCaptura $\leftarrow$ Vacia()\OdeLinea{1}
 		res.jugsEnPos $\leftarrow$ Vacio()\OdeLinea{1}
 	\end{algorithm}
 	
@@ -921,7 +921,7 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 		\While(\OdeBloque{log(EC)}){HaySiguiente(itCoor)}{
 			coor: siguiente $\leftarrow$ Siguiente(itCoor)\OdeLinea{1}
 			\If{HayPokémonEnPos(j, siguiente).hayPokemon}{
-				Definir(j.grillaPos[Latitud(siguiente)][Longitud(siguiente)].jugEsperandoCaptura, (*j.jugadores[e]).cantPokemons)\OdeLinea{log(EC)}
+				Encolar(TUPLA A DEFINIR, j.grillaPos[Latitud(siguiente)][Longitud(siguiente)].jugEsperandoCaptura)\OdeLinea{log(EC)}
 			}
 			Avanzar(itCoor)\OdeLinea{1}
 		}
@@ -945,7 +945,7 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 		\While(\OdeBloque{log(EC)}){HaySiguiente(itCoor)}{
 			coor: siguiente $\leftarrow$ Siguiente(itCoor)\OdeLinea{1}
 			\If{HayPokémonEnPos(j, siguiente).hayPokemon}{
-				Borrar(j.grillaPos[Latitud(siguiente)][Longitud(siguiente)].jugEsperandoCaptura, e)\OdeLinea{log(EC)}
+				Desencolar(TUPLA A DEFINIR, j.grillaPos[Latitud(siguiente)][Longitud(siguiente)].jugEsperandoCaptura)\OdeLinea{log(EC)}
 			}
 			Avanzar(itCoor)\OdeLinea{1}
 		}
