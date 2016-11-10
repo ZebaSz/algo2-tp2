@@ -313,7 +313,7 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 	~
 
 	\tadAxioma{jugadoresConectadosEstanEnLaPos(e)}{
-		($\forall i$: nat) ((i $\leq$ long(e.jugadores) $\land$ e.jugadores[i]$\rightarrow$conectado?)$\implies$(i $\in$ \\ e.grillaPos[longitud(e.jugadores[i]$\rightarrow$posicion)][latitud(e.jugadores[i]$\rightarrow$posicion)].jugsEnPos))
+		($\forall i$: nat) ((i $\leq$ long(e.jugadores) $\land$ e.jugadores[i]$\rightarrow$conectado?)$\implies$(i $\in$ \\ e.grillaPos[longitud(e.jugadores[i]$\rightarrow$posicion)] [latitud(e.jugadores[i]$\rightarrow$posicion)].jugsEnPos))
 	}
 	
 	~
@@ -483,6 +483,8 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 
 
 	\TituloDis{Representación del iterador de jugadores}
+
+	A modo de generalización, este iterador acepta un parámetro extra que define si se deben iterar los jugadores registrados válidos o los expulsados. La idea es que el constructor de este iterador no se exponga salvo a través de las funciones correspondientes de Juego (jugadores y expulsados).
 
 	\begin{Estructura}{itJugadores}[itJug]
 		\begin{Tupla}[itJug]
@@ -656,8 +658,7 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 				nat: nuevaCant $\leftarrow$ Obtener(j.pokemons, sig.clave) - sig.significado\OdeLinea{|P|}
 				\eIf{nuevaCant = 0}{
 					Borrar(j.pokemons, pk)\OdeLinea{|P|}
-				}
-				{
+				}{
 					Definir(j.pokemons, pk, nuevaCant)\OdeLinea{|P|}
 				}
 				j.cantPokemons $\leftarrow$ j.cantPokemons - sig.significado\OdeLinea{1}
@@ -674,7 +675,7 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 		\While(\OdeBloque{PS \times |P|}){HaySiguiente?(it)}{
 			coor: coorConPk $\leftarrow$ Siguiente(it)\OdeLinea{1}
 			\eIf{DistEuclidea(c, coorConPk) $>$ 4}{
-				\tcc{Si el movimiento es lejano, sumar al contador e manejar captura si corresponde}
+				\tcc{Si el movimiento es lejano, sumar al contador y manejar captura si corresponde}
 				j.grillaPos[Latitud(coorConPk)][Longitud(coorConPk)].contadorCaptura $\leftarrow$ j.grillaPos[Latitud(coorConPk)][Longitud(coorConPk)].contadorCaptura +1\OdeLinea{1}
 				infoPos: posPk $\leftarrow$ j.grillaPos[Latitud(coorConPk)][Longitud(coorConPk)]\OdeLinea{1}
 				\eIf{posPk.contadorCaptura = 10}{
@@ -849,9 +850,9 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{iEntrenadoresPosibles}{\In{j}{pokego}, \In{es}{conj(jugador)}, \In{c}{coor}}{conj(jugador)}}
 		res $\leftarrow$ Vacio()\OdeLinea{1}
-		itColaPrior(jugador): entrenadores $\leftarrow$ CrearIt(j.grillaPos[Latitud(c)][Longitud(c)].jugEsperandoCaptura)\OdeLinea{1}
+		itColaPrior(tupOrd(jugador,nat)): entrenadores $\leftarrow$ CrearIt(j.grillaPos[Latitud(c)][Longitud(c)].jugEsperandoCaptura)\OdeLinea{1}
 		\While(\OdeBloque{EC \times \#(es)}){HayMas?(entrenadores)}{
-			jugador: actual $\leftarrow$ Siguiente(entrenadores).jugador\OdeLinea{1}
+			jugador: actual $\leftarrow \pi_1$(Actual(entrenadores))\OdeLinea{1}
 			\If(\OdeBloque{\#(es)}){Pertenece?(es,actual)}{
 				AgregarRapido(res, actual)\OdeLinea{1}
 			}
