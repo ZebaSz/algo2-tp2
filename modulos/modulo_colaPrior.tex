@@ -2,7 +2,7 @@
 
 Esta cola de prioridad genérica se representa sobre un conjunto, el cual a su vez se implementa sobre un arbol de búsqueda autobalanceado (AVL). Gracias a esto, no solo podemos realizar cualquier función en tiempo logarítmico o menor, sino que también nos permite agregar la función Borrar, que nos permite eliminar cualquier elemento de la cola. Para establecer correctamente la prioridad, se requiere que $\alpha$ tenga definida una relación de orden estricta.
 
-Se usa $\#C$ para hablar de la cantidad de elementos de la cola
+Se usa $\#C$ para denotar la cantidad de elementos de la cola, $elem_1$ y $elem_2$ para representar elementos cualesquiera de la cola (aquellos que más cueste comparar) y $newMin$ para representar el nuevo mínimo luego de haber removido el mínimo actual.
 
 \begin{Interfaz}
 
@@ -36,7 +36,7 @@ Se usa $\#C$ para hablar de la cantidad de elementos de la cola
 	\InterfazFuncion{Encolar}{\Inout{c}{colaPrior}, \In{a}{$\alpha$}}{}
 	[$c \igobs c_0$]
 	{$res \igobs$ encolar($a, c_0$)}
-	[$O(log(\#C) + copy(a))$]
+	[$O(log(\#C) \times isLess(a, elem_1) + copy(a))$]
 	[encola un elemento.]
 	[se almacena una copia de $a$.]
 
@@ -55,13 +55,13 @@ Se usa $\#C$ para hablar de la cantidad de elementos de la cola
 	\InterfazFuncion{Desencolar}{\Inout{c}{colaPrior}}{}
 	[$\neg$ vacía(c) $\land$ $c \igobs c_0$]
 	{$res \igobs$ desencolar($c_0$)}
-	[$O(log(\#C))$]
+	[$O(log(\#C) \times isLess(elem_1, elem_2))$]
 	[desencola el elemento mas chico de la cola.]
 
 	\InterfazFuncion{Borrar}{\Inout{c}{colaPrior}, \In{a}{$\alpha$}}{colaPrior}
 	[$c \igobs c_0$]
 	{$res \igobs$ borrar($c_0$, a)}
-	[$O(log(\#C))$]
+	[$O(log(\#C) \times isLess(elem_1, elem_2))$]
 	[desencola un elemento particular de la cola si el mismo pertenecía.]
 
   \TituloDis{Especificación de las operaciones auxiliares utilizadas en la interfaz}
@@ -182,23 +182,23 @@ Se usa $\#C$ para hablar de la cantidad de elementos de la cola
 
 	\complejidad: $O(1)$
 
-	\justifcomp: solo se inicializa el conjunto vacío
+	\justifcomp: solo se inicializa el conjunto vacío.
 
 	~
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
-		\caption{\algoritmo{iEncolar}{\Inout{c}{eCola}, \In{e}{$\alpha$}}{}}
+		\caption{\algoritmo{iEncolar}{\Inout{c}{eCola}, \In{a}{$\alpha$}}{}}
 		$\alpha$ : min $\leftarrow$ c.menor\OdeLinea{1}
-		c.conjElem $\leftarrow$ Agregar(c.conjElem, e)\OdeLinea{log($\#C$)}
-		\If{e $<$ min}{
-				c.menor $\leftarrow$ Minimo(c.conjElem)\OdeLinea{log($\#C$)}
-			}
+		c.conjElem $\leftarrow$ Agregar(c.conjElem, a)\OdeLinea{log($\#C$) \times isLess(a, elem_1) + copy(a)}
+		\If{a $<$ min}{
+			c.menor $\leftarrow$ a\OdeLinea{copy(a)}
+		}
 	\end{algorithm}
 
-	\complejidad: $O(log(\#C))$
+	\complejidad: $O(log(\#C) \times isLess(a, elem_1) + copy(a))$
 
-	\justifcomp: hay que agregar el elemento al conjunto, y por invariante de AVL esto nos cuenta O(log($\#C$)). En caso de que sea el menor, hay que encontrar el elemento y cambiarlo O(log($\#C$))
+	\justifcomp: se utilizan operaciones del conjunto. También se copia el elemento aparte en caso de ser un nuevo mínimo.
 
 	~
 
@@ -222,34 +222,34 @@ Se usa $\#C$ para hablar de la cantidad de elementos de la cola
 
 	\complejidad: $O(1)$
 
-	\justifcomp: conseguimos el minimo del conjunto en O(1) gracias al iterador que tenemos guardado
+	\justifcomp: conseguimos el minimo del conjunto en O(1) gracias a la copia que tenemos guardada.
 
 	~
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{iDesencolar}{\Inout{c}{eCola}}{}}
-		res.raiz $\leftarrow$ NULL\OdeLinea{1}
+		Borrar(c, c.menor)\OdeLinea{log(\#C) \times isLess(elem_1, elem_2) + copy(newMin)}
 	\end{algorithm}
 
-	\complejidad: $O(1)$
+	\complejidad: $O(log(\#C) \times isLess(elem_1, elem_2) + copy(newMin))$
 
-	\justifcomp: solo se inicializan los punteros como nulos.
+	\justifcomp: se utilizan operaciones del conjunto. También se busca y copia el nuevo mínimo.
 
 	~
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
-		\caption{\algoritmo{iBorrar}{\Inout{c}{eCola}, \In{e}{$\alpha$}}{}}
-		c.conjElem $\leftarrow$ Borrar(e, c.conjElem)\OdeLinea{log(\#C)}
-		\If{e = menor \textbf{and not} Vacio?(c.conjElem)}{
-			c.menor $\leftarrow$ Minimo(c.conjElem)\OdeLinea{log(\#C)}
+		\caption{\algoritmo{iBorrar}{\Inout{c}{eCola}, \In{a}{$\alpha$}}{}}
+		c.conjElem $\leftarrow$ Borrar(e, c.conjElem)\OdeLinea{log(\#C) \times isLess(elem_1, elem_2)}
+		\If{a = menor \textbf{and not} Vacio?(c.conjElem)}{
+			c.menor $\leftarrow$ Minimo(c.conjElem)\OdeLinea{log(\#C) \times isLess(elem_1, elem_2) + copy(newMin)}
 		}
 	\end{algorithm}
 
-	\complejidad: $O(log(\#C))$
+	\complejidad: $O(log(\#C) \times isLess(elem_1, elem_2) + copy(newMin))$
 
-	\justifcomp: borrar el elemento del conjunto cuesta log($\#C$) y, si es el minimo, encontrar el nuevo minimo cuesta también log($\#C$)
+	\justifcomp: se utilizan operaciones del conjunto. También se busca y copia el nuevo mínimo de ser necesario.
 
 	~
 
