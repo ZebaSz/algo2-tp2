@@ -1,0 +1,123 @@
+\section{Módulo Tupla con Orden}
+
+TODO
+
+\begin{Interfaz}
+
+	\textbf{parámetros formales}\hangindent=2\parindent\\
+	\parbox{1.7cm}{\textbf{géneros}}$\alpha$\\
+	\parbox[t]{1.7cm}{\textbf{función}}\parbox[t]{.5\textwidth-\parindent-1.7cm}{
+		\InterfazFuncion{$\bullet < \bullet$}{\In{k_1}{$\alpha$}, \In{k_2}{$\alpha$}}{bool}
+		{$res \igobs (a_1 < a_2)$}
+		[$\Theta(isLess(a_1, a_2))$]
+		[comparación de $\alpha$'s]
+		% TODO: ver todas las complejidades con esto
+	}
+	\parbox[t]{1.7cm}{\textbf{función}}\parbox[t]{.5\textwidth-\parindent-1.7cm}{
+		\InterfazFuncion{$\bullet < \bullet$}{\In{k_1}{$\sigma$}, \In{k_2}{$\sigma$}}{bool}
+		{$res \igobs (a_1 < a_2)$}
+		[$\Theta(isLess(a_1, a_2))$]
+		[comparación de $\sigma$'s]
+		% TODO: ver todas las complejidades con esto
+	}
+
+	\textbf{se explica con}: \tadNombre{tupla($\alpha$, $\sigma$)}.
+
+	\textbf{géneros}: \TipoVariable{tupOrd($\alpha$, $\sigma$)}.
+
+	%%\textbf{servicios usados}: \tadNombre{Vector($\alpha$)}
+
+	\TituloDis{Operaciones básicas de Tupla con Orden}
+
+	\InterfazFuncion{CrearTupla}{\In{a}{$\alpha$}, \In{s}{$\sigma$}}{tupOrd}
+	{$res \igobs \langle a, s \rangle$}
+	[$O(1)$]
+	[crea tupla]	
+
+	\InterfazFuncion{$\pi_1$}{\In{t}{tupOrd}}{$\alpha$}
+	{$res \igobs \pi_1 (t)$}
+	[$O(1)$]
+	[Devuelve el primer componente de la tupla]
+
+	\InterfazFuncion{$\pi_2$}{\In{t}{tupOrd}}{$\sigma$}
+	{$res \igobs \pi_2 (t)$}
+	[$O(1)$]
+	[Devuelve la segunda componente de la tupla]
+
+	\InterfazFuncion{$<$}{\In{t1}{tupOrd}, \In{t2}{tupOrd}}{$\alpha$}
+	{$res \igobs t1 < t2$}
+	[$O(1)$]
+	[Devuelve si la primer tupla es mejor a la segunda]
+
+	\TituloDis{Especificación de las operaciones auxiliares utilizadas en la interfaz}
+
+	\begin{tad}{Tupla Extendida}
+	\parskip=0pt
+	\tadExtiende{\tadNombre{tupla($\alpha$, $\sigma$)}}
+
+	\tadTitulo{otras operaciones (exportadas)}
+
+	\tadOperacion{\argumento $<$ \argumento}{tupOrd, tupOrd}{bool}{}
+	
+	\tadAxiomas
+	\tadAxioma{a $<$ b}{ $\pi_2$(a) $<$ $\pi_2$(b) $\lor$ ($\pi_1$(a) = $\pi_1$(b) $\land$ $\pi_1$(a) $<$ $\pi_1$(b)}
+
+
+	\end{tad}
+
+\end{Interfaz}
+
+
+\begin{Representacion}
+	\TituloDis{Representación de Tupĺa con Orden}
+
+	\begin{Estructura}{tupla($\alpha$, $\sigma$)}[eT]
+		\begin{Tupla}[eT]
+			\tupItem{primer}{$\alpha$}
+			\tupItem{segun}{$\sigma$}
+		\end{Tupla}
+	\end{Estructura}
+
+	\TituloDis{Invariante de Representación}
+
+	\Rep[eT][e]{true}
+
+
+	\TituloDis{Función de Abstracción}
+
+	\Abs[eT]{tupOrd}[e]{t}{e.primer = $\pi_1 (t)$ $\land$ e.segun = $\pi_2 (t)$}
+\end{Representacion}
+
+\begin{Algoritmos}
+	\TituloDis{Algorítmos de Tupla con Orden}
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iCrearTupla}{\In{a}{$\alpha$}, \In{s}{$\sigma$}}{eT}}
+		res.primer $\leftarrow$ a\OdeLinea{1}
+		res.segun $\leftarrow$ s\OdeLinea{1}
+	\end{algorithm}
+
+	\complejidad: $O(1)$
+
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{i$\pi_1$}{{\In{t}{eT}}{$\alpha$}}
+		res $\leftarrow$ t.primer\OdeLinea{1}
+	\end{algorithm}
+
+	\complejidad: $O(1)$
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{\argumento $<$ \argumento}{{\In{t1}{eT}, \In{t2}{eT}}{bool}}
+		res $\leftarrow$ t1.segun $<$ t2.segun $\lor$ (t1.segun = t2.segun $\land$ t1.primer $<$ t2.primer\OdeLinea{1}
+	\end{algorithm}
+
+	\complejidad: $O(1)$
+\end{Algoritmos}
