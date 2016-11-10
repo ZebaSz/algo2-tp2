@@ -60,7 +60,7 @@ TODO
 	\tadOperacion{\argumento $<$ \argumento}{tupOrd, tupOrd}{bool}{}
 	
 	\tadAxiomas
-	\tadAxioma{a $<$ b}{ $\pi_2$(a) $<$ $\pi_2$(b) $\lor$ ($\pi_1$(a) = $\pi_1$(b) $\land$ $\pi_1$(a) $<$ $\pi_1$(b)}
+	\tadAxioma{a $<$ b}{ $\pi_2$(a) $<$ $\pi_2$(b) $\lor$ ($\pi_1$(a) = $\pi_1$(b) $\land$ $\pi_1$(a) $<$ $\pi_1$(b))}
 
 
 	\end{tad}
@@ -105,7 +105,7 @@ TODO
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
-		\caption{\algoritmo{i$\pi_1$}{{\In{t}{eT}}{$\alpha$}}
+		\caption{\algoritmo{i$\pi_1$}{\In{t}{eT}}{$\alpha$}}
 		res $\leftarrow$ t.primer\OdeLinea{1}
 	\end{algorithm}
 
@@ -115,8 +115,18 @@ TODO
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
-		\caption{\algoritmo{\argumento $<$ \argumento}{{\In{t1}{eT}, \In{t2}{eT}}{bool}}
-		res $\leftarrow$ t1.segun $<$ t2.segun $\lor$ (t1.segun = t2.segun $\land$ t1.primer $<$ t2.primer\OdeLinea{1}
+		\caption{\algoritmo{i$\pi_2$}{\In{t}{eT}}{$\alpha$}}
+		res $\leftarrow$ t.segun\OdeLinea{1}
+	\end{algorithm}
+
+	\complejidad: $O(1)$
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{\argumento $<$ \argumento}{\In{t1}{eT}, \In{t2}{eT}}{bool}}
+		res $\leftarrow$ t1.segun $<$ t2.segun $\lor$ (t1.segun = t2.segun $\land$ t1.primer $<$ t2.primer)\OdeLinea{1}
 	\end{algorithm}
 
 	\complejidad: $O(1)$
