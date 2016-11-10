@@ -88,7 +88,7 @@ Se usa $\#C$ para hablar de la cantidad de elementos de la cola
 	\end{enumerate}
 
 	\Rep[eCola][e]{
-	HayMas?(CrearIt(e.conjElem)) = HayMas?(e.menor) $\yluego$ \\
+	vacio?(e.conjElem) $\neq$ HayMas?(e.menor) $\yluego$ \\
 	menor(CrearIt(e.conjElem), e.menor)}
 
 	\TituloDis{Operaciones auxiliares}
@@ -106,7 +106,12 @@ Se usa $\#C$ para hablar de la cantidad de elementos de la cola
 	\TituloDis{Función de Abstracción}
 
 	\Abs[eCola]{colaPrior}[e]{d}
-	{a}
+	{\IF vacio?(e.conjElem) THEN
+		vacia
+	ELSE
+		encolar(Actual(e.menor), Abs(borrar(Actual(e.menor), e.conjElem)))
+	}
+
 	%%TODO
 
 	\TituloDis{Representación del iterador}
