@@ -547,7 +547,7 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 		\While(\OdeBloque{EC \times log(EC)}){HaySiguiente(itCoor)}{
 			coor: d $\leftarrow$ Siguiente(itCoor)\OdeLinea{1}
 
-			itConjJugs : it $\leftarrow$ CrearIterador(j.grillaPos[Latitud(d)][Longitud(d)].jugsEnPos)\OdeLinea{1}
+			itConjOrd : it $\leftarrow$ CrearIterador(j.grillaPos[Latitud(d)][Longitud(d)].jugsEnPos)\OdeLinea{1}
 			\While(\OdeBloque{EC \times log(EC)}){HayMas(it)}{
 				jugador: jug $\leftarrow$ Actual(it)\OdeLinea{1}
 				Encolar(j.grillaPos[Latitud(c)][Longitud(c)].jugEsperandoCaptura, CrearTupla(jug, (*j.jugadores[jug]).cantPokemons))\OdeLinea{log(EC)}
@@ -814,7 +814,7 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{iEntrenadoresPosibles}{\In{j}{pokego}, \In{es}{conj(jugador)}, \In{c}{coor}}{conj(jugador)}}
 		res $\leftarrow$ Vacio()\OdeLinea{1}
-		entrenadores $\leftarrow$ CrearIt(j.grillaPos[Latitud(c)][Longitud(c)].jugEsperandoCaptura)\OdeLinea{1}
+		itColaPrior(jugador): entrenadores $\leftarrow$ CrearIt(j.grillaPos[Latitud(c)][Longitud(c)].jugEsperandoCaptura)\OdeLinea{1}
 		\While(\OdeBloque{EC \times \#(es)}){HayMas?(entrenadores)}{
 			jugador: actual $\leftarrow$ Siguiente(entrenadores).jugador\OdeLinea{1}
 			\If(\OdeBloque{\#(es)}){Pertenece?(es,actual)}{
