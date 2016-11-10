@@ -2,28 +2,18 @@
 
 \begin{Interfaz}
 
-	\textbf{se explica con}: \tadNombre{Cola de Prioridad($\alpha$)}, \tadNombre{Iterador Unidireccional($\alpha$)}.
-
-	\textbf{géneros}: \TipoVariable{colaPrior}, \TipoVariable{itColaPrior($\alpha$)}.
-
-	\TituloDis{Operaciones básicas de ColaPrior($\alpha$)}
-
-
-
-
-
-	%\textbf{parámetros formales}\hangindent=2\parindent\\
-	%\parbox{1.7cm}{\textbf{géneros}} \TipoVariable{$\alpha$}\\
-	%\parbox[t]{1.7cm}{\textbf{función}}\parbox[t]{\textwidth-2\parindent-1.7cm}{
-	%	\InterfazFuncion{Copiar}{\In{s}{$\alpha$}}{$\alpha$}
-	%	{$res \igobs s$}
-	%	[$\Theta(copy(s))$]
-	%	[función de copia de $\alpha$'s.]
-	%}
+	\textbf{parámetros formales}\hangindent=2\parindent\\
+	\parbox{1.7cm}{\textbf{géneros}} \TipoVariable{$\alpha$}\\
+	\parbox[t]{1.7cm}{\textbf{función}}\parbox[t]{\textwidth-2\parindent-1.7cm}{
+		\InterfazFuncion{Copiar}{\In{s}{$\alpha$}}{$\alpha$}
+		{$res \igobs s$}
+		[$\Theta(copy(s))$]
+		[función de copia de $\alpha$'s.]
+	}
 
 	\textbf{géneros}: \TipoVariable{colaPrior, itColaPrior}.
 
-	\TituloDis{Operaciones básicas de ColaPrioridad($\alpha$}
+	\TituloDis{Operaciones básicas de ColaPrioridad($\alpha$)}
 
 	\InterfazFuncion{Vacía}{}{colaPrior}
 	{$res$ $\igobs$ vacía}
@@ -43,43 +33,39 @@
 
 	\InterfazFuncion{Próximo}{\In{c}{colaPrior}}{$\alpha$}
 	[$\not$ vacía(c)]
-	{$res \igobs$ próximo?($c$)}
+	{res $\igobs$ próximo?($c$)}
 	[$O(copy(res))$]
 	[devuelve el elemento mas chico]
 
 	\InterfazFuncion{Desencolar}{\Inout{c}{colaPrior}}{}
-	[$c \igobs c_0$]
+	[$\not$ vacía(c) $\land$ $c \igobs c_0$]
 	{$res \igobs$ desencolar($c_0$)}
 	[$O()$]
 	[elimina el elemento mas chico de la cola]
 
+	\InterfazFuncion{Borrar}{\Inout{c}{colaPrior}, \In{e}{$\alpha$}}{colaPrior}
+	[$c \igobs c_0$]
+	{$res \igobs$ borrar($c_0$, e)}
+	[$O()$]
+	[elimina el elemento e de la cola]
 
+  \TituloDis{Especificación de las operaciones auxiliares utilizadas en la interfaz}
+
+  \begin{tad}{Diccionario(Jugador, Nat) Extendido}
+    \parskip=0pt
+    \tadExtiende{\tadNombre{Diccionario(Jugador, Nat)}}
+    
+    \tadTitulo{otras operaciones (exportadas)}
+    \tadOperacion{borrar}{colaPrior($\alpha$), $\alpha$}{nat}{}
+    \tadAxiomas
+    \tadAxioma{borrar(c,a)}{\IF vacia?(c) $\oluego$ THEN 
+    	c
+    ELSE 
+    	{\IF proximo(c) = a THEN
+    		desencolar(c)
+    	ELSE
+    		encolar(proximo(c), borrar(desencolar(c),a))
+    	FI}
+    FI}
+  \end{tad}
 \end{Interfaz}
-
-\begin{Representacion}
-	\TituloDis{Representación de colaPrior}
-
-	\begin{Estructura}{colaPrior}[ePrior]
-		\begin{Tupla}[ePrior]
-			\tupItem{a}{}
-		\end{Tupla}
-	\end{Estructura}
-
-	\TituloDis{Invariante de Representación de ColaPrioridad}
-
-	\begin{enumerate}
-		
-		\item 
-
-	\end{enumerate}
-\end{Representacion}
-
-\begin{Algoritmos}
-
-	\begin{algorithm}[H]
-		\NoCaptionOfAlgo
-		\caption{\algoritmo{iPertenece?}{\In{c}{eConj}, \In{a}{$\alpha$}}{bool}}
-		res $\leftarrow$ Definido?(c.raiz, a) \OdeLinea{log(\#c)}
-	\end{algorithm}
-
-\end{Algoritmos}	
