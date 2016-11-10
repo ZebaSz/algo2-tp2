@@ -2,7 +2,7 @@
 
 Este conjunto genérico se implementa sobre un arbol de búsqueda autobalanceado (AVL). Esto permite agregar, buscar y remover cualquier elemento en tiempo logarítmico. Se requiere que $\alpha$ tenga definida una relación de orden estricta.
 
-Usaremos $\#c$ para denotar la cantidad de entradas del diccionario. También usaremos la función $isLess$ para denotar costos de comparación entre elementos.
+Usaremos $\#c$ para denotar la cantidad de entradas del diccionario y $elem_1$ y $elem_2$ para representar elementos cualesquiera del conjunto (aquellos que más cueste comparar). También usaremos la función $isLess$ para denotar costos de comparación entre elementos.
 
 \begin{Interfaz}
 
@@ -35,13 +35,13 @@ Usaremos $\#c$ para denotar la cantidad de entradas del diccionario. También us
 	\InterfazFuncion{Agregar}{\Inout{c}{conjOrd}, \In{a}{$\alpha$}}{}
 	[$c \igobs c_0$]
 	{$c \igobs$ Ag($a, c_0$)}
-	[$O(log(\#c) \times isLess(\alpha_1, \alpha_2))$]
+	[$O(log(\#c) \times isLess(a, elem_1))$]
 	[agrega $a$ al conjunto.]
 	[se almacenan copias de $a$.]
 
 	\InterfazFuncion{Pertenece?}{\In{c}{conjOrd}, \In{a}{$\alpha$}}{bool}
 	{$res \igobs$ $a \in c$)]}
-	[$O(log(\#c) \times isLess(\alpha_1, \alpha_2)) $]
+	[$O(log(\#c) \times isLess(a, elem_1)) $]
 	[devuelve \texttt{true} si $a$ esta en el conjunto.]
 
 	\InterfazFuncion{Vacio?}{\In{c}{conjOrd}}{bool}
@@ -52,13 +52,13 @@ Usaremos $\#c$ para denotar la cantidad de entradas del diccionario. También us
 	\InterfazFuncion{Borrar}{\Inout{c}{conjOrd}, \In{a}{$\alpha$}}{}
 	[$c \igobs c_0$)]
 	{$c \igobs$ borrar($a, c_0$)}
-	[$O(log(\#c) \times isLess(\alpha_1, \alpha_2)) $]
+	[$O(log(\#c) \times isLess(a, elem_1)) $]
 	[elimina un elemento del conjunto si el mismo existía.]
 
 	\InterfazFuncion{Minimo}{\Inout{c}{conjOrd}}{$\alpha$}
 	[$\neg$vacio?($c$)]
 	{$res \igobs$ minimo($c$)}
-	[$O(log(\#c) \times isLess(\alpha_1, \alpha_2)) $]
+	[$O(log(\#c) \times isLess(elem_1, elem_2)) $]
 	[devuelve el elemento mas chico del conjunto.]
 
 	\TituloDis{Especificación de las operaciones auxiliares utilizadas en la interfaz}
@@ -81,10 +81,9 @@ Usaremos $\#c$ para denotar la cantidad de entradas del diccionario. También us
 		FI}
 	FI}
 
-	~
-
 	\end{tad}
 
+	~
 
 	\TituloDis{Operaciones básicas del iterador}
 
@@ -321,10 +320,10 @@ Usaremos $\#c$ para denotar la cantidad de entradas del diccionario. También us
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{iPertenece?}{\In{c}{eConj}, \In{a}{$\alpha$}}{bool}}
-		res $\leftarrow$ Buscar(c.raiz, a) $\neq$ NULL\OdeLinea{log(\#c) \times isLess(\alpha_1, \alpha_2)}
+		res $\leftarrow$ Buscar(c.raiz, a) $\neq$ NULL\OdeLinea{log(\#c) \times isLess(a, elem_1)}
 	\end{algorithm}
 
-	\complejidad: $ O(log(\#c)$ $\times$ isLess($ \alpha_1, \alpha_2 $))
+	\complejidad: $O(log(\#c) \times isLess(a, elem_1))$
 
 	\justifcomp: la complejidad de buscar un elemento es de orden de la altura del arbol, que por invariante de AVL sabemos que es $log(\#c)$
 
@@ -346,25 +345,25 @@ Usaremos $\#c$ para denotar la cantidad de entradas del diccionario. También us
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{iAgregar}{\Inout{c}{eConj}, \In{a}{$\alpha$}}{}}
 		\If{not Pertenece?(c, a)}{
-			c.raiz $\leftarrow$ Insertar(a, c.raiz)\OdeLinea{log(\#c) \times isLess(\alpha_1, \alpha_2)}
+			c.raiz $\leftarrow$ Insertar(a, c.raiz)\OdeLinea{log(\#c) \times isLess(a, elem_1)}
 		}
 	\end{algorithm}
 
-	\complejidad: $O(log(\#c) \times isLess(\alpha_1, \alpha_2))$
+	\complejidad: $O(log(\#c) \times isLess(a, elem_1))$
 
-	\justifcomp: la complejidad de buscar un elemento es de orden de la altura del arbol, que por invariante de AVL sabemos que es $log(\#c)$
+	\justifcomp: la complejidad de agregar un elemento es de orden de la altura del arbol, que por invariante de AVL sabemos que es $log(\#c)$.
 
 	~
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{iBorrar}{\Inout{c}{eConj}, \In{a}{$\alpha$}}{}}
-		c.raiz $\leftarrow$ Remover(a, c.raiz)\OdeLinea{log(\#c) \times isLess(\alpha_1, \alpha_2)}
+		c.raiz $\leftarrow$ Remover(a, c.raiz)\OdeLinea{log(\#c) \times isLess(a, elem_1)}
 	\end{algorithm}
 
-	\complejidad: $O(log(\#c) \times isLess(\alpha_1, \alpha_2))$
+	\complejidad: $O(log(\#c) \times isLess(a, elem_1))$
 
-	\justifcomp: la complejidad de buscar, agregar o eliminar un elemento es de orden de la altura del arbol, que por invariante de AVL sabemos que es $log(\#c)$
+	\justifcomp: la complejidad de eliminar un elemento es de orden de la altura del arbol, que por invariante de AVL sabemos que es $log(\#c)$.
 
 	~	
 
@@ -372,15 +371,15 @@ Usaremos $\#c$ para denotar la cantidad de entradas del diccionario. También us
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{iMinimo}{\Inout{c}{eConj}}{$\alpha$}}
 		puntero(Nodo): minimo $\leftarrow$ c.raiz\OdeLinea{1}
-		\While(\OdeBloque{log(\#c) \times isLess(\alpha_1, \alpha_2)}){(*minimo).hijoIzq $\neq$ NULL}{
-				minimo $\leftarrow$ (*minimo.)hijoIzq \OdeLinea{1}
-			}
-		res $\leftarrow$ minimo.elem
+		\While(\OdeBloque{log(\#c) \times isLess(elem_1, elem_2)}){(*minimo).hijoIzq $\neq$ NULL}{
+			minimo $\leftarrow$ (*minimo.)hijoIzq \OdeLinea{1}
+		}
+		res $\leftarrow$ (*minimo).elem
 	\end{algorithm}
 
-	\complejidad: $O(log(\#c) \times isLess(\alpha_1, \alpha_2))$
+	\complejidad: $O(log(\#c) \times isLess(elem_1, elem_2))$
 
-	\justifcomp: hay que recorrer una rama del arbol hasta llegar al extremo izquierdo, y por invariante de AVL sabemos que es $log(\#c)$
+	\justifcomp: hay que recorrer una rama del arbol hasta llegar al extremo izquierdo, y por invariante de AVL sabemos que es $log(\#c)$.
 
 	~
 
@@ -402,6 +401,10 @@ Usaremos $\#c$ para denotar la cantidad de entradas del diccionario. También us
 			res $\leftarrow$ Buscar(a, (*nodo).hijoDer)\OdeLinea{h}
 		}
 	\end{algorithm}
+	
+	\complejidad: $O(h + isLess(a, (*nodo).elem))$
+
+	\justifcomp: cada llamada recursiva reduce el tamaño del problema aproximadamente a la mitad. Por ende, la complejidad en cualquier punto es del orden de la altura actual del subarbol (acotada por $log(\#c)$).
 
 	~
 
@@ -412,9 +415,9 @@ Usaremos $\#c$ para denotar la cantidad de entradas del diccionario. También us
 		\Post{res es igual a la nueva raíz del subarbol que se pasó por parámetro con el nuevo elemento insertado y balanceado}
 		\BlankLine
 		\eIf{nodo = NULL}{
-			res $\leftarrow$ CrearNodo(a, s)\OdeLinea{1}
+			res $\leftarrow$ CrearNodo(a, s)\OdeLinea{copy(a)}
 		}{	
-			\eIf{a $<$ n.elem}{
+			\eIf(\OdeBloque{isLess(a, (*nodo).elem)}){a $<$ (*nodo).elem}{
 				(*nodo).hijoIzq $\leftarrow$ Insertar(a, s, (*nodo).hijoIzq)\OdeLinea{h}
 			}{
 				(*nodo).hijoDer $\leftarrow$ Insertar(a, s, (*nodo).hijoDer)\OdeLinea{h}
@@ -422,6 +425,10 @@ Usaremos $\#c$ para denotar la cantidad de entradas del diccionario. También us
 			res $\leftarrow$ Balancear(nodo)\OdeLinea{1}
 		}
 	\end{algorithm}
+	
+	\complejidad: $O(h + isLess(a, (*nodo).elem) + copy(a))$
+
+	\justifcomp: cada llamada recursiva reduce el tamaño del problema aproximadamente a la mitad. Por ende, la complejidad en cualquier punto es del orden de la altura actual del subarbol (acotada por $log(\#c)$).
 
 	~
 
@@ -434,11 +441,11 @@ Usaremos $\#c$ para denotar la cantidad de entradas del diccionario. También us
 		\uIf{nodo = NULL}{
 			res $\leftarrow$ nodo\OdeLinea{1}
 		}
-		\uElseIf{a $<$ (*nodo).elem}{
+		\uElseIf(\OdeBloque{isLess(a, (*nodo).elem)}){a $<$ (*nodo).elem}{
 			(*nodo).hijoIzq $\leftarrow$ Remover(a, (*nodo).hijoIzq)\OdeLinea{h}
 			res $\leftarrow$ Balancear(nodo)\OdeLinea{1}
 		}
-		\uElseIf{a $>$ (*nodo).elem}{
+		\uElseIf(\OdeBloque{isLess((*nodo).elem, a)}){(*nodo).elem $<$ a}{
 			(*nodo).hijoDer $\leftarrow$ Remover(a, (*nodo).hijoDer)\OdeLinea{h}
 			res $\leftarrow$ Balancear(nodo)\OdeLinea{1}
 		}
@@ -455,7 +462,10 @@ Usaremos $\#c$ para denotar la cantidad de entradas del diccionario. También us
 			}
 		}
 	\end{algorithm}
+	
+	\complejidad: $O(h + isLess(a, (*nodo).elem))$
 
+	\justifcomp: cada llamada recursiva reduce el tamaño del problema aproximadamente a la mitad. Por ende, la complejidad en cualquier punto es del orden de la altura actual del subarbol (acotada por $log(\#c)$).
 
 	~
 
@@ -469,7 +479,7 @@ Usaremos $\#c$ para denotar la cantidad de entradas del diccionario. También us
 		nuevo.hijoIzq $\leftarrow$ NULL\OdeLinea{1}
 		nuevo.hijoDer $\leftarrow$ NULL\OdeLinea{1}
 		nuevo.alto $\leftarrow$ 1\OdeLinea{1}
-		nuevo.elem $\leftarrow$ a\OdeLinea{copy(\alpha)}
+		nuevo.elem $\leftarrow$ Copiar(a)\OdeLinea{copy(\alpha)}
 		res $\leftarrow$ \&nuevo\OdeLinea{1}
 	\end{algorithm}
 	
@@ -544,6 +554,10 @@ Usaremos $\#c$ para denotar la cantidad de entradas del diccionario. También us
 			res $\leftarrow$ nodo\OdeLinea{1}
 		}
 	\end{algorithm}
+	
+	\complejidad: $O(1)$
+
+	\justifcomp: las rotaciones son una serie de comparaciones y asignaciones de punteros ($\Theta(1)$). El invariante de orden del arbol de búsqueda (ABB) se preserva luego de cada rotación. El invariante de balanceo de AVL se restaura para cada subarbol al final de \texttt{Balancear}, pero no luego de cada rotación individual (puede ser necesario rotar un subarbol de manera temporalmente imbalanceada para restaurar el balance de un arbol).
 
 	~
 
@@ -560,6 +574,10 @@ Usaremos $\#c$ para denotar la cantidad de entradas del diccionario. También us
 		ArreglarAlto(aux)\OdeLinea{1}
 		res $\leftarrow$ aux\OdeLinea{1}
 	\end{algorithm}
+	
+	\complejidad: $O(1)$
+
+	\justifcomp: las rotaciones son una serie de comparaciones y asignaciones de punteros ($\Theta(1)$). El invariante de orden del arbol de búsqueda (ABB) se preserva luego de cada rotación. El invariante de balanceo de AVL se restaura para cada subarbol al final de \texttt{Balancear}, pero no luego de cada rotación individual (puede ser necesario rotar un subarbol de manera temporalmente imbalanceada para restaurar el balance de un arbol).
 
 	~
 
