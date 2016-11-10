@@ -8,49 +8,51 @@ Se usa $\#C$ para hablar de la cantidad de elementos de la cola
 
 	\textbf{se explica con}: \tadNombre{Cola de prioridad($\alpha$)}, \tadNombre{Iterador Unidireccional($\alpha$)}.
 
-	\textbf{géneros}: \TipoVariable{colaPrior, itColaPrior}.
+	\textbf{géneros}: \TipoVariable{colaPrior($\alpha$), itColaPrior($\alpha$)}.
 
 	\TituloDis{Operaciones básicas de ColaPrioridad($\alpha$)}
 
 	\InterfazFuncion{Vacía}{}{colaPrior}
 	{$res$ $\igobs$ vacía}
 	[$O(1)$]
-	[creación de una cola de prioridad vacía.]
+	[crea una cola de prioridad vacía.]
 
-	\InterfazFuncion{Encolar}{\Inout{c}{colaPrior}, \In{e}{$\alpha$}}{}
+	\InterfazFuncion{Encolar}{\Inout{c}{colaPrior}, \In{a}{$\alpha$}}{}
 	[$c \igobs c_0$]
-	{$res \igobs$ encolar($e, c_0$)}
-	[$O(log(\#C) + copy(e))$]
-	[encola una copia de e en la posición que le corresponde (log($\#C$)) y reacomoda el resto del arbol]
+	{$res \igobs$ encolar($a, c_0$)}
+	[$O(log(\#C) + copy(a))$]
+	[encola un elemento.]
+	[se almacena una copia de $a$.]
 
 	\InterfazFuncion{Vacía?}{\In{c}{colaPrior}}{bool}
 	{$res \igobs$ vacía?($c$)}
 	[$O(1)$]
-	[devuelve true si, y solo si, la cola no contiene elementos.]
+	[devuelve \texttt{true} si y solo si la cola no contiene elementos.]
 
 	\InterfazFuncion{Próximo}{\In{c}{colaPrior}}{$\alpha$}
 	[$\neg$ vacía(c)]
 	{res $\igobs$ próximo?($c$)}
 	[$O(1)$]
-	[devuelve el elemento mas chico de la cola]
+	[devuelve el elemento mas chico de la cola.]
+	[$res$ no es modificable.]
 
 	\InterfazFuncion{Desencolar}{\Inout{c}{colaPrior}}{}
 	[$\neg$ vacía(c) $\land$ $c \igobs c_0$]
 	{$res \igobs$ desencolar($c_0$)}
 	[$O(log(\#C))$]
-	[elimina el elemento mas chico de la cola en O(1), pero buscar el nuevo más chico es O(log($\#C$))]
+	[desencola el elemento mas chico de la cola.]
 
-	\InterfazFuncion{Borrar}{\Inout{c}{colaPrior}, \In{e}{$\alpha$}}{colaPrior}
+	\InterfazFuncion{Borrar}{\Inout{c}{colaPrior}, \In{a}{$\alpha$}}{colaPrior}
 	[$c \igobs c_0$]
-	{$res \igobs$ borrar($c_0$, e)}
+	{$res \igobs$ borrar($c_0$, a)}
 	[$O(log(\#C))$]
-	[busca el elemento e en log($\#C$), si lo encuentra lo elimina y reacomoda el arbol]
+	[desencola un elemento particular de la cola si el mismo pertenecía.]
 
   \TituloDis{Especificación de las operaciones auxiliares utilizadas en la interfaz}
 
-  \begin{tad}{Diccionario(Jugador, Nat) Extendido}
+  \begin{tad}{Cola de prioridad($\alpha$) Extendido}
     \parskip=0pt
-    \tadExtiende{\tadNombre{Diccionario(Jugador, Nat)}}
+    \tadExtiende{\tadNombre{Cola de prioridad($\alpha$)}}
     
     \tadTitulo{otras operaciones (exportadas)}
     \tadOperacion{borrar}{colaPrior($\alpha$), $\alpha$}{nat}{}
@@ -70,10 +72,10 @@ Se usa $\#C$ para hablar de la cantidad de elementos de la cola
 \begin{Representacion}
 	\TituloDis{Representación de colaPrior}
 
-	\begin{Estructura}{colaPrior}[eCola]
+	\begin{Estructura}{colaPrior($\alpha$)}[eCola]
 		\begin{Tupla}[eCola]
 			\tupItem{conjElem}{conjOrd($\alpha$)}
-			\tupItem{menor}{itConjOrd($\alpha$)}
+			\tupItem{menor}{$\alpha$}
 		\end{Tupla}
 	\end{Estructura}
 
@@ -81,63 +83,31 @@ Se usa $\#C$ para hablar de la cantidad de elementos de la cola
 	
 	\begin{enumerate}
 
-		\item Si no hay elementos en el conjunto entonces no hay Actual en el iterador del menor
-
 		\item Y si hay elementos, hay un menor 
 
-		\item El menor es efectivamente el menor de conjElem %TODO no estamos chequeando que efectivamente exista ese menor (podrían ser todos mayores y ya)
+		\item El menor es efectivamente el menor del conjunto de elementos
 
 	\end{enumerate}
 
-	\Rep[eCola][e]{
-	vacio?(e.conjElem) $\neq$ HayMas?(e.menor) $\yluego$ \\
-	menor(CrearIt(e.conjElem), e.menor)}
-
-	\TituloDis{Operaciones auxiliares}
-
-	\tadOperacion{menor}{itConjOrd($\alpha$), itConjOrd($\alpha$)}{bool}{}
-
- 	~
-
-	\tadAxioma{menor(itConj, itMenor)}{
-		HayMas?(itConj) $\impluego$ ((Actual(itConj) $>$ Actual(itMenor) $\lor$ Actual(itConj) = Actual(itMenor)) $\land$ menor(Avanzar(itConj), itMenor))
-	}
+	\Rep[eCola][e]{vacio?(e.conjElem) $\oluego$ e.menor $\igobs$ minimo(e.conjElem)}
 
 	~
 
 	\TituloDis{Función de Abstracción}
 
-	\Abs[eCola]{colaPrior}[e]{d}
-	{\IF vacio?(e.conjElem) THEN
-		vacia
-	ELSE
-		encolar(Actual(e.menor), Abs((borrar(Actual(e.menor), e.conjElem), buscarMenor(borrar(Actual(e.menor), e.conjElem))))
-	FI}
+	\Abs[eCola]{colaPrior}[e]{d}{conjACola(e.conjElem)}
+	
+	~
 
-	\tadOperacion{buscarMenor}{conjOrd($\alpha$)}{itConjOrd($\alpha$)}{}
-	\tadOperacion{buscarMenorAux}{itConjOrd($\alpha$), itConjOrd($\alpha$)}{itConjOrd($\alpha$)}{} %%TODO aca enrealidad va que los el primer iterador sea siguiente o el mismo al segundo(restriccion)
+	\tadOperacion{conjACola}{conj($\alpha$)}{colaPrior($\alpha$)}{}
 
-	\tadAxioma{buscarMenor(conj)}{buscarMenorAux(crearIt(conj),crearIt(conj))}
-	\tadAxioma{buscarMenorAux(itConj, itMenor)}{
-	\IF $\neg$ HayMas?(itConj) THEN
-		itMenor
-	ELSE
-		{\IF Actual(Avanzar(itConj)) < Actual(itMenor) THEN
-			buscarMenorAux(Avanzar(itConj), Avanzar(itConj))
-		ELSE
-			buscarMenorAux(Avanzar(itConj), itMenor)
-		FI}
-	FI}
+	\tadAxioma{conjACola(conj)}{\IF $\emptyset$?(conj) THEN vacia ELSE encolar(minimo(conj),borrar(conj, minimo(conj))) FI}
 
-	%%TODO (naxio dejo este todo, nideawachem)
-
+	~
 
 	\TituloDis{Representación del iterador}
 
-	\begin{Estructura}{itColaPrior}[eItCola]
-		\begin{Tupla}[eItCola]
-			\tupItem{itConjElem}{itConjOrd($\alpha$)}
-		\end{Tupla}
+	\begin{Estructura}{itColaPrior($\alpha$)}[itConjOrd($\alpha$)]
 	\end{Estructura}
 
 	\TituloDis{Invariante de Representación del iterador}
@@ -204,7 +174,7 @@ Se usa $\#C$ para hablar de la cantidad de elementos de la cola
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{iProximo}{\In{c}{eCola}}{$\alpha$}}
-		res $\leftarrow$ Actual(c.menor)\OdeLinea{1}
+		res $\leftarrow$ c.menor\OdeLinea{1}
 	\end{algorithm}
 
 	\complejidad: $O(1)$

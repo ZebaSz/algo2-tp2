@@ -9,7 +9,7 @@ Usaremos $\#c$ para denotar la cantidad de entradas del diccionario. También us
 	\textbf{parámetros formales}\hangindent=2\parindent\\
 	\parbox{1.7cm}{\textbf{géneros}}$\alpha$\\
 	\parbox[t]{1.7cm}{\textbf{función}}\parbox[t]{.5\textwidth-\parindent-1.7cm}{
-		\InterfazFuncion{$\bullet < \bullet$}{\In{k_1}{$\alpha$}, \In{k_2}{$\alpha$}}{bool}
+		\InterfazFuncion{$\bullet < \bullet$}{\In{a_1}{$\alpha$}, \In{a_2}{$\alpha$}}{bool}
 		{$res \igobs (a_1 < a_2)$}
 		[$\Theta(isLess(a_1, a_2))$]
 		[comparación de $\alpha$'s]
@@ -54,13 +54,13 @@ Usaremos $\#c$ para denotar la cantidad de entradas del diccionario. También us
 	[$c \igobs c_0$)]
 	{$c \igobs$ borrar($a, c_0$)}
 	[$O(log(\#c))$]
-	[busca $a$ en el conjunto y si lo encuentra lo borra]
+	[elimina un elemento del conjunto si el mismo existía.]
 
 	\InterfazFuncion{Minimo}{\Inout{c}{conjOrd}}{$\alpha$}
 	[$\neg$vacio?($c$)]
 	{$res \igobs$ minimo($c$)}
 	[$O(log(\#c))$]
-	[devuelve al elemento mas chico del conjunto]
+	[devuelve el elemento mas chico del conjunto.]
 
 	\TituloDis{Especificación de las operaciones auxiliares utilizadas en la interfaz}
 
@@ -240,7 +240,7 @@ Usaremos $\#c$ para denotar la cantidad de entradas del diccionario. También us
 
 	\TituloDis{Representación del iterador}
 
-	\begin{Estructura}{itConjOrd}[eItConj]
+	\begin{Estructura}{itConjOrd($\alpha$)}[eItConj]
 		\begin{Tupla}[eItConj]
 			\tupItem{conjunto}{puntero(conjOrd)}
 			\tupItem{pila}{pila(puntero(Nodo))}
@@ -373,7 +373,7 @@ Usaremos $\#c$ para denotar la cantidad de entradas del diccionario. También us
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{iMinimo}{\Inout{c}{eConj}}{$\alpha$}}
-		puntero(Nodo): minimo $\leftarrow$ e.raiz\OdeLinea{1}
+		puntero(Nodo): minimo $\leftarrow$ c.raiz\OdeLinea{1}
 		\While(\OdeBloque{log($\#C$)}){(*minimo).hijoIzq $\neq$ NULL}{
 				minimo $\leftarrow$ (*minimo.)hijoIzq \OdeLinea{1}
 			}
@@ -583,6 +583,72 @@ Usaremos $\#c$ para denotar la cantidad de entradas del diccionario. También us
 
 	\justifcomp: las rotaciones son una serie de comparaciones y asignaciones de punteros ($\Theta(1)$). El invariante de orden del arbol de búsqueda (ABB) se preserva luego de cada rotación. El invariante de balanceo de AVL se restaura para cada subarbol al final de \texttt{Balancear}, pero no luego de cada rotación individual (puede ser necesario rotar un subarbol de manera temporalmente imbalanceada para restaurar el balance de un arbol).
 
-% TODO: algos de iterador
+	\TituloDis{Algoritmos del iterador}
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{CrearIt}{\In{c}{eConj}}{eItConj}}
+		res.conjunto $\leftarrow$ \&(c)\OdeLinea{1}
+		res.pila $\leftarrow$ Vacía()\OdeLinea{1}
+		\If{\textbf{not} c.raiz = NULL}{
+			Apilar(res.pila, c.raiz)\OdeLinea{1}
+		}
+	\end{algorithm}
+
+	\complejidad: $O(1)$
+
+	\justifcomp: solo se inicializa el iterador.
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{HayMas}{\In{it}{eItConj}}{bool}}
+		res $\leftarrow$ EsVacía?(it.pila)\OdeLinea{1}
+	\end{algorithm}
+
+	\complejidad: $O(1)$
+
+	\justifcomp: solo se utilizan operaciones básicas de pila.
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{Actual}{\In{it}{eItConj}}{jugador}}
+		res $\leftarrow$ (*Tope(it.pila)).id\OdeLinea{1}
+	\end{algorithm}
+
+	\complejidad: $O(1)$
+
+	\justifcomp: solo se utilizan operaciones básicas de pila.
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{Avanzar}{\Inout{it}{eItConj}}{}}
+		\While(\OdeBloque{1}){\textbf{not} EsVacía(it.pila)} {
+			puntero(Nodo) : tope $\leftarrow$ Tope(it.pila)\OdeLinea{1}
+			\eIf{not (*tope).hijoIzq = NULL}{
+				Apilar(it.pila, (*tope).hijoIzq)\OdeLinea{1}
+					\textbf{break}\OdeLinea{1}
+			}{
+				Desapilar(it.pila)\OdeLinea{1}
+				\If{not (*tope).hijoDer = NULL}{
+					Apilar(it.pila, (*tope).hijoDer)\OdeLinea{1}
+					\textbf{break}\OdeLinea{1}
+				}
+			}
+		}
+	\end{algorithm}
+
+	\complejidad: $O(1)$
+
+	\justifcomp: la pila contiene aquellas posiciones para las cuales todavía no se visitó el nodo derecho, y en el caso del tope, tampoco se revisó el nodo izquierdo, además de estar ordenadas por posición en el arbol (las primeras que se agregan correpsonden a posiciones superiores).
+
+	El peor caso posible para un ABB normal es que la pila contenga todos los elementos del conjunto (ningún nodo del arbol tiene nodo derecho).
+
+	En el caso particular de los AVL la complejidad es constante porque, por el invariante de factores de balance, la cantidad de posiciones que tenemos que recorrer "hacia arriba" para encontrar un nodo derecho es como máximo 2. Por ende, la cantidad de ciclos a realizar tiene máximo constante y no depende del tamaño del arbol.
 
 \end{Algoritmos}
