@@ -348,10 +348,10 @@ Usaremos $\#c$ para denotar la cantidad de entradas del diccionario. También us
 		\Pre{\texttt{true}}
 		\Post{res es igual a un nodo hijo o al que viene por parametro, donde a es la clave del Nodo o bien la clave no está, en cuyo caso es NULL}
 		\BlankLine
-		\uIf{nodo = NULL \textbf{or} (*nodo).valor = a}{
+		\uIf{nodo = NULL \textbf{or} (*nodo).elem = a}{
 			res $\leftarrow$ nodo\OdeLinea{1}
 		}
-		\uElseIf{j $<$ (*nodo).valor}{
+		\uElseIf{a $<$ (*nodo).elem}{
 			res $\leftarrow$ Buscar(a, (*nodo).hijoIzq)\OdeLinea{h}
 		}
 		\Else{
@@ -370,7 +370,7 @@ Usaremos $\#c$ para denotar la cantidad de entradas del diccionario. También us
 		\eIf{nodo = NULL}{
 			res $\leftarrow$ CrearNodo(a, s)\OdeLinea{1}
 		}{	
-			\eIf{a $<$ n.valor}{
+			\eIf{a $<$ n.elem}{
 				(*nodo).hijoIzq $\leftarrow$ Insertar(a, s, (*nodo).hijoIzq)\OdeLinea{h}
 			}{
 				(*nodo).hijoDer $\leftarrow$ Insertar(a, s, (*nodo).hijoDer)\OdeLinea{h}
@@ -390,11 +390,11 @@ Usaremos $\#c$ para denotar la cantidad de entradas del diccionario. También us
 		\uIf{nodo = NULL}{
 			res $\leftarrow$ nodo\OdeLinea{1}
 		}
-		\uElseIf{a $<$ (*nodo).valor}{
+		\uElseIf{a $<$ (*nodo).elem}{
 			(*nodo).hijoIzq $\leftarrow$ Remover(a, (*nodo).hijoIzq)\OdeLinea{h}
 			res $\leftarrow$ Balancear(nodo)\OdeLinea{1}
 		}
-		\uElseIf{a $>$ (*nodo).valor}{
+		\uElseIf{a $>$ (*nodo).elem}{
 			(*nodo).hijoDer $\leftarrow$ Remover(a, (*nodo).hijoDer)\OdeLinea{h}
 			res $\leftarrow$ Balancear(nodo)\OdeLinea{1}
 		}
@@ -425,7 +425,7 @@ Usaremos $\#c$ para denotar la cantidad de entradas del diccionario. También us
 		nuevo.hijoIzq $\leftarrow$ NULL\OdeLinea{1}
 		nuevo.hijoDer $\leftarrow$ NULL\OdeLinea{1}
 		nuevo.alto $\leftarrow$ 1\OdeLinea{1}
-		nuevo.valor $\leftarrow$ a\OdeLinea{copy(\alpha)}
+		nuevo.elem $\leftarrow$ a\OdeLinea{copy(\alpha)}
 		res $\leftarrow$ \&nuevo\OdeLinea{1}
 	\end{algorithm}
 	
