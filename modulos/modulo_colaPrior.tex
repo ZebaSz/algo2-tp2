@@ -127,7 +127,7 @@ Se usa $\#C$ para hablar de la cantidad de elementos de la cola
 	
 	\begin{enumerate}
 
-		\item Y si hay elementos, hay un menor 
+		\item Si hay elementos, hay un menor 
 
 		\item El menor es efectivamente el menor del conjunto de elementos
 
@@ -189,17 +189,16 @@ Se usa $\#C$ para hablar de la cantidad de elementos de la cola
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{iEncolar}{\Inout{c}{eCola}, \In{e}{$\alpha$}}{}}
-		$\alpha$ : min $\leftarrow$ Actual(c.menor)\OdeLinea{1}
+		$\alpha$ : min $\leftarrow$ c.menor\OdeLinea{1}
 		c.conjElem $\leftarrow$ Agregar(c.conjElem, e)\OdeLinea{log($\#C$)}
 		\If{e $<$ min}{
-				itColaPrior: it $\leftarrow$ BuscarMinimo(CrearIt(c.conjElem))\OdeLinea{log($\#C$)} %TODO seba buscarMinimo es tuya
-				c.menor $\leftarrow$ it
+				c.menor $\leftarrow$ Minimo(c.conjElem)\OdeLinea{log($\#C$)}
 			}
 	\end{algorithm}
 
 	\complejidad: $O(log(\#C))$
 
-	\justifcomp: hay que agregar el elemento al conjunto, y por invariante de AVL esto nos cuenta O(log($\#C$)). En caso de que sea el menor, hay que encontrar el elemento y cambiar el iterador en O(log($\#C$))
+	\justifcomp: hay que agregar el elemento al conjunto, y por invariante de AVL esto nos cuenta O(log($\#C$)). En caso de que sea el menor, hay que encontrar el elemento y cambiarlo O(log($\#C$))
 
 	~
 
