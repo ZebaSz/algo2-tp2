@@ -110,23 +110,22 @@ Se usa $\#C$ para hablar de la cantidad de elementos de la cola
 		vacia
 	ELSE
 		encolar(Actual(e.menor), Abs((borrar(Actual(e.menor), e.conjElem), buscarMenor(borrar(Actual(e.menor), e.conjElem))))
-	}
+	FI}
 
 	\tadOperacion{buscarMenor}{conjOrd($\alpha$)}{itConjOrd($\alpha$)}{}
 	\tadOperacion{buscarMenorAux}{itConjOrd($\alpha$), itConjOrd($\alpha$)}{itConjOrd($\alpha$)}{} %%TODO aca enrealidad va que los el primer iterador sea siguiente o el mismo al segundo(restriccion)
 
 	\tadAxioma{buscarMenor(conj)}{buscarMenorAux(crearIt(conj),crearIt(conj))}
 	\tadAxioma{buscarMenorAux(itConj, itMenor)}{
-		{\IF $\neg$ HayMas?(itConj) THEN
-			itMenor
+	\IF $\neg$ HayMas?(itConj) THEN
+		itMenor
+	ELSE
+		{\IF Actual(Avanzar(itConj)) < Actual(itMenor) THEN
+			buscarMenorAux(Avanzar(itConj), Avanzar(itConj))
 		ELSE
-			\IF Actual(Avanzar(itConj)) < Actual(itMenor) THEN
-				buscarMenorAux(Avanzar(itConj), Avanzar(itConj))
-			ELSE
-				buscarMenorAux(Avanzar(itConj), itMenor)
-			FI
-		}
-	}
+			buscarMenorAux(Avanzar(itConj), itMenor)
+		FI}
+	FI}
 
 	%%TODO
 
