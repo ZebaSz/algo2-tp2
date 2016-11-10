@@ -1,4 +1,4 @@
-\section{Modulo ColaPrioridad}
+\section{Modulo ColaPrioridad($\alpha$)}
 
 Se usa $\#C$ para hablar de la cantidad de elementos de la cola
 
@@ -79,20 +79,26 @@ Se usa $\#C$ para hablar de la cantidad de elementos de la cola
 	
 	\begin{enumerate}
 
+		\item Si no hay elementos en el conjunto entonces no hay Actual en el iterador del menor
+
+		\item Y si hay elementos hay un menor 
+
 		\item El menor es efectivamente el menor de conjElem
 
 	\end{enumerate}
 
-	\Rep[eCola][e]{menor(CrearIt(e.conjElem), Actual(e.menor))}
+	\Rep[eCola][e]{
+	HayMas?(CrearIt(e.conjElem)) = HayMas?(e.menor) $\yluego$ \\
+	menor(CrearIt(e.conjElem), e.menor)}
 
 	\TituloDis{Operaciones auxiliares}
 
-	\tadOperacion{menor}{itConjOrd($\alpha$), $\alpha$}{bool}{}
+	\tadOperacion{menor}{itConjOrd($\alpha$), itConjOrd($\alpha$)}{bool}{}
 
  	~
 
-	\tadAxioma{menor(itConj, elemento)}{
-		HaySiguiente?(itConj) $\impluego$ ((Actual(itConj) $>$ elemento $\lor$ Actual(itConj) = elemento) $\land$ menor(Avanzar(itConj), elemento))
+	\tadAxioma{menor(itConj, itMenor)}{
+		HayMas?(itConj) $\impluego$ ((Actual(itConj) $>$ Actual(itMenor) $\lor$ Actual(itConj) = Actual(itMenor)) $\land$ menor(Avanzar(itConj), itMenor))
 	}
 
 	~
