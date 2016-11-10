@@ -211,7 +211,7 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 			\tupItem{hayPokemon?}{bool}
 			\tupItem{pokemon}{pokemon}
 			\tupItem{contadorCaptura}{nat}
-			\tupItem{jugEsperandoCaptura}{colaPrior}
+			\tupItem{jugEsperandoCaptura}{colaPrior(tupOrd)}
 			\tupItem{jugsEnPos}{conjOrd(jugador)}
 		\end{Tupla}
 
@@ -288,13 +288,9 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 
 	\tadOperacion{compararCoors}{coor, conj(coor)}{bool}{}
 
-	\tadOperacion{jugadoresEsperandoCaptura}{pokego, conj(coor)}{bool}{} %TODO despues de definir la tupla, hay que cambiar estas funciones
+	\tadOperacion{jugadoresEsperandoCaptura}{pokego, conj(coor)}{bool}{}
 
-	\tadOperacion{jugsEsperandoEnPosValido}{pokego, dicc(jugador, nat)}{bool}{} 
-
-	\tadOperacion{jugsEsperandoClavesValidas}{pokego, conj(jugador)}{bool}{}
-
-	\tadOperacion{jugsEsperandoDefsValidas}{pokego, dicc(jugador, nat), conj(coor)}{bool}{}
+	\tadOperacion{jugsEsperandoEnPosValido}{pokego, colaPrior(jugador, nat)}{bool}{} %TODO fijense si les parece correcto lo que hice con esto
 
 	~
 
@@ -414,22 +410,9 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 	
 	~
 
-	\tadAxioma{jugsEsperandoEnPosValido(e, dic)}{
-		jugsEsperandoClavesValidas(e, claves(dic)) $\land$ jugsEsperandoDefsValidas(e, dic, claves(dic))
+	\tadAxioma{jugsEsperandoEnPosValido(e, cola)}{
+		vacía?(cola) $\oluego$ (jugsEsperandoEnPosValido(e, desencolar(cola)) $\land$ $\pi_1$(proximo(cola)) $<$ long(e.jugadores) $\land$ e.jugadores[$\pi_1$(proximo(cola))].sanciones $<$ 5 $\yluego$ distEuclidea(e.jugadores[$\pi_1$(proximo(cola))].posicion, crearCoor(i,j)) $\leq$ 4 $\land$ $\pi_2$proximo(cola) = (*e.jugadores[$\pi_1$(proximo(cola))]).cantPokemons)
 	}
-	
-	~
-
-	\tadAxioma{jugsEsperandoClavesValidas(e, js)}{
-		vacio?(js) $\oluego$ jugsEsperandoClavesValidas(e, sinUno(js)) $\land$ dameUno(js) $<$ long(e.jugadores) $\yluego$ (e.jugadores[dameUno(js)].sanciones $<$ 5 $\yluego$ distEuclidea(e.jugadores[dameUno(js)].posicion, crearCoor(i,j)) $\leq$ 4)
-	}
-	
-	~
-
-	\tadAxioma{jugsEsperandoDefsValidas(e, dic, js)}{
-		vacio?(js) $\oluego$ (jugsEsperandoDefsValidas(e, dic, sinUno(js)) $\land$ obtener(dic, dameUno(js)) = (*e.jugadores[dameUno(js)]).cantPokemons)
-	}
-	
 	
 	\TituloDis{Función de Abstracción}
 
@@ -567,7 +550,7 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 			itConjJugs : it $\leftarrow$ CrearIterador(j.grillaPos[Latitud(d)][Longitud(d)].jugsEnPos)\OdeLinea{1}
 			\While(\OdeBloque{EC \times log(EC)}){HayMas(it)}{
 				jugador: jug $\leftarrow$ Actual(it)\OdeLinea{1}
-				Encolar(TUPLA A DEFINIR, j.grillaPos[Latitud(c)][Longitud(c)].jugEsperandoCaptura)\OdeLinea{log(EC)}
+				Encolar(j.grillaPos[Latitud(c)][Longitud(c)].jugEsperandoCaptura, CrearTupla(jug, (*j.jugadores[jug]).cantPokemons))\OdeLinea{log(EC)}
 				Avanzar(it)\OdeLinea{1}
 			}
 			Avanzar(itCoor)\OdeLinea{1}
@@ -926,7 +909,7 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 		\While(\OdeBloque{log(EC)}){HaySiguiente(itCoor)}{
 			coor: siguiente $\leftarrow$ Siguiente(itCoor)\OdeLinea{1}
 			\If{HayPokémonEnPos(j, siguiente).hayPokemon}{
-				Encolar(TUPLA A DEFINIR, j.grillaPos[Latitud(siguiente)][Longitud(siguiente)].jugEsperandoCaptura)\OdeLinea{log(EC)}
+				Encolar(j.grillaPos[Latitud(siguiente)][Longitud(siguiente)].jugEsperandoCaptura, CrearTupla(e,(*j.jugadores[e]).cantPokemons))\OdeLinea{log(EC)}
 			}
 			Avanzar(itCoor)\OdeLinea{1}
 		}
@@ -950,7 +933,7 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 		\While(\OdeBloque{log(EC)}){HaySiguiente(itCoor)}{
 			coor: siguiente $\leftarrow$ Siguiente(itCoor)\OdeLinea{1}
 			\If{HayPokémonEnPos(j, siguiente).hayPokemon}{
-				Desencolar(TUPLA A DEFINIR, j.grillaPos[Latitud(siguiente)][Longitud(siguiente)].jugEsperandoCaptura)\OdeLinea{log(EC)}
+				Desencolar(j.grillaPos[Latitud(siguiente)][Longitud(siguiente)].jugEsperandoCaptura, CrearTupla(e,(*j.jugadores[e]).cantPokemons))\OdeLinea{log(EC)}
 			}
 			Avanzar(itCoor)\OdeLinea{1}
 		}
