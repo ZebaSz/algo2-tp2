@@ -1,10 +1,27 @@
 \section{Módulo ConjuntoOrd($\alpha$)}
 
-Este conjunto aprovecha el orden absoluto de los jugadores (nats) para almacenar los datos en un arbol de búsqueda autobalanceado (AVL). Esto permite agregar, buscar y remover cualquier elemento en tiempo logarítmico.
+Este conjunto genérico se implementa sobre un arbol de búsqueda autobalanceado (AVL). Esto permite agregar, buscar y remover cualquier elemento en tiempo logarítmico. Se requiere que $\alpha$ tenga definido una relación de orden estricta.
 
-Usaremos $\#c$ para denotar la cantidad de entradas del diccionario.
+Usaremos $\#c$ para denotar la cantidad de entradas del diccionario. También usaremos la función $isLess$ para denotar costos de comparación entre elementos.
 
 \begin{Interfaz}
+
+	\textbf{parámetros formales}\hangindent=2\parindent\\
+	\parbox{1.7cm}{\textbf{géneros}}$\alpha$\\
+	\parbox[t]{1.7cm}{\textbf{función}}\parbox[t]{.5\textwidth-\parindent-1.7cm}{
+		\InterfazFuncion{$\bullet < \bullet$}{\In{k_1}{$\alpha$}, \In{k_2}{$\alpha$}}{bool}
+		{$res \igobs (a_1 < a_2)$}
+		[$\Theta(isLess(a_1, a_2))$]
+		[comparación de $\alpha$'s]
+		% TODO: ver todas las complejidades con esto
+	}
+	\parbox[t]{1.7cm}{\textbf{función}}\parbox[t]{.5\textwidth-\parindent-1.7cm}{
+		\InterfazFuncion{Copiar}{\In{a}{$\alpha$}}{$\alpha$}
+		{$res \igobs a$}
+		[$\Theta(copy(a))$]
+		[función de copia de $\alpha$'s]
+	}
+
 	\textbf{se explica con}: \tadNombre{Conjunto($\alpha$)}, \tadNombre{Iterador Unidireccional(Jugador)}.
 
 	\textbf{géneros}: \TipoVariable{conjOrd}, \TipoVariable{itConjOrd}.
@@ -14,25 +31,30 @@ Usaremos $\#c$ para denotar la cantidad de entradas del diccionario.
 	\InterfazFuncion{Vacio}{}{conjOrd}
 	{res $\igobs \emptyset$ }
 	[$O(1)$]
-	[Crea el conjunto vacío]
+	[crea el conjunto vacío.]
 
 	\InterfazFuncion{Agregar}{\Inout{c}{conjOrd}, \In{a}{$\alpha$}}{}
 	[$c \igobs c_0$]
 	{$c \igobs$ Ag($a, c_0$)}
 	[$O(log(\#c))$]
-	[Agrega al conjunto a]
+	[agrega $a$ al conjunto.]
 	[se almacenan copias de $a$.]
 
 	\InterfazFuncion{Pertenece?}{\In{c}{conjOrd}, \In{a}{$\alpha$}}{bool}
 	{$res \igobs$ $a \in c$)]}
 	[$O(log(\#c))$]
-	[devuelve \texttt{true} si a esta en el conjunto.]
+	[devuelve \texttt{true} si $a$ esta en el conjunto.]
+
+	\InterfazFuncion{EsVacio?}{\In{c}{conjOrd}}{bool}
+	{$res \igobs$ esVacio?($c$)]}
+	[$O(1)$]
+	[devuelve \texttt{true} si el conjunto está vacio.]
 
 	\InterfazFuncion{Borrar}{\Inout{c}{conjOrd}, \In{a}{$\alpha$}}{}
 	[$c \igobs c_0$)]
 	{$c \igobs$ borrar($a, c_0$)}
 	[$O(log(\#c))$]
-	[borra a del conjunto.]
+	[borra $a$ del conjunto.]
 
 
 	\TituloDis{Operaciones básicas del iterador}
@@ -71,11 +93,32 @@ Usaremos $\#c$ para denotar la cantidad de entradas del diccionario.
 
 	\begin{Estructura}{conjOrd}[eConj]
 		\begin{Tupla}[eConj]
-			\tupItem{TODO}{TODO ACA VA EL DICCIONARIO}
+			\tupItem{raiz}{puntero(Nodo)}
+		\end{Tupla}
+
+		~ 
+
+		\begin{Tupla}[Nodo]
+			\tupItem{hijoIzq}{puntero(Nodo)}
+			\tupItem{hijoDer}{puntero(Nodo)}				
+			\tupItem{valor}{$\alpha$}
+			\tupItem{alto}{nat}
 		\end{Tupla}
 	\end{Estructura}
 
 	\TituloDis{Invariante de Representación de ConjuntoOrd($\alpha$)}
+
+	\begin{enumerate}
+		
+		\item No hay valores repetidos
+
+		\item Para cualquier nodo del arbol, el valor de su hijo izquierdo es menor y el de su hijo derecho es mayor al suyo
+
+		\item La altura de un Nodo es la altura del hijo con mayor altura mas 1
+
+		\item El factor de balanceo es $\leq$ 1 (donde el factor de balanceo es el modulo de la diferencia de las alturas de los hijos)
+
+	\end{enumerate}
 	
 	\Rep[eConj][e]{}
 	%%TODO FiJARSE SI ESTA EL TRUE SI NO PONERLO
@@ -88,8 +131,8 @@ Usaremos $\#c$ para denotar la cantidad de entradas del diccionario.
 
 	\TituloDis{Representación del iterador}
 
-	\begin{Estructura}{itConjOrd}[itJugs]
-		\begin{Tupla}[itJugs]
+	\begin{Estructura}{itConjOrd}[eItConj]
+		\begin{Tupla}[eItConj]
 			\tupItem{conjunto}{puntero(conjOrd)}
 			\tupItem{pila}{pila(puntero(Nodo))}
 		\end{Tupla}
@@ -107,12 +150,12 @@ Usaremos $\#c$ para denotar la cantidad de entradas del diccionario.
 
 	\end{enumerate}
 
-	\Rep[itJugs][it]{it.conjunto $\neq$ NULL $\land$ PilaValida?(it.pila)}
+	\Rep[eItConj][it]{it.conjunto $\neq$ NULL $\land$ PilaValida?(it.pila)}
 
 
 	\TituloDis{Función de Abstracción del iterador}
 
-	\Abs[itJugs]{itUni(nat)}[it]{b}{Siguientes(b) $=$ Sigs(it.pila)}
+	\Abs[eItConj]{itUni(nat)}[it]{b}{Siguientes(b) $=$ Sigs(it.pila)}
 
 	\tadOperacion{PilaValida?}{pila(puntero(Nodo))}{bool}{}
 	\tadOperacion{Sigs}{pila(puntero(Nodo))}{secu(jugador)}{}
@@ -171,23 +214,45 @@ Usaremos $\#c$ para denotar la cantidad de entradas del diccionario.
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{iPertenece?}{\In{c}{eConj}, \In{a}{$\alpha$}}{bool}}
-		res $\leftarrow$ Definido?(c.raiz, a) \OdeLinea{log(\#c)}
+		res $\leftarrow$ Buscar(c.raiz, a) $\neq$ NULL\OdeLinea{log(\#c)}
 	\end{algorithm}
+
+	\complejidad: $O(log(\#c))$
+
+	\justifcomp: la complejidad de buscar un elemento es de orden de la altura del arbol, que por invariante de AVL sabemos que es $log(\#c)$
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iEsVacio?}{\In{c}{eConj}}{bool}}
+		res $\leftarrow$ c.raiz $=$ NULL\OdeLinea{1}
+	\end{algorithm}
+
+	\complejidad: $O(1)$
+
+	\justifcomp: solo se ingresa a la raiz del arbol
 
 	~
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{iAgregar}{\Inout{c}{eConj}, \In{a}{$\alpha$}}{}}
-		p.raiz $\leftarrow$ Definir(c.raiz, a, true)\OdeLinea{log(\#c)}
+		\If{not Pertenece?(c, a)}{
+			c.raiz $\leftarrow$ Insertar(a, c.raiz)\OdeLinea{log(\#c)}
+		}
 	\end{algorithm}
+
+	\complejidad: $O(log(\#c))$
+
+	\justifcomp: la complejidad de buscar un elemento es de orden de la altura del arbol, que por invariante de AVL sabemos que es $log(\#c)$
 
 	~
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{iBorrar}{\Inout{c}{eConj}, \In{a}{$\alpha$}}{}}
-		p.raiz $\leftarrow$ Borrar(c.raiz, a)\OdeLinea{log(\#c)}
+		c.raiz $\leftarrow$ Remover(a, c.raiz)\OdeLinea{log(\#c)}
 	\end{algorithm}
 
 	\complejidad: $O(log(\#c))$
@@ -195,6 +260,203 @@ Usaremos $\#c$ para denotar la cantidad de entradas del diccionario.
 	\justifcomp: la complejidad de buscar, agregar o eliminar un elemento es de orden de la altura del arbol, que por invariante de AVL sabemos que es $log(\#c)$
 
 
+	\TituloDis{Algoritmos auxiliares}
 
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{Buscar}{\In{a}{$\alpha$}, \In{nodo}{puntero(Nodo)}}{puntero(Nodo)}}
+		\Pre{\texttt{true}}
+		\Post{res es igual a un nodo hijo o al que viene por parametro, donde a es la clave del Nodo o bien la clave no está, en cuyo caso es NULL}
+		\BlankLine
+		\uIf{nodo = NULL \textbf{or} (*nodo).valor = a}{
+			res $\leftarrow$ nodo\OdeLinea{1}
+		}
+		\uElseIf{j $<$ (*nodo).valor}{
+			res $\leftarrow$ Buscar(a, (*nodo).hijoIzq)\OdeLinea{h}
+		}
+		\Else{
+			res $\leftarrow$ Buscar(a, (*nodo).hijoDer)\OdeLinea{h}
+		}
+	\end{algorithm}
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{Insertar}{\In{a}{$\alpha$}, \Inout{nodo}{puntero(Nodo)}}{puntero(Nodo)}}
+		\Pre{\texttt{true}}
+		\Post{res es igual a la nueva raíz del subarbol que se pasó por parámetro con el nuevo elemento insertado y balanceado}
+		\BlankLine
+		\eIf{nodo = NULL}{
+			res $\leftarrow$ CrearNodo(a, s)\OdeLinea{1}
+		}{	
+			\eIf{a $<$ n.valor}{
+				(*nodo).hijoIzq $\leftarrow$ Insertar(a, s, (*nodo).hijoIzq)\OdeLinea{h}
+			}{
+				(*nodo).hijoDer $\leftarrow$ Insertar(a, s, (*nodo).hijoDer)\OdeLinea{h}
+			}
+			res $\leftarrow$ Balancear(nodo)\OdeLinea{1}
+		}
+	\end{algorithm}
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{Remover}{\In{a}{$\alpha$}, \In{nodo}{puntero(Nodo)}}{puntero(Nodo)}}
+		\Pre{entre los nodo que desprenden del nodo del parametro se encuentra un nodo que contiene a $a$} 
+		\Post{res es igual a la nueva raíz del subarbol que se pasó por parámetro pero ahora con el hijo removido}
+		\BlankLine
+		\uIf{nodo = NULL}{
+			res $\leftarrow$ nodo\OdeLinea{1}
+		}
+		\uElseIf{a $<$ (*nodo).valor}{
+			(*nodo).hijoIzq $\leftarrow$ Remover(a, (*nodo).hijoIzq)\OdeLinea{h}
+			res $\leftarrow$ Balancear(nodo)\OdeLinea{1}
+		}
+		\uElseIf{a $>$ (*nodo).valor}{
+			(*nodo).hijoDer $\leftarrow$ Remover(a, (*nodo).hijoDer)\OdeLinea{h}
+			res $\leftarrow$ Balancear(nodo)\OdeLinea{1}
+		}
+		\Else{
+			puntero(Nodo): i $\leftarrow$ (*nodo).hijoIzq\OdeLinea{1}
+			puntero(Nodo): d $\leftarrow$ (*nodo).hijoDer\OdeLinea{1}
+			\eIf{d = NULL}{
+				res $\leftarrow$ i\OdeLinea{1}
+			}{
+				puntero(Nodo): minimo $\leftarrow$ BuscarMinimo(d)\OdeLinea{h}
+				minimo.hijoDer $\leftarrow$ RemoverMinimo(d)\OdeLinea{h}
+				minimo.hijoIzq $\leftarrow$ i\OdeLinea{1}
+				res $\leftarrow$ Balancear(minimo)\OdeLinea{1}
+			}
+		}
+	\end{algorithm}
+
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{CrearNodo}{\In{a}{$\alpha$}}{puntero(Nodo)}}
+		\Pre{\texttt{true}}
+		\Post{$res$ apunta a un nodo de alto 1 con valor $a$}
+		\BlankLine
+		Nodo: nuevo\OdeLinea{1}
+		nuevo.hijoIzq $\leftarrow$ NULL\OdeLinea{1}
+		nuevo.hijoDer $\leftarrow$ NULL\OdeLinea{1}
+		nuevo.alto $\leftarrow$ 1\OdeLinea{1}
+		nuevo.valor $\leftarrow$ a\OdeLinea{copy(\alpha)}
+		res $\leftarrow$ \&nuevo\OdeLinea{1}
+	\end{algorithm}
+	
+	\complejidad: $O(copy(\alpha))$
+
+	\justifcomp: solo se crea e inicializa un nodo con una copia del valor.
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{ArreglarAlto}{\Inout{nodo}{puntero(Nodo)}}{}}
+		\Pre{la altura de los hijos de $nodo$ es correcta}
+		\Post{la altura de $nodo$ es igual a la altura máxima de sus hijos + 1}
+		\BlankLine
+		nat: alturaIzq $\leftarrow$ Altura((*nodo).hijoIzq)\OdeLinea{1}
+		nat: alturaDer $\leftarrow$ Altura((*nodo).hijoDer)\OdeLinea{1}
+		\eIf{alturaIzq $<$ alturaDer}{
+			(*nodo).alto $\leftarrow$ alturaDer + 1\OdeLinea{1}
+		}{
+			(*nodo).alto $\leftarrow$ alturaIzq + 1\OdeLinea{1}
+		}
+	\end{algorithm}
+	
+	\complejidad: $O(1)$
+
+	\justifcomp: solo se realizan comparaciones para las alturas de los hijos
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{Altura}{\In{nodo}{puntero(Nodo)}}{nat}}
+		\Pre{\texttt{true}}
+		\Post{$res$ es 0 si $nodo$ es nulo, o igual a la altura del nodo al que apunta en caso contrario}
+		\BlankLine
+		\eIf{nodo = NULL}{
+			res $\leftarrow$ 0\OdeLinea{1}
+		}{
+			res $\leftarrow$ (*nodo).alto\OdeLinea{1}
+		}
+	\end{algorithm}
+	
+	\complejidad: $O(1)$
+
+	\justifcomp: solo se verifica si es nulo o se lee un componente.
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{Balancear}{\Inout{nodo}{puntero(Nodo)}}{puntero(Nodo)}}
+		\Pre{$nodo \neq$ NULL}
+		\Post{el módulo del factor de balanceo de $res$ es menor a 2}
+		\BlankLine
+		ArreglarAlto(nodo)\OdeLinea{1}
+		nat: alturaIzq $\leftarrow$ Altura((*nodo).hijoIzq)\OdeLinea{1}
+		nat: alturaDer $\leftarrow$ Altura((*nodo).hijoDer)\OdeLinea{1}
+		\uIf{alturaDer $>$ alturaIzq \textbf{and} alturaDer - alturaIzq = 2}{
+			\If{Altura((*nodo).hijoDer.hijoIzq) $>$ Altura((*nodo).hijoDer.hijoDer)}{
+				(*nodo).hijoDer $\leftarrow$ rotarDer((*nodo).hijoDer\OdeLinea{1}
+			}
+			res $\leftarrow$ rotarIzq(nodo)\OdeLinea{1}
+		}
+		\uElseIf{alturaIzq $>$ alturaDer \textbf{and} alturaIzq - alturaDer = 2}{
+			\If{Altura((*nodo).hijoIzq.hijoDer) $>$ Altura((*nodo).hijoIzq.hijoIzq)}{
+				(*nodo).hijoIzq $\leftarrow$ rotarIzq((*nodo).hijoIzq)\OdeLinea{1}
+			}
+			res $\leftarrow$ rotarDer(nodo)\OdeLinea{1}
+		}
+		\Else{
+			res $\leftarrow$ nodo\OdeLinea{1}
+		}
+	\end{algorithm}
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{rotarDer}{\In{nodo}{puntero(Nodo)}}{puntero(Nodo)}}
+		\Pre{$nodo$ tiene un hijo izquierdo}
+		\Post{$res$ es el hijo izquierdo de nodo, y arbol se rota a la derecha}
+		\BlankLine
+		puntero(nodo) : aux $\leftarrow$ (*nodo).hijoIzq\OdeLinea{1}
+		(*nodo).hijoIzq $\leftarrow$ (*aux).hijoDer\OdeLinea{1}
+		(*aux).hijoDer $\leftarrow$ nodo\OdeLinea{1}
+		ArreglarAlto(nodo)\OdeLinea{1}
+		ArreglarAlto(aux)\OdeLinea{1}
+		res $\leftarrow$ aux\OdeLinea{1}
+	\end{algorithm}
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{rotarIzq}{\In{nodo}{puntero(Nodo)}}{puntero(Nodo)}}
+		\Pre{$nodo$ tiene un hijo derecho}
+		\Post{$res$ es el hijo derecho de nodo, y arbol se rota a la izquierda}
+		\BlankLine
+		puntero(nodo) : aux $\leftarrow$ (*nodo).hijoDer\OdeLinea{1}
+		(*nodo).hijoDer $\leftarrow$ aux.hijoIzq\OdeLinea{1}
+		aux.hijoIzq $\leftarrow$ nodo\OdeLinea{1}
+		ArreglarAlto(nodo)\OdeLinea{1}
+		ArreglarAlto(aux)\OdeLinea{1}
+		res $\leftarrow$ aux\OdeLinea{1}
+	\end{algorithm}
+	
+	\complejidad: $O(1)$
+
+	\justifcomp: las rotaciones son una serie de comparaciones y asignaciones de punteros ($\Theta(1)$). El invariante de orden del arbol de búsqueda (ABB) se preserva luego de cada rotación. El invariante de balanceo de AVL se restaura para cada subarbol al final de \texttt{Balancear}, pero no luego de cada rotación individual (puede ser necesario rotar un subarbol de manera temporalmente imbalanceada para restaurar el balance de un arbol).
+
+% TODO: algos de iterador
 
 \end{Algoritmos}

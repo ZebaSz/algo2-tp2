@@ -576,7 +576,7 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 
 	\complejidad: $O(|P| + EC \times log(EC))$
 
-	\justifcomp: todos los jugadores que se encuentran en el area (EC) deben agregarse a la lista de espera, que los ordena por prioridad (inserción en log(EC)). Al mismo tiempo debe definirse este nuevo pokémon en el diccionario global a un costo de ($|pk|$), que a su vez está acotado por ($|P|$).
+	\justifcomp: todos los jugadores que se encuentran en el area (EC) deben agregarse a la lista de espera, que los ordena por prioridad (inserción en log(EC)). Al mismo tiempo debe definirse este nuevo pokémon en el diccionario global (con un costo de $|pk|$, que a su vez está acotado por $|P|$).
 
 	~
 
@@ -619,7 +619,7 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 
 	\complejidad: $O(log(EC))$
 
-	\justifcomp: inversamente, al desconectarse, el jugador debe salir del conjunto de jugadores en $c$ y de la cola de espera de captura (de haber un pokemón cerca).
+	\justifcomp: inversamente a Conectarse, al desconectarse el jugador debe salir del conjunto de jugadores en $c$ y de la cola de espera de captura (de haber un pokemón cerca).
 
 	~
 
@@ -639,7 +639,7 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 			itDiccString(nat) : pokesABorrar $\leftarrow$ CrearIt((*j.jugadores[e]).pokemonsCapturados)\OdeLinea{1}
 			\While(\OdeBloque{PC \times |P|}){HaySiguiente(pokesABorrar)}{
 				tupla(clave: String, significado: Nat) : sig $\leftarrow$ Siguiente(pokesABorrar)\OdeLinea{|P|}
-
+				% TODO: si borramos cuando nuevaCant = 0, la complejidad explota
 				nat: nuevaCant $\leftarrow$ Obtener(j.pokemons, sig.clave) - sig.significado\OdeLinea{|P|}
 				Definir(j.pokemons, pk, nuevaCant)\OdeLinea{|P|}
 				j.cantPokemons $\leftarrow$ j.cantPokemons - sig.significado\OdeLinea{1}
@@ -663,11 +663,11 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 					pokemon: pk $\leftarrow$ posPk.pokemon\OdeLinea{1}
 					jugador: captor $\leftarrow$ Proximo(posPk.jugEsperandoCaptura)\OdeLinea{1}
 					(*j.jugadores[captor]).cantPokemons $\leftarrow$ (*j.jugadores[captor]).cantPokemons + 1\OdeLinea{1}
-					\eIf(\OdeBloque{log(|P|)}){Definido((*j.jugadores[captor]).pokemonsCapturados, pk)}{
-						nat: nuevaCant $\leftarrow$ Obtener((*j.jugadores[captor]).pokemonsCapturados, pk) + 1\OdeLinea{log(|P|)}
-						Definir((*j.jugadores[captor]).pokemonsCapturados, pk, nuevaCant)\OdeLinea{log(|P|)}
+					\eIf(\OdeBloque{|P|}){Definido((*j.jugadores[captor]).pokemonsCapturados, pk)}{
+						nat: nuevaCant $\leftarrow$ Obtener((*j.jugadores[captor]).pokemonsCapturados, pk) + 1\OdeLinea{|P|}
+						Definir((*j.jugadores[captor]).pokemonsCapturados, pk, nuevaCant)\OdeLinea{|P|}
 					}{
-						Definir((*j.jugadores[captor]).pokemonsCapturados, pk, 1)\OdeLinea{log(|P|)}
+						Definir((*j.jugadores[captor]).pokemonsCapturados, pk, 1)\OdeLinea{|P|}
 					}
 
 					\tcc{Si se elimina esa posición, no hay que avanzar el iterador}
