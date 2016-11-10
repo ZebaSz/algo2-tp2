@@ -1,6 +1,6 @@
 sudo: required
 dist: xenial
 before_install:
-- sudo apt-get update && sudo apt-get install --no-install-recommends texlive-fonts-recommended texlive-latex-extra texlive-fonts-extra texlive-latex-recommended texline-extra-utils texlive-science dvipng
+- sudo apt-get update && sudo apt-get install --no-install-recommends texlive-fonts-recommended texlive-latex-extra texlive-fonts-extra texlive-latex-recommended texlive-lang-spanish texlive-science dvipng
 script:
-- texfot pdflatex resolucion.tex
+- pdflatex resolucion.tex
