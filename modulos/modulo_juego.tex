@@ -933,7 +933,7 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 		\While(\OdeBloque{log(EC)}){HaySiguiente(itCoor)}{
 			coor: siguiente $\leftarrow$ Siguiente(itCoor)\OdeLinea{1}
 			\If{HayPokémonEnPos(j, siguiente).hayPokemon}{
-				Desencolar(j.grillaPos[Latitud(siguiente)][Longitud(siguiente)].jugEsperandoCaptura, CrearTupla(e,(*j.jugadores[e]).cantPokemons))\OdeLinea{log(EC)}
+				Borrar(j.grillaPos[Latitud(siguiente)][Longitud(siguiente)].jugEsperandoCaptura, CrearTupla(e,(*j.jugadores[e]).cantPokemons))\OdeLinea{log(EC)}
 			}
 			Avanzar(itCoor)\OdeLinea{1}
 		}
