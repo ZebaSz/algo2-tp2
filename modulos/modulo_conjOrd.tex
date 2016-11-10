@@ -22,7 +22,7 @@ Usaremos $\#c$ para denotar la cantidad de entradas del diccionario. También us
 		[función de copia de $\alpha$'s]
 	}
 
-	\textbf{se explica con}: \tadNombre{Conjunto($\alpha$)}, \tadNombre{Iterador Unidireccional(Jugador)}.
+	\textbf{se explica con}: \tadNombre{Conjunto($\alpha$)}, \tadNombre{Iterador Unidireccional($\alpha$)}.
 
 	\textbf{géneros}: \TipoVariable{conjOrd}, \TipoVariable{itConjOrd}.
 
@@ -45,8 +45,8 @@ Usaremos $\#c$ para denotar la cantidad de entradas del diccionario. También us
 	[$O(log(\#c))$]
 	[devuelve \texttt{true} si $a$ esta en el conjunto.]
 
-	\InterfazFuncion{EsVacio?}{\In{c}{conjOrd}}{bool}
-	{$res \igobs$ esVacio?($c$)]}
+	\InterfazFuncion{Vacio?}{\In{c}{conjOrd}}{bool}
+	{$res \igobs$ vacio?($c$)]}
 	[$O(1)$]
 	[devuelve \texttt{true} si el conjunto está vacio.]
 
@@ -54,12 +54,12 @@ Usaremos $\#c$ para denotar la cantidad de entradas del diccionario. También us
 	[$c \igobs c_0$)]
 	{$c \igobs$ borrar($a, c_0$)}
 	[$O(log(\#c))$]
-	[borra $a$ del conjunto.]
+	[busca $a$ en el conjunto y si lo encuentra lo borra]
 
 	\InterfazFuncion{Minimo}{\Inout{c}{conjOrd}}{$\alpha$}
-	[$\neg\emptyset$?(p($p$))]
-	{$res \igobs$ minimo($p$)}
-	[$O(log(\#j))$]
+	[$\neg$vacio?($c$)]
+	{$res \igobs$ minimo($c$)}
+	[$O(log(\#c))$]
 	[devuelve al elemento mas chico del conjunto]
 
 	\TituloDis{Especificación de las operaciones auxiliares utilizadas en la interfaz}
@@ -72,7 +72,7 @@ Usaremos $\#c$ para denotar la cantidad de entradas del diccionario. También us
 	\tadOperacion{minimo}{conj($\alpha$)/c}{$\alpha$}{$\neg\emptyset$?(c)}
 
 	\tadAxiomas
-	\tadAxioma{minimo(c)}{\IF $\#(c) \= 1$  THEN 
+	\tadAxioma{minimo(c)}{\IF $\#(c) = 1$ THEN 
 		dameUno(c) 
 	ELSE 
 		{\IF dameUno(c) $<$ minimo(sinUno(c)) THEN
@@ -95,7 +95,7 @@ Usaremos $\#c$ para denotar la cantidad de entradas del diccionario. También us
 	\InterfazFuncion{CrearIt}{\In{c}{conjOrd}}{itConjOrd}
 	{true}
 	[$O(1)$]
-	[crea un iterador unidireccional de los jugadores validos o expulsados.]
+	[crea un iterador unidireccional de los elementos.]
 	[el iterador se invalida si y solo si se elimina el siguiente elemento del iterador. Además, siguientes($res$) podría cambiar completamente ante cualquier operación que modifique el conjunto.]
 
 	\InterfazFuncion{HayMas}{\In{it}{itConjOrd}}{bool}
@@ -103,7 +103,7 @@ Usaremos $\#c$ para denotar la cantidad de entradas del diccionario. También us
 	[$O(1)$]
 	[devuelve \texttt{true} si y sólo si en el iterador todavía quedan elementos para avanzar.]
 
-	\InterfazFuncion{Actual}{\In{it}{itConjOrd}}{jugador}
+	\InterfazFuncion{Actual}{\In{it}{itConjOrd}}{$\alpha$}
 	[HayMas?($it$)]
 	{$res$ $\igobs$ Actual($it$)}
 	[$O(1))$]
@@ -158,8 +158,7 @@ Usaremos $\#c$ para denotar la cantidad de entradas del diccionario. También us
 	\TituloDis{Función de Abstracción}
 
 	\Abs[eConj]{conjOrd}[e]{d}
-	{($\forall a$: $\alpha$) a $\in$ d = definido?(a, e.raiz)}
-	%%TODO cambiar e.raiz
+	{($\forall a$: $\alpha$) a $\in$ d = Pertenece?(a, e)}
 
 	\TituloDis{Operaciones auxiliares}
 
@@ -265,12 +264,12 @@ Usaremos $\#c$ para denotar la cantidad de entradas del diccionario. También us
 
 	\TituloDis{Función de Abstracción del iterador}
 
-	\Abs[eItConj]{itUni(nat)}[it]{b}{Siguientes(b) $=$ Sigs(it.pila)}
+	\Abs[eItConj]{itUni($\alpha$)}[it]{b}{Siguientes(b) $=$ Sigs(it.pila)}
 
 	\tadOperacion{PilaValida?}{pila(puntero(Nodo))}{bool}{}
-	\tadOperacion{Sigs}{pila(puntero(Nodo))}{secu(jugador)}{}
-	\tadOperacion{Hijos}{puntero(Nodo)/n}{secu(jugador)}{n $\neq$ NULL}
-	\tadOperacion{HijosDer}{pila(puntero(Nodo))/p}{secu(jugador)}{}
+	\tadOperacion{Sigs}{pila(puntero(Nodo))}{secu($\alpha$)}{}
+	\tadOperacion{Hijos}{puntero(Nodo)/n}{secu($\alpha$)}{n $\neq$ NULL}
+	\tadOperacion{HijosDer}{pila(puntero(Nodo))/p}{secu($\alpha$)}{}
 
 	~
 	\tadAxioma{PilaValida?(p)}{
@@ -335,7 +334,7 @@ Usaremos $\#c$ para denotar la cantidad de entradas del diccionario. También us
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
-		\caption{\algoritmo{iEsVacio?}{\In{c}{eConj}}{bool}}
+		\caption{\algoritmo{iVacio?}{\In{c}{eConj}}{bool}}
 		res $\leftarrow$ c.raiz $=$ NULL\OdeLinea{1}
 	\end{algorithm}
 
@@ -369,6 +368,23 @@ Usaremos $\#c$ para denotar la cantidad de entradas del diccionario. También us
 
 	\justifcomp: la complejidad de buscar, agregar o eliminar un elemento es de orden de la altura del arbol, que por invariante de AVL sabemos que es $log(\#c)$
 
+	~	
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iMinimo}{\Inout{c}{eConj}}{$\alpha$}}
+		puntero(Nodo): minimo $\leftarrow$ e.raiz\OdeLinea{1}
+		\While(\OdeBloque{log($\#C$)}){(*minimo).hijoIzq $\neq$ NULL}{
+				minimo $\leftarrow$ (*minimo.)hijoIzq \OdeLinea{1}
+			}
+		res $\leftarrow$ minimo.elem
+	\end{algorithm}
+
+	\complejidad: $O(log(\#c))$
+
+	\justifcomp: hay que recorrer una rama del arbol hasta llegar al extremo izquierdo, y por invariante de AVL sabemos que es $log(\#c)$
+
+	~
 
 	\TituloDis{Algoritmos auxiliares}
 

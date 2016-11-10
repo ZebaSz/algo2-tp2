@@ -1,5 +1,7 @@
 \section{Modulo ColaPrioridad($\alpha$)}
 
+Esta cola de prioridad genérica se representa sobre un conjunto de $\alpha$, el cual a su vez se implementa sobre un arbol de búsqueda autobalanceado (AVL). Gracias a esto, no solo podemos realizar cualquier función en tiempo logarítmico o menor, sino que también nos permite agregar la función Borrar, que nos permite eliminar cualquier elemento de la cola. A su vez, requerimos de un iterador al conjunto, que nos habilite a obtener el primer elemento de la cola en O(1). Para establecer correctamente la prioridad, se requiere que $\alpha$ tenga definido una relación de orden estricta.
+
 Se usa $\#C$ para hablar de la cantidad de elementos de la cola
 
 \begin{Interfaz}
@@ -19,7 +21,7 @@ Se usa $\#C$ para hablar de la cantidad de elementos de la cola
 	[$c \igobs c_0$]
 	{$res \igobs$ encolar($e, c_0$)}
 	[$O(log(\#C) + copy(e))$]
-	[encola una copia de e en la posición que le corresponde (log($\#C$)) y reacomoda el resto del arbol (log($\#C$))]
+	[encola una copia de e en la posición que le corresponde (log($\#C$)) y reacomoda el resto del arbol]
 
 	\InterfazFuncion{Vacía?}{\In{c}{colaPrior}}{bool}
 	{$res \igobs$ vacía?($c$)}
@@ -27,13 +29,13 @@ Se usa $\#C$ para hablar de la cantidad de elementos de la cola
 	[devuelve true si, y solo si, la cola no contiene elementos.]
 
 	\InterfazFuncion{Próximo}{\In{c}{colaPrior}}{$\alpha$}
-	[$\not$ vacía(c)]
+	[$\neg$ vacía(c)]
 	{res $\igobs$ próximo?($c$)}
 	[$O(1)$]
 	[devuelve el elemento mas chico de la cola]
 
 	\InterfazFuncion{Desencolar}{\Inout{c}{colaPrior}}{}
-	[$\not$ vacía(c) $\land$ $c \igobs c_0$]
+	[$\neg$ vacía(c) $\land$ $c \igobs c_0$]
 	{$res \igobs$ desencolar($c_0$)}
 	[$O(log(\#C))$]
 	[elimina el elemento mas chico de la cola en O(1), pero buscar el nuevo más chico es O(log($\#C$))]
@@ -42,7 +44,7 @@ Se usa $\#C$ para hablar de la cantidad de elementos de la cola
 	[$c \igobs c_0$]
 	{$res \igobs$ borrar($c_0$, e)}
 	[$O(log(\#C))$]
-	[elimina el elemento e de la cola en log($\#C$) y reacomoda el arbol (log($\#C$))]
+	[busca el elemento e en log($\#C$), si lo encuentra lo elimina y reacomoda el arbol]
 
   \TituloDis{Especificación de las operaciones auxiliares utilizadas en la interfaz}
 
@@ -81,9 +83,9 @@ Se usa $\#C$ para hablar de la cantidad de elementos de la cola
 
 		\item Si no hay elementos en el conjunto entonces no hay Actual en el iterador del menor
 
-		\item Y si hay elementos hay un menor 
+		\item Y si hay elementos, hay un menor 
 
-		\item El menor es efectivamente el menor de conjElem
+		\item El menor es efectivamente el menor de conjElem %TODO no estamos chequeando que efectivamente exista ese menor (podrían ser todos mayores y ya)
 
 	\end{enumerate}
 
@@ -110,33 +112,31 @@ Se usa $\#C$ para hablar de la cantidad de elementos de la cola
 		vacia
 	ELSE
 		encolar(Actual(e.menor), Abs((borrar(Actual(e.menor), e.conjElem), buscarMenor(borrar(Actual(e.menor), e.conjElem))))
-	}
+	FI}
 
 	\tadOperacion{buscarMenor}{conjOrd($\alpha$)}{itConjOrd($\alpha$)}{}
 	\tadOperacion{buscarMenorAux}{itConjOrd($\alpha$), itConjOrd($\alpha$)}{itConjOrd($\alpha$)}{} %%TODO aca enrealidad va que los el primer iterador sea siguiente o el mismo al segundo(restriccion)
 
 	\tadAxioma{buscarMenor(conj)}{buscarMenorAux(crearIt(conj),crearIt(conj))}
 	\tadAxioma{buscarMenorAux(itConj, itMenor)}{
-		{\IF $\neg$ HayMas?(itConj) THEN
-			itMenor
+	\IF $\neg$ HayMas?(itConj) THEN
+		itMenor
+	ELSE
+		{\IF Actual(Avanzar(itConj)) < Actual(itMenor) THEN
+			buscarMenorAux(Avanzar(itConj), Avanzar(itConj))
 		ELSE
-			\IF Actual(Avanzar(itConj)) < Actual(itMenor) THEN
-				buscarMenorAux(Avanzar(itConj), Avanzar(itConj))
-			ELSE
-				buscarMenorAux(Avanzar(itConj), itMenor)
-			FI
-		}
-	}
+			buscarMenorAux(Avanzar(itConj), itMenor)
+		FI}
+	FI}
 
-	%%TODO
+	%%TODO (naxio dejo este todo, nideawachem)
 
 
 	\TituloDis{Representación del iterador}
 
-	\begin{Estructura}{itConjOrd}[itJugs]
-		\begin{Tupla}[itJugs]
-			\tupItem{conjunto}{puntero(conjOrd)}
-			\tupItem{pila}{pila(puntero(Nodo))}
+	\begin{Estructura}{itColaPrior}[eItCola]
+		\begin{Tupla}[eItCola]
+			\tupItem{itConjElem}{itConjOrd($\alpha$)}
 		\end{Tupla}
 	\end{Estructura}
 
@@ -144,16 +144,16 @@ Se usa $\#C$ para hablar de la cantidad de elementos de la cola
 
 	\begin{enumerate}
 
-		\item no hay nada hecho del iterador
+		\item TODO creo que es true, pero confirmarmelo pls
 
 	\end{enumerate}
 
-	\Rep[itJugs][it]{hay iterador?}
+	\Rep[eItCola][it]{true}
 
 	\TituloDis{Función de Abstracción del iterador}
 
-	\Abs[eConj]{conjOrd}[e]{d}
-	{($\forall a$: $\alpha$) a $\in$ d = definido?(a, e.raiz)}
+	\Abs[eItCola]{itUni($\alpha$)}[e]{d}
+	{TODO}
 
 \end{Representacion}
 
@@ -175,9 +175,11 @@ Se usa $\#C$ para hablar de la cantidad de elementos de la cola
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{iEncolar}{\Inout{c}{eCola}, \In{e}{$\alpha$}}{}}
-		c.conjElem $\leftarrow$ Agregar(c.conjElem, e)\OdeLinea{O(log($\#C$))}
-		\If{e $<$ c.menor}{
-				%TODO cambiar el iterador menor al nuevo elemento
+		$\alpha$ : min $\leftarrow$ Actual(c.menor)\OdeLinea{1}
+		c.conjElem $\leftarrow$ Agregar(c.conjElem, e)\OdeLinea{log($\#C$)}
+		\If{e $<$ min}{
+				itColaPrior: it $\leftarrow$ BuscarMinimo(CrearIt(c.conjElem))\OdeLinea{log($\#C$)} %TODO seba buscarMinimo es tuya
+				c.menor $\leftarrow$ it
 			}
 	\end{algorithm}
 
@@ -190,12 +192,24 @@ Se usa $\#C$ para hablar de la cantidad de elementos de la cola
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{iVacia?}{\In{c}{eCola}}{bool}}
-		res $\leftarrow$ Vacio?(c.conjElem)\OdeLinea{O(1)} %TODO al conjOrd le estaría faltando esta funcion
+		res $\leftarrow$ Vacio?(c.conjElem)\OdeLinea{1}
 	\end{algorithm}
 
 	\complejidad: $O(1)$
 
 	\justifcomp: por la manera en la que se representa, si el conjunto de elementos esta vacío, la cola también
+
+	~
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{iProximo}{\In{c}{eCola}}{$\alpha$}}
+		res $\leftarrow$ Actual(c.menor)\OdeLinea{1}
+	\end{algorithm}
+
+	\complejidad: $O(1)$
+
+	\justifcomp: conseguimos el minimo del conjunto en O(1) gracias al iterador que tenemos guardado
 
 	~
 
@@ -214,11 +228,33 @@ Se usa $\#C$ para hablar de la cantidad de elementos de la cola
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{iBorrar}{\Inout{c}{eCola}, \In{e}{$\alpha$}}{}}
-		res.raiz $\leftarrow$ NULL\OdeLinea{1}
+		$\alpha$ : min $\leftarrow$ Actual(c.menor)\OdeLinea{1}
+		c.conjElem $\leftarrow$ Borrar(e, c.conjElem)\OdeLinea{log($\#C$)}
+		\If{e = min}{
+				itColaPrior: it $\leftarrow$ BuscarMinimo(CrearIt(c.conjElem))\OdeLinea{log($\#C$)}
+				c.menor $\leftarrow$ it
+			}
 	\end{algorithm}
 
-	\complejidad: $O(1)$
+	\complejidad: $O(log(\#C))$
 
-	\justifcomp: solo se inicializan los punteros como nulos.
+	\justifcomp: borrar el elemento del conjunto cuesta log($\#C$) y, si es el minimo, encontrar el nuevo minimo cuesta también log($\#C$)
 
+	~
+
+	\TituloDis{Algoritmos auxiliares}
+
+	\begin{algorithm}[H]
+		\NoCaptionOfAlgo
+		\caption{\algoritmo{BuscarMinimo}{\In{a}{$\alpha$}, \In{nodo}{puntero(Nodo)}}{puntero(Nodo)}}
+		\Pre{\texttt{SEBA}}
+		\Post{SEBA}
+		\BlankLine
+		\If{SEBA}{
+			SEBA $\leftarrow$ NAXIO\OdeLinea{CARLOS}
+		}
+	\end{algorithm}
+
+
+%TODO no estan definidas las funciones del iterador, no se si alcanza con decirle que se comporta como un itConj
 \end{Algoritmos}
