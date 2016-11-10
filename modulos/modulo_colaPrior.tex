@@ -1,10 +1,26 @@
 \section{Modulo ColaPrioridad($\alpha$)}
 
-Esta cola de prioridad genérica se representa sobre un conjunto de $\alpha$, el cual a su vez se implementa sobre un arbol de búsqueda autobalanceado (AVL). Gracias a esto, no solo podemos realizar cualquier función en tiempo logarítmico o menor, sino que también nos permite agregar la función Borrar, que nos permite eliminar cualquier elemento de la cola. A su vez, requerimos de un iterador al conjunto, que nos habilite a obtener el primer elemento de la cola en O(1). Para establecer correctamente la prioridad, se requiere que $\alpha$ tenga definido una relación de orden estricta.
+Esta cola de prioridad genérica se representa sobre un conjunto, el cual a su vez se implementa sobre un arbol de búsqueda autobalanceado (AVL). Gracias a esto, no solo podemos realizar cualquier función en tiempo logarítmico o menor, sino que también nos permite agregar la función Borrar, que nos permite eliminar cualquier elemento de la cola. Para establecer correctamente la prioridad, se requiere que $\alpha$ tenga definida una relación de orden estricta.
 
 Se usa $\#C$ para hablar de la cantidad de elementos de la cola
 
 \begin{Interfaz}
+
+	\textbf{parámetros formales}\hangindent=2\parindent\\
+	\parbox{1.7cm}{\textbf{géneros}}$\alpha$\\
+	\parbox[t]{1.7cm}{\textbf{función}}\parbox[t]{.5\textwidth-\parindent-1.7cm}{
+		\InterfazFuncion{$\bullet < \bullet$}{\In{a_1}{$\alpha$}, \In{a_2}{$\alpha$}}{bool}
+		{$res \igobs (a_1 < a_2)$}
+		[$\Theta(isLess(a_1, a_2))$]
+		[comparación de $\alpha$'s]
+		% TODO: ver todas las complejidades con esto
+	}
+	\parbox[t]{1.7cm}{\textbf{función}}\parbox[t]{.5\textwidth-\parindent-1.7cm}{
+		\InterfazFuncion{Copiar}{\In{a}{$\alpha$}}{$\alpha$}
+		{$res \igobs a$}
+		[$\Theta(copy(a))$]
+		[función de copia de $\alpha$'s]
+	}
 
 	\textbf{se explica con}: \tadNombre{Cola de prioridad($\alpha$)}, \tadNombre{Iterador Unidireccional($\alpha$)}.
 
@@ -67,6 +83,34 @@ Se usa $\#C$ para hablar de la cantidad de elementos de la cola
     	FI}
     FI}
   \end{tad}
+
+	\TituloDis{Operaciones básicas del iterador}
+
+	El iterador que presentamos no permite modificar la cola recorrida.
+
+	\InterfazFuncion{CrearIt}{\In{c}{colaPrior}}{itColaPrior}
+	{true}
+	[$O(1)$]
+	[crea un iterador unidireccional de los elementos.]
+	[el iterador se invalida si y solo si se elimina el siguiente elemento del iterador. Además, siguientes($res$) podría cambiar completamente ante cualquier operación que modifique el conjunto.]
+
+	\InterfazFuncion{HayMas}{\In{it}{itColaPrior}}{bool}
+	{$res$ $\igobs$ hayMas?($it$)}
+	[$O(1)$]
+	[devuelve \texttt{true} si y sólo si en el iterador todavía quedan elementos para avanzar.]
+
+	\InterfazFuncion{Actual}{\In{it}{itColaPrior}}{$\alpha$}
+	[HayMas?($it$)]
+	{$res$ $\igobs$ Actual($it$)}
+	[$O(1))$]
+	[devuelve el elemento siguiente a la posición del iterador.]
+
+	\InterfazFuncion{Avanzar}{\Inout{it}{itColaPrior}}{}
+	[$it = it_0$ $\land$ HayMas?($it$)]
+	{$it$ $\igobs$ Avanzar($it_0$)}
+	[$O(log(\#c))$]
+	[avanza a la posición siguiente del iterador.]
+
 \end{Interfaz}
 
 \begin{Representacion}
@@ -198,12 +242,10 @@ Se usa $\#C$ para hablar de la cantidad de elementos de la cola
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
 		\caption{\algoritmo{iBorrar}{\Inout{c}{eCola}, \In{e}{$\alpha$}}{}}
-		$\alpha$ : min $\leftarrow$ Actual(c.menor)\OdeLinea{1}
-		c.conjElem $\leftarrow$ Borrar(e, c.conjElem)\OdeLinea{log($\#C$)}
-		\If{e = min}{
-				itColaPrior: it $\leftarrow$ BuscarMinimo(CrearIt(c.conjElem))\OdeLinea{log($\#C$)}
-				c.menor $\leftarrow$ it
-			}
+		c.conjElem $\leftarrow$ Borrar(e, c.conjElem)\OdeLinea{log(\#C)}
+		\If{e = menor \textbf{and not} Vacio?(c.conjElem)}{
+			c.menor $\leftarrow$ Minimo(c.conjElem)\OdeLinea{log(\#C)}
+		}
 	\end{algorithm}
 
 	\complejidad: $O(log(\#C))$
@@ -212,19 +254,16 @@ Se usa $\#C$ para hablar de la cantidad de elementos de la cola
 
 	~
 
-	\TituloDis{Algoritmos auxiliares}
+	\TituloDis{Algoritmos del iterador}
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
-		\caption{\algoritmo{BuscarMinimo}{\In{a}{$\alpha$}, \In{nodo}{puntero(Nodo)}}{puntero(Nodo)}}
-		\Pre{\texttt{SEBA}}
-		\Post{SEBA}
-		\BlankLine
-		\If{SEBA}{
-			SEBA $\leftarrow$ NAXIO\OdeLinea{CARLOS}
-		}
+		\caption{\algoritmo{CrearIt}{\In{c}{eCola}}{eItCola}}
+		res $\leftarrow$ CrearIt(c.conjElem)\OdeLinea{1}
 	\end{algorithm}
 
+	\complejidad: $O(1)$
 
-%TODO no estan definidas las funciones del iterador, no se si alcanza con decirle que se comporta como un itConj
+	\justifcomp: como el iterador consiste en exponer el iterador del conjunto interno, comparte las mismas complejidades. Los demás algorítmos funcionan igual a los de dicho iterador.
+
 \end{Algoritmos}
