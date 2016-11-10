@@ -22,7 +22,7 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 
 	\textbf{géneros}: \TipoVariable{juego}, \TipoVariable{itJugadores}.
 
-	\textbf{servicios usados}: \tadNombre{Coordenada}, \tadNombre{Mapa}, \tadNombre{Vector($\alpha$)}, \tadNombre{DiccionarioString($\alpha$)}, \tadNombre{DiccionarioPrioridad}, \tadNombre{Conjunto Lineal($\alpha$)}, \tadNombre{ConjuntoJugadores}
+	\textbf{servicios usados}: \tadNombre{Coordenada}, \tadNombre{Mapa}, \tadNombre{Vector($\alpha$)}, \tadNombre{DiccionarioString($\alpha$)}, \tadNombre{ColaPrioridad($\alpha$)}, \tadNombre{Conjunto Lineal($\alpha$)}, \tadNombre{ConjuntoOrd($\alpha$)}
 
 
 	\InterfazFuncion{CrearJuego}{\In{m}{mapa}}{juego}
@@ -211,8 +211,7 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 			\tupItem{hayPokemon?}{bool}
 			\tupItem{pokemon}{pokemon}
 			\tupItem{contadorCaptura}{nat}
-			\tupItem{jugEsperandoCaptura}{dicPrior}
-			%TODO dicPrior debería ser una cola
+			\tupItem{jugEsperandoCaptura}{colaPrior}
 			\tupItem{jugsEnPos}{conjOrd(jugador)}
 		\end{Tupla}
 
@@ -289,9 +288,9 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 
 	\tadOperacion{compararCoors}{coor, conj(coor)}{bool}{}
 
-	\tadOperacion{jugadoresEsperandoCaptura}{pokego, conj(coor)}{bool}{}
+	\tadOperacion{jugadoresEsperandoCaptura}{pokego, conj(coor)}{bool}{} %TODO despues de definir la tupla, hay que cambiar estas funciones
 
-	\tadOperacion{jugsEsperandoEnPosValido}{pokego, dicc(jugador, nat)}{bool}{}
+	\tadOperacion{jugsEsperandoEnPosValido}{pokego, dicc(jugador, nat)}{bool}{} 
 
 	\tadOperacion{jugsEsperandoClavesValidas}{pokego, conj(jugador)}{bool}{}
 
@@ -430,6 +429,7 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 	\tadAxioma{jugsEsperandoDefsValidas(e, dic, js)}{
 		vacio?(js) $\oluego$ (jugsEsperandoDefsValidas(e, dic, sinUno(js)) $\land$ obtener(dic, dameUno(js)) = (*e.jugadores[dameUno(js)]).cantPokemons)
 	}
+	
 	
 	\TituloDis{Función de Abstracción}
 
