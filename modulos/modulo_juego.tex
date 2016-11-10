@@ -132,12 +132,11 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 	[$O(PS)$]
 	[devuelve el pokémon que se encuentra cerca de la posición.]
 
-	\InterfazFuncion{EntrenadoresPosibles}{\In{j}{juego}, \In{c}{coor}}{conj(jugador)}
-	[hayPokémonCercano($c,j$)]
-	{$res \igobs$ entrenadoresPosibles($c, jugadores(j), j$)} %TODO aca roni toco la aridad pero no nos pusimos de acuerdo sobre como hacerlo
-	[$O(EC)$]
-	[devuelve el conjunto de jugadores esperando a capturar el pokémon que se encuentra en la posición.]
-	[$res$ no es modificable.]
+	\InterfazFuncion{EntrenadoresPosibles}{\In{j}{juego}, \In{es}{conj(jugador)} \In{c}{coor}}{conj(jugador)}
+	[hayPokémonCercano($c,j$) $\land$ es $\subseteq$ jugadoresConectados(j)]
+	{$res \igobs$ entrenadoresPosibles($c, es, j$)}
+	[$O(EC \times \#(es))$]
+	[devuelve un subconjunto de los jugadores que están esperando a capturar el pokémon que se encuentra en la posición.]
 
 	\InterfazFuncion{IndiceRareza}{\In{j}{juego}, \In{pk}{pokemon}}{nat}
 	[$pk \in$ pokemons($j$)]
@@ -830,14 +829,20 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
-		\caption{\algoritmo{iEntrenadoresPosibles}{\In{j}{pokego}, \In{c}{coor}}{conj(jugador)}}
-		res $\leftarrow$ Claves(j.grillaPos[Latitud(c)][Longitud(c)].jugEsperandoCaptura)
+		\caption{\algoritmo{iEntrenadoresPosibles}{\In{j}{pokego}, \In{es}{conj(jugador)}, \In{c}{coor}}{conj(jugador)}}
+		res $\leftarrow$ Vacio()\OdeLinea{1}
+		entrenadores $\leftarrow$ CrearIt(j.grillaPos[Latitud(c)][Longitud(c)].jugEsperandoCaptura)\OdeLinea{1}
+		\While(\OdeBloque{EC \times \#(es)}){HayMas?(entrenadores)}{
+			jugador: actual $\leftarrow$ Siguiente(entrenadores).jugador\OdeLinea{1}
+			\If(\OdeBloque{\#(es)}){Pertenece?(es,actual)}{
+				AgregarRapido(res, actual)\OdeLinea{1}
+			}
+		}
 	\end{algorithm}
 
-	\complejidad: $O(EC)$
+	\complejidad: $O(EC \times \#(es))$
 
-	\justifcomp: el diccionario debe recuperar las claves iterando.
-	%TODO explicar que se hace por referencia y no por copia, para justificar la complejidad
+	\justifcomp: se debe iterar sobre todos los jugadores que están esperando la captura para ver si los mismos están en el conjunto provisto. En el peor caso, se asume que el conjunto de jugadores provisto es un Conjunto Lineal, así que por cada jugador que espera caputra (EC) se debe iterar todo el conjunto pasado por parámetro ($\#(es)$) en peor caso.
 
 	~
 
