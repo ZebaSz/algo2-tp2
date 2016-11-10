@@ -101,7 +101,7 @@ Se usa $\#C$ para hablar de la cantidad de elementos de la cola
 
 	\tadOperacion{conjACola}{conj($\alpha$)}{colaPrior($\alpha$)}{}
 
-	\tadAxioma{conjACola(conj)}{\IF $\emptyset$?(conj) THEN vacia ELSE encolar(minimo(conj),borrar(conj, minimo(conj))) FI}
+	\tadAxioma{conjACola(conj)}{\IF $\emptyset$?(conj) THEN vacia ELSE encolar(dameUno(conj),conjACola(sinUno(conj))) FI}
 
 	~
 
