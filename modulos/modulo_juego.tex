@@ -646,9 +646,13 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 			itDiccString(nat) : pokesABorrar $\leftarrow$ CrearIt((*j.jugadores[e]).pokemonsCapturados)\OdeLinea{1}
 			\While(\OdeBloque{PC \times |P|}){HaySiguiente(pokesABorrar)}{
 				tupla(clave: String, significado: Nat) : sig $\leftarrow$ Siguiente(pokesABorrar)\OdeLinea{|P|}
-				% TODO: si borramos cuando nuevaCant = 0, la complejidad explota
 				nat: nuevaCant $\leftarrow$ Obtener(j.pokemons, sig.clave) - sig.significado\OdeLinea{|P|}
-				Definir(j.pokemons, pk, nuevaCant)\OdeLinea{|P|}
+				\eIf{nuevaCant = 0}{
+					Borrar(j.pokemons, pk)\OdeLinea{|P|}
+				}
+				{
+					Definir(j.pokemons, pk, nuevaCant)\OdeLinea{|P|}
+				}
 				j.cantPokemons $\leftarrow$ j.cantPokemons - sig.significado\OdeLinea{1}
 			}
 		}{
