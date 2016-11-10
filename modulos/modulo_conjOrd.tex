@@ -101,7 +101,7 @@ Usaremos $\#c$ para denotar la cantidad de entradas del diccionario. También us
 		\begin{Tupla}[Nodo]
 			\tupItem{hijoIzq}{puntero(Nodo)}
 			\tupItem{hijoDer}{puntero(Nodo)}				
-			\tupItem{valor}{$\alpha$}
+			\tupItem{elem}{$\alpha$}
 			\tupItem{alto}{nat}
 		\end{Tupla}
 	\end{Estructura}
@@ -120,14 +120,91 @@ Usaremos $\#c$ para denotar la cantidad de entradas del diccionario. También us
 
 	\end{enumerate}
 	
-	\Rep[eConj][e]{}
-	%%TODO FiJARSE SI ESTA EL TRUE SI NO PONERLO
+	\Rep[eConj][e]{
+		sinRepetidos(e.raiz, $\emptyset$)  $\land$  ABB?(e.raiz) $\land$ altoValido?(e.raiz) $\land$\\
+		altoValido?(e.raiz) 
+		
+	}	
+
 
 	\TituloDis{Función de Abstracción}
 
 	\Abs[eConj]{conjOrd}[e]{d}
 	{($\forall a$: $\alpha$) a $\in$ d = definido?(a, e.raiz)}
 	%%TODO cambiar e.raiz
+
+	\TituloDis{Operaciones auxiliares}
+
+	\tadOperacion{sinRepetidos}{puntero(nodo), conj(nat)}{bool}{}
+	\tadOperacion{ABB?}{puntero(Nodo)/nodo}{bool}{}
+	\tadOperacion{menor?}{puntero(Nodo)/padre, puntero(Nodo)/hijo}{bool}{padre $\neq$ NULL}
+	\tadOperacion{altoValido?}{puntero(nodo)}{bool}{}
+	\tadOperacion{mayorAltura}{nat, nat}{nat}{}
+	\tadOperacion{factorDeBalanceo}{nat, nat}{nat}{}
+	\tadOperacion{cantidadHijos}{puntero(Nodo)}{nat}{}
+	~
+
+	\tadAxioma{sinRepetidos(padre, elems)}{
+		padre $=$ NULL $\oluego$(padre.elem $\not\in$ elems $\land$ \\
+		sinRepetidos(padre.hijoIzq, Ag(padre.elem, c)) $\land$ \\
+		sinRepetidos(padre.hijoDer, Ag(padre.elem, c)))
+	}
+
+	~
+
+	\tadAxioma{ABB?(nodo)}{
+		(nodo = NULL) $\oluego$ \\ 
+		(menor?(nodo, (*nodo).hijoDer) $\land$ $\neg$menor?(nodo, (*nodo).hijoIzq) $\land$ \\
+		ABB?((*nodo).hijoIzq) $\land$ ABB?((*nodo).hijoDer))
+	}
+
+	~
+
+	\tadAxioma{menor?(padre, hijo)}{
+		(hijo = NULL) $\oluego$ 
+		padre.elem $<$ hijo.elem)
+	}
+
+	~
+
+	\tadAxioma{altoValido?(nodo)}{
+		nodo = NULL $\oluego$ \\
+		((*nodo).alto = mayorAltura((*nodo).hijoIzq, (*nodo).hijoDer) + 1 $\land$ \\
+		factorDeBalanceo(cantidadHijos((*nodo).hijoIzq), cantidadHijos((*nodo).hijoDer)) $\leq$ 1 
+	}
+
+	~
+
+	\tadAxioma{mayorAltura(izq, der)}{
+		{\IF cantidadHijos(izq) $<$ cantidadHijos(der) THEN
+			cantidadHijos(izq)
+		ELSE
+			cantidadHijos(der)
+		FI}
+	}
+
+	~
+
+	\tadAxioma{cantidadHijos(nodo)}{
+		{\IF nodo = NULL THEN
+			0
+		ELSE
+			$\beta$((*nodo).hijoIzq $\neq$ NULL) + cantidadHijos((*nodo).hijoIzq) + \\
+			$\beta$((*nodo).hijoDer $\neq$ NULL) + cantidadHijos((*nodo).hijoDer)		
+		FI}
+	}
+
+	~
+
+	\tadAxioma{factorDeBalanceo(izq, der)}{
+		{\IF izq $<$ der THEN
+			der - izq 
+		ELSE
+			izq - der
+		FI}
+	}
+
+	~	
 
 	\TituloDis{Representación del iterador}
 
