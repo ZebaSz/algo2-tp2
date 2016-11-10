@@ -121,9 +121,7 @@ Usaremos $\#c$ para denotar la cantidad de entradas del diccionario. También us
 	\end{enumerate}
 	
 	\Rep[eConj][e]{
-		sinRepetidos(e.raiz, $\emptyset$)  $\land$  ABB?(e.raiz) $\land$ altoValido?(e.raiz) $\land$\\
-		altoValido?(e.raiz) 
-		
+		sinRepetidos(e.raiz, $\emptyset$)  $\land$  ABB?(e.raiz) $\land$ altoValido?(e.raiz)
 	}	
 
 
@@ -142,6 +140,7 @@ Usaremos $\#c$ para denotar la cantidad de entradas del diccionario. También us
 	\tadOperacion{mayorAltura}{nat, nat}{nat}{}
 	\tadOperacion{factorDeBalanceo}{nat, nat}{nat}{}
 	\tadOperacion{cantidadHijos}{puntero(Nodo)}{nat}{}
+	\tadOperacion{definido?}{$\alpha$, puntero(nodo)}{bool}{}
 	~
 
 	\tadAxioma{sinRepetidos(padre, elems)}{
@@ -205,6 +204,10 @@ Usaremos $\#c$ para denotar la cantidad de entradas del diccionario. También us
 	}
 
 	~	
+
+	\tadAxioma{definido?(a , n)}{
+		n $\neq$ NULL $\yluego$ (n.elem = a $\lor$ definido?(j, n.hijoIzq) $\lor$ definido?(j, n.hijoDer))
+	}
 
 	\TituloDis{Representación del iterador}
 
