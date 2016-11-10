@@ -61,7 +61,7 @@ Este módulo permite crear tuplas con orden absoluto. El orden se define por el 
 
 	\InterfazFuncion{\puntito $<$ \puntito}{\In{t1}{tupOrd}, \In{t2}{tupOrd}}{$\alpha$}
 	{$res \igobs t1 < t2$}
-	[$O(1)$]
+	[$O(isLess(t1.primer, t2.primer) + isLess(t1.segun, t2.segun) + equals(t1.segun, t2.segun))$]
 	[Devuelve si la primer tupla es menor a la segunda]
 
 	\TituloDis{Especificación de las operaciones auxiliares utilizadas en la interfaz}

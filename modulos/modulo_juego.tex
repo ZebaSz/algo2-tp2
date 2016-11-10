@@ -211,7 +211,7 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 			\tupItem{hayPokemon?}{bool}
 			\tupItem{pokemon}{pokemon}
 			\tupItem{contadorCaptura}{nat}
-			\tupItem{jugEsperandoCaptura}{colaPrior(tupOrd)}
+			\tupItem{jugEsperandoCaptura}{colaPrior(tupOrd(jugador, nat))}
 			\tupItem{jugsEnPos}{conjOrd(jugador)}
 		\end{Tupla}
 
@@ -239,9 +239,9 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 
 		\item Solo las posiciones con pokemon tienen jugadoresEsperandoCaptura
 
-		\item Para cada una de las claves de jugsEsperandoCaptura, el jugador es un jugador válido y se encuentra en posición de captura del pokemon correspondiente
+		\item Para cada uno de los elementos de jugsEsperandoCaptura, su primer miembro es un jugador válido y se encuentra en posición de captura del pokemon correspondiente
 
-		\item Para cada una de las claves de jugsEsperandoCaptura, su significado es la cantidad de pokemons
+		\item Para cada uno de los elementos de jugsEsperandoCaptura, su segundo miembro es la cantidad de pokemons
 
 		\item Los jugadores que estan esperando para capturar estan en su respectivo jugsEsperandoCaptura
 
@@ -296,11 +296,14 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 
 	\tadOperacion{jugadoresEsperandoCaptura}{pokego, conj(coor)}{bool}{}
 
-	\tadOperacion{jugsEsperandoEnPosValido}{pokego, colaPrior(jugador, nat)}{bool}{} %TODO fijense si les parece correcto lo que hice con esto
+	\tadOperacion{jugsEsperandoEnPosValido}{pokego, colaPrior(jugador, nat)}{bool}{}
 
 	\tadOperacion{jugadoresEstanCapturando}{pokego}{bool}{}
 
 	\tadOperacion{enCapturaValida}{pokego/p, nat/i}{bool}{i $\leq$ long(e.jugadores) $\land$ e.jugadores[i] $\rightarrow$conectado?}
+
+	\tadOperacion{estaEnLaCola}{tuplaOrd(jugador,nat), colaPrior(tuplaOrd(jugador,nat))}{bool}{}
+	
 	
 	~
 
@@ -415,13 +418,13 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 
 	\tadAxioma{jugadoresEsperandoCaptura(e, ps)}{
 		vacio?(ps) $\oluego$ (jugsEsperandoEnPosValido(e, e.grilla[latitud(dameUno(ps))][longitud(dameUno(ps))].jugEsperandoCaptura) \\
-		$\land$ jugadoresEsperandoCaptura(sinUno(ps)))
+		$\land$ jugadoresEsperandoCaptura(e, sinUno(ps)))
 	}
 	
 	~
 
 	\tadAxioma{jugsEsperandoEnPosValido(e, cola)}{
-		vacía?(cola) $\oluego$ (jugsEsperandoEnPosValido(e, desencolar(cola)) $\land$ $\pi_1$(proximo(cola)) $<$ long(e.jugadores) $\land$ e.jugadores[$\pi_1$(proximo(cola))].sanciones $<$ 5 $\yluego$ distEuclidea(e.jugadores[$\pi_1$(proximo(cola))].posicion, crearCoor(i,j)) $\leq$ 4 $\land$ $\pi_2$proximo(cola) = (*e.jugadores[$\pi_1$(proximo(cola))]).cantPokemons)
+		vacía?(cola) $\oluego$ (jugsEsperandoEnPosValido(e, desencolar(cola)) $\land$ $\pi_1$(proximo(cola)) $<$ long(e.jugadores) $\land$ e.jugadores[$\pi_1$(proximo(cola))].sanciones $<$ 5 $\yluego$ distEuclidea(e.jugadores[$\pi_1$(proximo(cola))].posicion, crearCoor(i,j)) $\leq$ 4 $\land$ $\pi_2$(proximo(cola)) = (*e.jugadores[$\pi_1$(proximo(cola))]).cantPokemons)
 	}
 
 	~
@@ -433,8 +436,19 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 	\tadAxioma{enCapturaValida(e, i)}{
 		($\forall c$: coor) ((posExistente(c, e.mapa) $\land$ c $\in$ e.posConPokemons $\land$ \\
 		distEuclidea(c, e.jugadores[i]$\rightarrow$posicion) $\leq$ 4) $\implies$ \\
-		($\langle$ i, e.jugadores[i] $\rightarrow$ cantPokemons $\rangle$ $\in$ e.grillaPos[longitud(e.jugadores[i]$\rightarrow$posicion)][latitud(e.jugadores[i]$\rightarrow$posicion)].jugsEnPos))
+		estaEnLaCola($\langle$ i, e.jugadores[i] $\rightarrow$ cantPokemons $\rangle$, \\
+		e.grillaPos[longitud(e.jugadores[i]$\rightarrow$posicion)]$ \\ $[latitud(e.jugadores[i]$\rightarrow$posicion)].jugsEsperandoCaptura))
 	}
+
+	\tadAxioma{estaEnLaCola(tupla, cola)}{
+	\IF vacía?(cola) THEN
+		false
+	ELSE
+		\IF próximo(cola) = tupla THEN
+			true
+		ELSE
+			enCapturaValida(tupla, desencolar(cola))
+	FI}
 
 	\tadAxioma{}
 	
