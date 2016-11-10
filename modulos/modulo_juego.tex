@@ -2,6 +2,8 @@
 
 La cantidad de cada pokémon se guarda en un diccionario basado en trie, usando los nombres como claves. Sus posiciones se guardan en un Conjunto Lineal con inserción rápida, y en el mismo mapa se guarda el pokémon que se ubica en dicha posición (este valor se invalida si la posición no está en el conjunto, como cuando se captura el pokémon).
 
+La información de cada jugador se guarda en un vector. El mismo usa punteros (referencias) para evitar incurrir en grandes costos a la hora de redimensionarlo.
+
 Utilizaremos la misma notación para complejidades que en el enunciado:
 
 \begin{itemize}
@@ -194,7 +196,6 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 			\tupItem{pokemons}{diccString(nat)}
 			\tupItem{posConPokemons}{conj(coor)}
 			\tupItem{\\jugadores}{vector(puntero(infoJugador))}
-			%TODO punteros en consideraciones
 			\tupItem{\\grillaPos}{arreglo\_dimensionable de (arreglo\_dimensionable de infoPos)}
 			\tupItem{\\cantPokemons}{nat}
 		\end{Tupla}
@@ -244,8 +245,6 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 		\item Para cada uno de los elementos de jugsEsperandoCaptura, su segundo miembro es la cantidad de pokemons
 
 		\item Los jugadores que estan esperando para capturar estan en su respectivo jugsEsperandoCaptura
-
-
 
 	\end{enumerate}
 

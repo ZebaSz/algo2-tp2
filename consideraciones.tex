@@ -1,4 +1,4 @@
-\section{Consideraciones}
+\section{Consideraciones de diseño}
 
 \begin{itemize}
 	\item Se asume lógica de cortocircuito para todos los algoritmos.
@@ -6,4 +6,7 @@
 	\item Algunas complejidades y sus justificaciones son compartidas (ya que la función es prácticamente idéntica, solo llama a una o dos auxiliares o solo realiza alguna otra acción en $\Theta(1)$), así que en algunos casos se omiten y se asume que se usa la próxima complejidad y justificación disponible
 
 	\item Para ser consistente con el cambio a iteradores en la funcion \texttt{Jugadores}, también se devuelve un iterador en \texttt{Expulsados}.
+
+	\item Si bien el vector de jugadores usa punteros se podrían usar simples referencias (en tanto las mismas se copian en O(1)), pero dejamos los punteros para hacerlo más explícito.
+
 \end{itemize}
