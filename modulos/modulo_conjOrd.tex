@@ -56,6 +56,36 @@ Usaremos $\#c$ para denotar la cantidad de entradas del diccionario. También us
 	[$O(log(\#c))$]
 	[borra $a$ del conjunto.]
 
+	\InterfazFuncion{Minimo}{\Inout{c}{conjOrd}}{$\alpha$}
+	[$\neg\emptyset$?(p($p$))]
+	{$res \igobs$ minimo($p$)}
+	[$O(log(\#j))$]
+	[devuelve al elemento mas chico del conjunto]
+
+	\TituloDis{Especificación de las operaciones auxiliares utilizadas en la interfaz}
+
+	\begin{tad}{Conjunto($\alpha$) Extendido}
+	\parskip=0pt
+	\tadExtiende{\tadNombre{Conjunto($\alpha$)}}
+
+	\tadTitulo{otras operaciones (exportadas)}
+	\tadOperacion{minimo}{conj($\alpha$)/c}{$\alpha$}{$\neg\emptyset$?(c)}
+
+	\tadAxiomas
+	\tadAxioma{minimo(c)}{\IF $\#(c) \= 1$  THEN 
+		dameUno(c) 
+	ELSE 
+		{\IF dameUno(c) $<$ minimo(sinUno(c)) THEN
+			dameUno(c)
+		ELSE
+			minimo(sinUno(c))
+		FI}
+	FI}
+
+	~
+
+	\end{tad}
+
 
 	\TituloDis{Operaciones básicas del iterador}
 
