@@ -679,7 +679,7 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 				infoPos: posPk $\leftarrow$ j.grillaPos[Latitud(coorConPk)][Longitud(coorConPk)]\OdeLinea{1}
 				\eIf{posPk.contadorCaptura = 10}{
 					pokemon: pk $\leftarrow$ posPk.pokemon\OdeLinea{1}
-					jugador: captor $\leftarrow$ Proximo(posPk.jugEsperandoCaptura)\OdeLinea{1}
+					jugador: captor $\leftarrow$ $\pi_1$(Proximo(posPk.jugEsperandoCaptura))\OdeLinea{1}
 					(*j.jugadores[captor]).cantPokemons $\leftarrow$ (*j.jugadores[captor]).cantPokemons + 1\OdeLinea{1}
 					\eIf(\OdeBloque{|P|}){Definido((*j.jugadores[captor]).pokemonsCapturados, pk)}{
 						nat: nuevaCant $\leftarrow$ Obtener((*j.jugadores[captor]).pokemonsCapturados, pk) + 1\OdeLinea{|P|}
