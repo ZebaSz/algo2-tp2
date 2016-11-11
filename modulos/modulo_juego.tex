@@ -740,6 +740,10 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 		res $\leftarrow$ (*j.jugadores[e]).conectado?\OdeLinea{1}
 	\end{algorithm}
 
+	\complejidad: $O(1)$
+
+	\justifcomp: solo se accede a un vector y se desreferencia un puntero y/o se accede a un miembro.
+
 	~
 
 	\begin{algorithm}[H]
@@ -772,6 +776,10 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 		res $\leftarrow$ CrearIterador((*j.jugadores[e]).pokemonsCapturados)\OdeLinea{1}
 	\end{algorithm}
 
+	\complejidad: $O(1)$
+
+	\justifcomp: solo se inicializa el iterador.
+
 	~
 
 	\begin{algorithm}[H]
@@ -779,6 +787,10 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 		\caption{\algoritmo{iJugadores}{\In{j}{pokego}}{itJugadores}}
 		res $\leftarrow$ CrearIt(j, false)\OdeLinea{1}
 	\end{algorithm}
+
+	\complejidad: $O(1)$
+
+	\justifcomp: solo se inicializa el iterador.
 
 	~
 
@@ -812,6 +824,10 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 		res $\leftarrow$ PosExistente(j.mapa, c) \textbf{and} HayPokémonEnDistancia(j, c, 5)\OdeLinea{1}
 	\end{algorithm}
 
+	\complejidad: $O(1)$
+
+	\justifcomp: solo debe iterar todas las posiciones de un cuadrado de lado predeterminado. Al ser predeterminado se considera constante.
+
 	~
 
 	\begin{algorithm}[H]
@@ -819,6 +835,10 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 		\caption{\algoritmo{iHayPokémonCercano}{\In{j}{pokego}, \In{c}{coor}}{bool}}
 		res $\leftarrow$ HayPokémonEnDistancia(j, c, 2)\OdeLinea{1}
 	\end{algorithm}
+
+	\complejidad: $O(1)$
+
+	\justifcomp: solo debe iterar todas las posiciones de un cuadrado de lado predeterminado. Al ser predeterminado se considera constante.
 
 	~
 
@@ -880,6 +900,10 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 		res $\leftarrow$ 100 - (cantPk $\times$ 100 $\div$ j.cantPokemons)\OdeLinea{1}
 	\end{algorithm}
 
+	\complejidad: $O(|P|)$
+
+	\justifcomp: se debe acceder al diccionario para averiguar cuántos pokemons de esa especie.
+
 	~
 
 	\begin{algorithm}[H]
@@ -891,7 +915,6 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 	\complejidad: $O(|P|)$
 
 	\justifcomp: se debe acceder al diccionario para averiguar cuántos pokemons de esa especie.
-
 
 	\TituloDis{Algoritmos auxiliares}
 
@@ -906,6 +929,10 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 		res.jugEsperandoCaptura $\leftarrow$ Vacia()\OdeLinea{1}
 		res.jugsEnPos $\leftarrow$ Vacio()\OdeLinea{1}
 	\end{algorithm}
+
+	\complejidad: $O(1)$
+
+	\justifcomp: solo se inicializan las variables.
 	
 	~
 
@@ -1106,6 +1133,12 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 		}
 	\end{algorithm}
 
+	\complejidad: $O(J)$
+
+	\justifcomp: como la lista de jugadores y la de eliminados son la misma, debe iterarla en su totalidad hasta encontrar otro elemento válido (si es que existe).
+
+	Cabe aclarar que la complejidad de iterar la lista en su totalidad es $\Theta(J)$, ya que la parte de la lista que se debe iterar en cada iteración es distinta, hasta que se la recorre de manera completa.
+
 	~
 
 	\begin{algorithm}[H]
@@ -1118,6 +1151,12 @@ Utilizaremos la misma notación para complejidades que en el enunciado:
 			}
 		}
 	\end{algorithm}
+
+	\complejidad: $O(J)$
+
+	\justifcomp: como la lista de jugadores y la de eliminados son la misma, debe iterarla en su totalidad hasta encontrar otro elemento válido (si es que existe).
+
+	Cabe aclarar que la complejidad de iterar la lista en su totalidad es $\Theta(J)$, ya que la parte de la lista que se debe iterar en cada iteración es distinta, hasta que se la recorre de manera completa.
 
 	~
 
