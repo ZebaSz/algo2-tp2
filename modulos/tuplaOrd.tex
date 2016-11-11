@@ -45,19 +45,21 @@ Este módulo permite crear tuplas con orden absoluto. El orden se define por el 
 
 	\InterfazFuncion{CrearTupla}{\In{a}{$\alpha$}, \In{s}{$\beta$}}{tupOrd}
 	{$res \igobs \langle a, s \rangle$}
-	[$O(1)$]
+	[$O(copy(a) + copy(b))$]
 	[crea una tupla.]
-	[]	
+	[se guardan copias de $a$ y $b$]	
 
 	\InterfazFuncion{$\pi_1$}{\In{t}{tupOrd}}{$\alpha$}
-	{$res \igobs \pi_1 (t)$}
+	{alias($res = \pi_1 (t)$)}
 	[$O(1)$]
 	[Devuelve el primer componente de la tupla]
+	[$res$ es modificable si y solo si $t$ es modificable.]
 
 	\InterfazFuncion{$\pi_2$}{\In{t}{tupOrd}}{$\beta$}
-	{$res \igobs \pi_2 (t)$}
+	{alias($res = \pi_2 (t)$)}
 	[$O(1)$]
 	[Devuelve la segunda componente de la tupla]
+	[$res$ es modificable si y solo si $t$ es modificable.]
 
 	\InterfazFuncion{\puntito $<$ \puntito}{\In{t1}{tupOrd}, \In{t2}{tupOrd}}{$\alpha$}
 	{$res \igobs t1 < t2$}
@@ -125,13 +127,14 @@ Este módulo permite crear tuplas con orden absoluto. El orden se define por el 
 
 	\begin{algorithm}[H]
 		\NoCaptionOfAlgo
-		\caption{\algoritmo{iCrearTupla}{\In{a}{$\alpha$}, \In{s}{$\beta$}}{eT}}
-		res.primer $\leftarrow$ a\OdeLinea{1}
-		res.segun $\leftarrow$ s\OdeLinea{1}
+		\caption{\algoritmo{iCrearTupla}{\In{a}{$\alpha$}, \In{b}{$\beta$}}{eT}}
+		res.primer $\leftarrow$ Copiar(a)\OdeLinea{1}
+		res.segun $\leftarrow$ Copiar(b)\OdeLinea{1}
 	\end{algorithm}
 
-	\complejidad: $O(1)$
+	\complejidad: $O(copy(a) + copy(b))$
 
+	\justifcomp: se copian los valores dentro de la tupla.
 
 	~
 
@@ -143,6 +146,8 @@ Este módulo permite crear tuplas con orden absoluto. El orden se define por el 
 
 	\complejidad: $O(1)$
 
+	\justifcomp: solo se devuelve una referencia a un miembro.
+
 	~
 
 	\begin{algorithm}[H]
@@ -152,6 +157,8 @@ Este módulo permite crear tuplas con orden absoluto. El orden se define por el 
 	\end{algorithm}
 
 	\complejidad: $O(1)$
+
+	\justifcomp: solo se devuelve una referencia a un miembro.
 
 	~
 
